@@ -25,6 +25,7 @@ const ck = require("chalker");
 const { PACKAGE_RAW_INFO, DEP_ITEM } = require("./symbols");
 const { FYN_LOCK_FILE, FYN_INSTALL_CONFIG_FILE, FV_DIR, PACKAGE_FYN_JSON } = require("./constants");
 const { parseYarnLock } = require("../yarn");
+const mm = require("minimatch");
 
 /* eslint-disable no-magic-numbers, max-statements, no-empty, complexity, no-eval */
 
@@ -261,6 +262,20 @@ class Fyn {
       }
 
       this._runNpm = _.uniq([].concat(this._options.runNpm, fynpoNpmRun).filter(x => x));
+
+      const resData = {
+        ...this._pkg.resolutions,
+        ..._.get(this._fynpo, ["config", "resolutions"])
+      };
+
+      if (!_.isEmpty(resData)) {
+        this._resolutions = resData;
+        this._resolutionsMatchers = Object.keys(resData).map(x => {
+          const pts = x.split("/");
+          const x2 = pts.length === 1 || (pts[0][0] === "@" && pts.length === 2) ? `**/${x}` : x;
+          return { mm: new mm.Minimatch(x2), res: resData[x] };
+        });
+      }
     }
   }
 

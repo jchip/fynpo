@@ -38,6 +38,7 @@ class DepItem {
     // was this item promoted to top level for flattening?
     this.promoted = undefined;
     this.depth = (parent && parent.depth + 1) || options.depth || 0;
+    this.nameDepPath = this.depth > 1 ? parent.nameDepPath + "/" + this.name : this.name;
     this.priority = options.priority;
   }
 

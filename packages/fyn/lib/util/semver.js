@@ -250,6 +250,11 @@ function analyze(semver) {
   return sv;
 }
 
+function replace(sv, replaced) {
+  sv.$$ = sv.$;
+  sv.$ = replaced;
+}
+
 /**
  * semver utilities lib
  */
@@ -261,6 +266,8 @@ const semverLib = {
   split,
 
   analyze,
+
+  replace,
 
   localify,
   localifyHard,

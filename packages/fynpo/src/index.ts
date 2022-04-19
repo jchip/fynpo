@@ -213,17 +213,6 @@ const execLinting = (parsed) => {
 export const fynpoMain = () => {
   const nixClap = new NixClap({
     usage: "$0 [command] [options]",
-    handlers: {
-      parsed: (data) => {
-        try {
-          const cwd = data.parsed.opts.cwd || process.cwd();
-          /* eslint-disable @typescript-eslint/no-var-requires */
-          data.nixClap.applyConfig(xrequire(Path.join(cwd, "lerna.json")).fynpo, data.parsed);
-        } catch (e) {
-          // Error
-        }
-      },
-    },
   }).init(
     {
       cwd: {

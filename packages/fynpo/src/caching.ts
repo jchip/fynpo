@@ -156,6 +156,7 @@ export class PkgBuildCache {
    * path to the file to save the output meta
    */
   metaFile: string;
+  fynpoOpts: any;
   /**
    * caching options
    */
@@ -195,6 +196,7 @@ export class PkgBuildCache {
       cachingOpts.server = `${cachingOpts.server}/`;
     }
 
+    this.fynpoOpts = fynpoOpts;
     this.opts = cachingOpts;
     this.repoCacheMetaDir = Path.join(this.topDir, `.fynpo/_cache-meta/${label}`);
     this.exist = false;
@@ -291,11 +293,16 @@ export class PkgBuildCache {
       }
     }
 
+    const inputRules = _.get(this.cacheRules, "input", {});
+
+    const resolutions =
+      inputRules.includeResolutions !== false ? _.pick(this.fynpoOpts, "resolutions") : {};
+
     this.input = await caching.processInput({
       cwd: Path.join(this.topDir, pkgInfo.path),
-      input: _.get(this.cacheRules, "input"),
+      input: inputRules,
       packageJson: pkgInfo.pkgJson,
-      extra: { label: this.label, localDepHashes },
+      extra: { ...resolutions, label: this.label, localDepHashes },
     });
 
     this.cacheDir = Path.join(this.opts.dir, this.label, pkgInfo.name);

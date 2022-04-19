@@ -36,6 +36,9 @@ const {
   DEP_ITEM
 } = require("./symbols");
 
+const failMetaMsg = name =>
+  `Unable to retrieve meta for package ${name} - If you've updated its version recently, try to run fyn with '--refresh-meta' again`;
+
 /*
  * Package dependencies resolver
  *
@@ -1039,6 +1042,32 @@ ${item.depPath.join(" > ")}`
     return { meta, resolved };
   }
 
+  /**
+   * Match a nested dep to user's resolutions data
+   *
+   * spec: https://github.com/yarnpkg/rfcs/blob/master/implemented/0000-selective-versions-resolutions.md
+   *
+   * @param {*} item
+   * @returns
+   */
+  _replaceWithResolutionsData(item) {
+    if (item.depth < 2 || !this._fyn._resolutions || item._semver.$$) {
+      return undefined;
+    }
+
+    const depPath = item.nameDepPath;
+
+    const found = this._fyn._resolutionsMatchers.find(r => r.mm.match(depPath));
+
+    if (found) {
+      const { res } = found;
+      logger.debug(`${depPath} changed to ${res} from ${item.semver} by resolutions data`);
+      semverUtil.replace(item._semver, res);
+    }
+
+    return undefined;
+  }
+
   _resolveWithLockData(item) {
     //
     // Force resolve from lock data in regen mode if item was not a direct
@@ -1142,13 +1171,12 @@ ${item.depPath.join(" > ")}`
       });
     };
 
+    this._replaceWithResolutionsData(item);
+
     const promise =
       !item.semverPath || this._fyn.preferLock
         ? tryLock().then(r => r || (item.semverPath && tryLocal()))
         : tryLocal().then(r => r || tryLock());
-
-    const failMetaMsg = name =>
-      `Unable to retrieve meta for package ${name} - If you've updated its version recently, try to run fyn with '--refresh-meta' again`;
 
     return promise
       .then(r => {
@@ -1156,7 +1184,9 @@ ${item.depPath.join(" > ")}`
           return r;
         }
 
-        if (this._lockOnly || item.localType) return undefined;
+        if (this._lockOnly || item.localType) {
+          return undefined;
+        }
         // neither local nor lock was able to resolve for item
         // so try to fetch from registry for real meta to resolve
         // always fetch the item and let pkg src manager deal with caching
@@ -1188,6 +1218,13 @@ ${item.depPath.join(" > ")}`
         if (!r) return;
 
         const { meta, resolved } = r;
+
+        if (item._semver.$$ && !Semver.satisfies(resolved, item._semver.$$)) {
+          logger.warn(
+            `${item.nameDepPath}@${resolved} resolved by resolutions data doesn't satisfy original semver ${item._semver.$$}`
+          );
+        }
+
         await this.addPackageResolution(item, meta, resolved);
       })
       .then(() => {
