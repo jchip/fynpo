@@ -1,3 +1,20 @@
+# 4/20/2022
+
+## Packages
+
+-   `fyn@1.1.37` `(1.1.36 => 1.1.37)`
+-   `fynpo@1.1.40` `(1.1.39 => 1.1.40)`
+
+## Commits
+
+-   `packages/fyn`
+
+    -   feat: supports user resolutions data base on yarn spec [commit](https://github.com/electrode-io/fynpo/commit/8953d34fe19abdab7ae9bb1ccc3209d79b1d0fe7)
+
+-   `packages/fynpo`
+
+    -   feat: supports user resolutions data base on yarn spec [commit](https://github.com/electrode-io/fynpo/commit/8953d34fe19abdab7ae9bb1ccc3209d79b1d0fe7)
+
 # 4/16/2022
 
 ## Packages
