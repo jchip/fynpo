@@ -271,9 +271,15 @@ class Fyn {
       if (!_.isEmpty(resData)) {
         this._resolutions = resData;
         this._resolutionsMatchers = Object.keys(resData).map(x => {
-          const pts = x.split("/");
-          const x2 = pts.length === 1 || (pts[0][0] === "@" && pts.length === 2) ? `**/${x}` : x;
-          return { mm: new mm.Minimatch(x2), res: resData[x] };
+          const x2 = fynTil.unSlashNpmScope(x);
+          const pts = x2.split("/");
+          // spec can only contain ** between slashes
+          assert(
+            !pts.find(x => !(!x.includes("*") || x === "**")),
+            `resolution path '${x}' can only contain '**' for wildcard matching`
+          );
+          const x3 = pts.length === 1 ? `**/${x2}` : x2;
+          return { mm: new mm.Minimatch(x3), res: resData[x] };
         });
       }
     }

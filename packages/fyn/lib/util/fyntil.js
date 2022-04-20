@@ -312,6 +312,17 @@ const fyntil = {
 
   posixify,
 
+  /**
+   * Take a npm dependency path separated by / and replace the / that's meant for a npm scope with ::
+   *
+   * @param {*} npmDepPath
+   * @returns dep path where npm scope's / replaced with ::
+   */
+
+  unSlashNpmScope(npmDepPath) {
+    return npmDepPath.replace(/(\@[^\/]+)\//g, (_a, b) => `${b}::`);
+  },
+
   getGlobalNodeModules() {
     const nodeDir = Path.dirname(process.execPath);
     if (process.platform === "win32") {

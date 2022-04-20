@@ -16,7 +16,7 @@ const createDefer = require("./util/defer");
 const simpleSemverCompare = semverUtil.simpleCompare;
 const logFormat = require("./util/log-format");
 const { LONG_WAIT_META } = require("./log-items");
-const { checkPkgOsCpu, relativePath } = require("./util/fyntil");
+const { checkPkgOsCpu, relativePath, unSlashNpmScope } = require("./util/fyntil");
 const { getDepSection, makeDepStep } = require("@fynpo/base");
 const xaa = require("./util/xaa");
 const { AggregateError } = require("@jchip/error");
@@ -1055,13 +1055,13 @@ ${item.depPath.join(" > ")}`
       return undefined;
     }
 
-    const depPath = item.nameDepPath;
+    const depPath = unSlashNpmScope(item.nameDepPath);
 
     const found = this._fyn._resolutionsMatchers.find(r => r.mm.match(depPath));
 
     if (found) {
       const { res } = found;
-      logger.debug(`${depPath} changed to ${res} from ${item.semver} by resolutions data`);
+      logger.debug(`${item.nameDepPath} changed to ${res} from ${item.semver} by resolutions data`);
       semverUtil.replace(item._semver, res);
     }
 
