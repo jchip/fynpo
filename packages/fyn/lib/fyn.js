@@ -270,16 +270,16 @@ class Fyn {
 
       if (!_.isEmpty(resData)) {
         this._resolutions = resData;
-        this._resolutionsMatchers = Object.keys(resData).map(x => {
-          const x2 = fynTil.unSlashNpmScope(x);
-          const pts = x2.split("/");
+        this._resolutionsMatchers = Object.keys(resData).map(depPath => {
+          const unslashedPath = fynTil.unSlashNpmScope(depPath);
+          const pts = unslashedPath.split("/");
           // spec can only contain ** between slashes
           assert(
             !pts.find(x => !(!x.includes("*") || x === "**")),
-            `resolution path '${x}' can only contain '**' for wildcard matching`
+            `resolution path '${depPath}' can only contain '**' for wildcard matching`
           );
-          const x3 = pts.length === 1 ? `**/${x2}` : x2;
-          return { mm: new mm.Minimatch(x3), res: resData[x] };
+          const finalPath = pts.length === 1 ? `**/${unslashedPath}` : unslashedPath;
+          return { mm: new mm.Minimatch(finalPath), res: resData[depPath] };
         });
       }
     }

@@ -1043,7 +1043,8 @@ ${item.depPath.join(" > ")}`
   }
 
   /**
-   * Match a nested dep to user's resolutions data
+   * Match a nested dep to user's resolutions data, or nested and direct dep for packages
+   * inside a fynpo monorepo.
    *
    * spec: https://github.com/yarnpkg/rfcs/blob/master/implemented/0000-selective-versions-resolutions.md
    *
@@ -1051,17 +1052,48 @@ ${item.depPath.join(" > ")}`
    * @returns
    */
   _replaceWithResolutionsData(item) {
-    if (item.depth < 2 || !this._fyn._resolutions || item._semver.$$) {
+    if (!this._fyn._resolutions || item._semver.$$) {
       return undefined;
     }
 
-    const depPath = unSlashNpmScope(item.nameDepPath);
+    //
+    // this item represent a direct dependency
+    //
+    if (item.depth < 2) {
+      //
+      // if we have a package within a fynpo monorepo, then we replace its direct
+      // dependencies with resolutions data, vs only its nested dependencies
+      // according to yarn's resolutions spec, because if local package A pull in
+      // another local package B, then B's dependencies would end up being
+      // subjected to resolutions data, so for consistency, we check resolutions
+      // for all fynpo's local packages' direct dependencies.
+      //
+      if (!this._fyn.isFynpo) {
+        // not a fynpo, avoid checking resolutions for direct dependencies
+        return undefined;
+      }
+    }
 
-    const found = this._fyn._resolutionsMatchers.find(r => r.mm.match(depPath));
+    let nameDepPath;
 
-    if (found) {
+    if (this._fyn.isFynpo) {
+      nameDepPath = `${this._fyn._pkg.name}/${item.nameDepPath}`;
+    } else {
+      nameDepPath = item.nameDepPath;
+    }
+
+    const unslashed = unSlashNpmScope(nameDepPath);
+
+    const found = this._fyn._resolutionsMatchers.find(r => r.mm.match(unslashed));
+
+    if (found && found.res && found.res !== "--no-change" && found.res !== item.semver) {
       const { res } = found;
-      logger.debug(`${item.nameDepPath} changed to ${res} from ${item.semver} by resolutions data`);
+      const msg = `${nameDepPath} changed to ${res} from ${item.semver} by resolutions data`;
+      if (item.depth < 2) {
+        logger.info(`fynpo: ${msg}`);
+      } else {
+        logger.debug(msg);
+      }
       semverUtil.replace(item._semver, res);
     }
 

@@ -313,14 +313,15 @@ const fyntil = {
   posixify,
 
   /**
-   * Take a npm dependency path separated by / and replace the / that's meant for a npm scope with ::
+   * Take a npm dependency path separated by / and replace the / that's meant for a npm scope with '+'
    *
    * @param {*} npmDepPath
-   * @returns dep path where npm scope's / replaced with ::
+   * @param {string} replacer string to replace the slash with
+   * @returns dep path where npm scope's / replaced with '+'
    */
 
-  unSlashNpmScope(npmDepPath) {
-    return npmDepPath.replace(/(\@[^\/]+)\//g, (_a, b) => `${b}::`);
+  unSlashNpmScope(npmDepPath, replacer = "+") {
+    return npmDepPath.replace(/(\@[^\/]+)\//g, (_a, b) => `${b}${replacer}`);
   },
 
   getGlobalNodeModules() {
