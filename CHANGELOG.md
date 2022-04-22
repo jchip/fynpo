@@ -1,3 +1,22 @@
+# 4/22/2022
+
+## Packages
+
+### Directly Updated
+
+-   `fyn@1.1.38` `(1.1.37 => 1.1.38)`
+
+### Fynpo Updated
+
+-   `fynpo@1.1.41` `(1.1.40 => 1.1.41)`
+
+## Commits
+
+-   `packages/fyn`
+
+    -   fix: match direct dep to resolutions for packages inside a fynpo [commit](https://github.com/electrode-io/fynpo/commit/c4a7d127bb64589d32547a5674d6ac104b53e683)
+    -   fix: npm dep path matching avoid / meant for scope [commit](https://github.com/electrode-io/fynpo/commit/95f60c1a9a9cb3f901588e99741594457042eccb)
+
 # 4/20/2022
 
 ## Packages
