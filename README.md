@@ -8,7 +8,7 @@
 
 [![npm badge][npm-badge-png]][package-url]
 
-**fynpo is a zero setup monorepo manager for node.js**
+**fynpo is a zero setup JavaScript tool for working with multiple packages as monorepo or colorepo**
 
 - See [this express monorepo PoC](https://github.com/jchip/express-monorepo) that put [express](https://expressjs.com/) and all its dependencies together in a monorepo, with their source cloned from their repos directly.
 

@@ -1,7 +1,8 @@
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
   title: "fynpo",
-  tagline: "A zero setup JavaScript monorepo manager",
+  tagline:
+    "A zero setup JavaScript tool for working with multiple packages as monorepo or colorepo",
   url: "https://jchip.github.io/fynpo/",
   baseUrl: "/fynpo/",
   onBrokenLinks: "throw",

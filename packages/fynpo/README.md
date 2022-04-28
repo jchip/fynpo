@@ -8,7 +8,7 @@
 
 [![npm badge][npm-badge-png]][package-url]
 
-**fynpo is a zero setup monorepo manager for node.js**
+**fynpo is a zero setup JavaScript tool for working with multiple packages as monorepo or colorepo**
 
 - See [this express monorepo PoC](https://github.com/jchip/express-monorepo) that put [express](https://expressjs.com/) and all its dependencies together in a monorepo, with their source cloned from their repos directly.
 
@@ -18,7 +18,7 @@
 
 - **zero setup monorepo manager for node.js** - Put existing npm packages together in a monorepo without changes.
 
-  > Fynpo is designed to work with npm packages and their npm scripts. Just put your existing npm packages together and fynpo will manage them as a monorepo without any fuss. All the things you know about development using npm, like `npm run`, continue to work. This makes switching to another monorepo solution simple should you want to. fyn can even use npm's package-lock.json file.
+  > Fynpo is designed to work with npm packages and their npm scripts. Just put your existing npm packages together, like a colocated repo (`colorepo`), and fynpo will orchestrate and manage them without any fuss. Your packages don't need to have any magical relationships, just the normal npm dependencies. All the things you know about development using npm, like `npm run`, continue to work. This makes switching to another monorepo solution simple should you want to. It can even use npm's package-lock.json or `yarn.lock` file.
 
 - **Integrated Local Package Handling**: No symlink magic, no dependencies hoisting, and no mixing packages.
 
@@ -49,7 +49,20 @@
   > You no longer have to guess or find the version of a package when looking at stack traces.
 
 - **Package Guaranteed Single Copy**: Any package version will have only one copy in `node_modules`
+
   > A directory layout of packages in `node_modules` that ensures there's only one copy of each package.
+
+- **Automated Releasing**: Automatic version bump and publishing
+
+  > Never have to decide how to bump your package versions again. Use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) in your git commit messages, and fynpo help you automatically update package versions and CHANGELOG, and then publish them to the registry for you. When publishing, it ensures that all your packages built without error before publishing any of them, so you are not left with a partially completed release process.
+
+- **Incremental Builds**: Out of the box caching for builds
+
+  > Build caching support out of the box. Using your own rules or npm files rules to generate the files for caching so you can avoid running the same build multiple times.
+
+- **Remote Caching**: Share build cache on a remote server
+
+  > Enable you to upload your build cache to a remote server for sharing with other team members or CI/CD jobs.
 
 ## License
 

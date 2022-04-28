@@ -30,8 +30,8 @@ export default function Home() {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="A JavaScript monorepo manager - all the benefits without the usual downsides"
+      title={`${siteConfig.title}`}
+      description="A zero setup JavaScript tool for working with multiple packages as a monorepo or colorepo manager"
     >
       <HomepageHeader />
       <main>
