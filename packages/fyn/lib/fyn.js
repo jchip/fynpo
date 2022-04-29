@@ -36,9 +36,9 @@ const { posixify } = require("./util/fyntil");
 
 class Fyn {
   constructor({ opts = {}, _cliSource = {}, _fynpo = true }) {
-    this._cliSource = _cliSource;
+    this._cliSource = { ..._cliSource };
     const options = (this._options = fynConfig(opts));
-    this._layout = options.layout;
+
     this._cwd = options.cwd || process.cwd();
     logger.debug(`fyn options`, JSON.stringify(fynTil.removeAuthInfo(options)));
     this.localPkgWithNestedDep = [];
@@ -55,9 +55,46 @@ class Fyn {
     }
   }
 
+  checkLayoutOption() {
+    const { _options, _cliSource } = this;
+
+    if (_options.flattenTop === false && _cliSource.flattenTop !== "default") {
+      //
+      if (_options.layout !== "detail") {
+        if (_cliSource.layout === "default") {
+          logger.info(
+            `flatten-top option turned off by ${_cliSource.flattenTop}, so switching node_modules layout to detail`
+          );
+          _options.layout = "detail";
+          _cliSource.layout = _cliSource.flattenTop;
+        } else {
+          logger.warn(
+            `you try to turn off flatten-top but set node_modules layout to ${_options.layout} and they are not compatible`
+          );
+        }
+      }
+    }
+  }
+
   checkFynLockExist() {
     const fname = Path.join(this._cwd, FYN_LOCK_FILE);
     return Fs.existsSync(fname);
+  }
+
+  updateConfigInLockfile(name, newValue) {
+    const valueInLock = this._depLocker.getConfig(name);
+    if (valueInLock !== undefined && valueInLock !== newValue) {
+      if (this._cliSource[name] === "cli") {
+        logger.info(`You are changing ${name} in your lockfile from ${valueInLock} to ${newValue}`);
+        this._depLocker.setConfig(name, newValue);
+      } else {
+        logger.info(`Setting ${name} to ${valueInLock} from your lockfile`);
+        this._options[name] = valueInLock;
+        this._cliSource[name] = "lock";
+      }
+    } else {
+      this._depLocker.setConfig(name, newValue);
+    }
   }
 
   async readLockFiles() {
@@ -70,18 +107,9 @@ class Fyn {
     this._depLocker = new PkgDepLocker(this.lockOnly, this._options.lockfile);
 
     const foundLock = await this._depLocker.read(Path.join(this._cwd, FYN_LOCK_FILE));
-    const layout = this._depLocker.getConfig("layout");
-    if (layout && layout !== this._layout) {
-      if (this._cliSource.layout === "cli") {
-        logger.info(`You are changing layout in your lockfile from ${layout} to ${this._layout}`);
-        this._depLocker.setConfig("layout", this._layout);
-      } else {
-        logger.info(`Setting layout to ${layout} from your lockfile`);
-      }
-    } else {
-      this._depLocker.setConfig("layout", this._layout);
-    }
-
+    this.updateConfigInLockfile("layout", this._options.layout);
+    this.updateConfigInLockfile("flattenTop", this._options.flattenTop);
+    this.checkLayoutOption();
     if (this._options.npmLock === true) {
       // force load npm lock data
     } else if (foundLock || this._options.npmLock === false) {
@@ -116,7 +144,7 @@ class Fyn {
   }
 
   get isNormalLayout() {
-    return this._layout === "normal";
+    return this._options.layout === "normal";
   }
 
   async _initCentralStore() {
@@ -202,8 +230,9 @@ class Fyn {
       this._fynpo = await fynTil.loadFynpo(this._cwd);
       // TODO: options from CLI should not be override by fynpo config options
       _.merge(this._options, _.get(this, "_fynpo.fyn.options"));
-      this._layout = this._options.layout;
     }
+
+    this.checkLayoutOption();
 
     if (!this._pkg) {
       const options = this._options;
