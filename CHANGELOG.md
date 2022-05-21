@@ -1,3 +1,28 @@
+# 5/20/2022
+
+## Packages
+
+-   `fyn@1.1.39` `(1.1.38 => 1.1.39)`
+-   `fynpo@1.1.42` `(1.1.41 => 1.1.42)`
+
+## Commits
+
+-   `packages/fyn`
+
+    -   fix: save flattenTop option to lockfile [commit](https://github.com/electrode-io/fynpo/commit/d4169ee0623ed4491f01210ebe9529dc2771b22c)
+
+-   `packages/fynpo`
+
+    -   update docs [commit](https://github.com/electrode-io/fynpo/commit/8d453bc3cd0da5d7553bed62c6750120af5fc103)
+
+-   `docs`
+
+    -   update docs [commit](https://github.com/electrode-io/fynpo/commit/8d453bc3cd0da5d7553bed62c6750120af5fc103)
+
+-   `docusaurus`
+
+    -   update docs [commit](https://github.com/electrode-io/fynpo/commit/8d453bc3cd0da5d7553bed62c6750120af5fc103)
+
 # 4/22/2022
 
 ## Packages
