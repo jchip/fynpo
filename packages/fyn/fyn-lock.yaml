@@ -1,5 +1,6 @@
 $fyn:
  layout: detail
+ flattenTop: true
 $pkg:
  dep:
   '@fynpo/base': ../fynpo-base

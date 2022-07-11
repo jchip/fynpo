@@ -254,7 +254,25 @@ class PkgDepResolver {
 
     // TODO: create test scenario for build-local
     if (this._options.buildLocal) {
-      const locals = depthPkgs.map(x => depthInfo[x].items.find(it => it.localType)).filter(x => x);
+      const locals = depthPkgs
+        .map(x => depthInfo[x].items.find(it => it.localType))
+        .filter(x => {
+          // if fynpo top level depends on a local package that's part of the monorepo, then
+          // we should not try to build the package while installing top level modules, because
+          // building a local package would likely require build tools that are typically
+          // installed as part of the top level packages
+          if (x && this._fyn.isTopLevelFynpoInstall()) {
+            const t1 = this._fyn._fynpo.graph.getPackageAtDir(Path.normalize(x.semverPath));
+            if (t1) {
+              logger.info(
+                "installing fynpo top level modules - skip build local for package at",
+                x.semverPath
+              );
+              return false;
+            }
+          }
+          return x;
+        });
 
       // logger.info("adding depth pkgs", depthPkgs.join(", "), locals);
 

@@ -8,7 +8,7 @@
  * - TODO: impl timestamp check so if no files updated then don't run
  */
 
-const assert = require("assert");
+// const assert = require("assert");
 const Path = require("path");
 const logger = require("./logger");
 const PromiseQueue = require("./util/promise-queue");
@@ -138,12 +138,12 @@ class LocalPkgBuilder {
   }
 
   async waitForItem(fullPath) {
-    if (this._waitItems[fullPath] === undefined) {
+    if (this._waitItems[fullPath] === undefined && this._started.promise) {
       logger.debug("waiting for local build item start, fullPath:", fullPath);
       await this._started.promise;
     }
     const x = this._waitItems[fullPath];
-    assert(x !== undefined, `No local pkg build job started for pkg at ${fullPath}`);
+    // assert(x !== undefined, `No local pkg build job started for pkg at ${fullPath}`);
 
     if (x && x.promise) {
       logger.debug("waiting for build local item", fullPath, x);
@@ -151,7 +151,7 @@ class LocalPkgBuilder {
       logger.debug("build local item awaited", fullPath);
       return localBuildResult;
     } else {
-      logger.debug("status is false => no build local job for pkg at", fullPath, x);
+      logger.debug("no build local job for pkg at", fullPath, x);
     }
 
     return {};

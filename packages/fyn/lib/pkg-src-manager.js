@@ -229,7 +229,7 @@ class PkgSrcManager {
 
     return readPkgJson(fullPath, true, true).then(json => {
       const publishUtilConfig = this.getPublishUtil(json, fullPath);
-      if (publishUtilConfig) {
+      if (publishUtilConfig && !publishUtilConfig.fynIgnore) {
         logger.debug(
           `processing local package.json at ${fullPath} with https://www.npmjs.com/package/publish-util prePackObj`
         );
@@ -315,6 +315,7 @@ class PkgSrcManager {
     // make-fetch-happen/index.js:352 (caching)
     //
     const pacoteRequest = () => {
+      logger.debug(`pacote.packument ${qItem.packumentUrl}`);
       return pacote
         .packument(
           pkgName,
@@ -556,6 +557,7 @@ class PkgSrcManager {
         type: "meta",
         cacheKey,
         item,
+        packumentUrl,
         defer: createDefer()
       };
 

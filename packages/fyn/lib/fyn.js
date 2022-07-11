@@ -225,6 +225,14 @@ class Fyn {
     return Boolean(noFynLocal);
   }
 
+  // are we installing modules for the top level fynpo dir
+  isTopLevelFynpoInstall() {
+    if (this._fynpo.config) {
+      return this._fynpo.dir === this._cwd;
+    }
+    return false;
+  }
+
   async _initializePkg() {
     if (!this._fynpo) {
       this._fynpo = await fynTil.loadFynpo(this._cwd);
