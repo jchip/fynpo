@@ -362,12 +362,20 @@ export class FynpoDepGraph {
     const depRecords: Record<string, DepCount> = {};
     const changed = [];
 
+    // don't take optionalDependecies or peerDependencies into consideration
+    // TODO: also do not consider devDependencies
+    // - should calculate detail circular dep info and return that for logging
+    // - when fyn is about to do local build for a dep, it should check if there's
+    //   circular dep and avoid it.
+    const ignoreDepSections = ["opt", "peer"];
     //
     // first start with packages that has zero local dependencies
     //
     for (const path in this.depMapByPath) {
       const depData = this.depMapByPath[path];
-      const count = Object.keys(depData.localDepsByPath).length;
+      const count = Object.keys(depData.localDepsByPath).filter(
+        (k) => !ignoreDepSections.includes(depData.localDepsByPath[k].depSection)
+      ).length;
       depRecords[path] = {
         depData,
         count,
