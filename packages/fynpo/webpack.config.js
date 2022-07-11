@@ -1,14 +1,13 @@
 "use strict";
 
 const Path = require("path");
-const webpack = require("webpack");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 const base = {
   mode: "production",
   // devtool: "source-map",
   entry: {
-    "index.js": Path.resolve("src/index.ts"),
+    "bundle.js": Path.resolve("src/index.ts"),
   },
   optimization: {
     minimize: false,
@@ -72,8 +71,9 @@ const base = {
     // lodash: "lodash",
 
     //
-    // the modules import-fresh and resolve-global manipulates require so can't bundle
-    // them.  they also pull in other modules also (found by install deps in testing/monorepo-test and
+    // The modules import-fresh and resolve-global manipulates require so can't bundle
+    // them. And package.json keeps them in dependencies with publishUtil
+    // They also pull in other modules (found by install deps in testing/monorepo-test and
     // look inside node_modules)
     // - so list all of them as external
     //
