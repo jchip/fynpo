@@ -3,109 +3,6 @@
     {
       "pkgInfo": {
         "name": "pkg2",
-        "version": "2.0.0",
-        "path": "packages/pkg2-b",
-        "pkgDir": "pkg2-b"
-      },
-      "localDepsByPath": {},
-      "dependentsByPath": {
-        "test1": {
-          "name": "test1",
-          "version": "1.0.0",
-          "path": "test1",
-          "depSection": "dep"
-        },
-        "tests/@scope/pkg1": {
-          "name": "@scope/pkg1",
-          "version": "1.0.0",
-          "path": "tests/@scope/pkg1",
-          "depSection": "dep"
-        },
-        "@scope/pkg-2": {
-          "name": "@scope/pkg-2",
-          "version": "1.0.0",
-          "path": "@scope/pkg-2",
-          "depSection": "dev",
-          "indirectSteps": [
-            "@scope/pkg-2@1.0.0(dev)",
-            "test1@1.0.0(dev)"
-          ]
-        },
-        "tests/t1": {
-          "name": "tpkg1",
-          "version": "1.0.0",
-          "path": "tests/t1",
-          "depSection": "dev",
-          "indirectSteps": [
-            "tpkg1@1.0.0(dev)",
-            "test1@1.0.0(dev)"
-          ]
-        },
-        "tests/t2": {
-          "name": "tpkg2",
-          "version": "1.0.0",
-          "path": "tests/t2",
-          "depSection": "dep",
-          "indirectSteps": [
-            "tpkg2@1.0.0(dep)",
-            "tpkg1@1.0.0(dep)",
-            "test1@1.0.0(dev)"
-          ]
-        }
-      }
-    },
-    {
-      "pkgInfo": {
-        "name": "test1",
-        "version": "1.0.0",
-        "path": "test1",
-        "pkgDir": "test1",
-        "dependencies": {
-          "pkg2": "^2.0.0"
-        }
-      },
-      "localDepsByPath": {
-        "packages/pkg2-b": {
-          "name": "pkg2",
-          "version": "2.0.0",
-          "path": "packages/pkg2-b",
-          "depSection": "dep"
-        }
-      },
-      "dependentsByPath": {
-        "@scope/pkg-2": {
-          "name": "@scope/pkg-2",
-          "version": "1.0.0",
-          "path": "@scope/pkg-2",
-          "depSection": "dev"
-        },
-        "tests/@scope/pkg1": {
-          "name": "@scope/pkg1",
-          "version": "1.0.0",
-          "path": "tests/@scope/pkg1",
-          "depSection": "dev"
-        },
-        "tests/t1": {
-          "name": "tpkg1",
-          "version": "1.0.0",
-          "path": "tests/t1",
-          "depSection": "dev"
-        },
-        "tests/t2": {
-          "name": "tpkg2",
-          "version": "1.0.0",
-          "path": "tests/t2",
-          "depSection": "dep",
-          "indirectSteps": [
-            "tpkg2@1.0.0(dep)",
-            "tpkg1@1.0.0(dep)"
-          ]
-        }
-      }
-    },
-    {
-      "pkgInfo": {
-        "name": "pkg2",
         "version": "1.0.0",
         "path": "packages/pkg2",
         "pkgDir": "pkg2"
@@ -197,6 +94,109 @@
           "version": "1.0.0",
           "path": "tests/t1",
           "depSection": "dep"
+        },
+        "tests/t2": {
+          "name": "tpkg2",
+          "version": "1.0.0",
+          "path": "tests/t2",
+          "depSection": "dep",
+          "indirectSteps": [
+            "tpkg2@1.0.0(dep)",
+            "tpkg1@1.0.0(dep)"
+          ]
+        }
+      }
+    },
+    {
+      "pkgInfo": {
+        "name": "pkg2",
+        "version": "2.0.0",
+        "path": "packages/pkg2-b",
+        "pkgDir": "pkg2-b"
+      },
+      "localDepsByPath": {},
+      "dependentsByPath": {
+        "test1": {
+          "name": "test1",
+          "version": "1.0.0",
+          "path": "test1",
+          "depSection": "dep"
+        },
+        "tests/@scope/pkg1": {
+          "name": "@scope/pkg1",
+          "version": "1.0.0",
+          "path": "tests/@scope/pkg1",
+          "depSection": "dep"
+        },
+        "@scope/pkg-2": {
+          "name": "@scope/pkg-2",
+          "version": "1.0.0",
+          "path": "@scope/pkg-2",
+          "depSection": "dev",
+          "indirectSteps": [
+            "@scope/pkg-2@1.0.0(dev)",
+            "test1@1.0.0(dev)"
+          ]
+        },
+        "tests/t1": {
+          "name": "tpkg1",
+          "version": "1.0.0",
+          "path": "tests/t1",
+          "depSection": "dev",
+          "indirectSteps": [
+            "tpkg1@1.0.0(dev)",
+            "test1@1.0.0(dev)"
+          ]
+        },
+        "tests/t2": {
+          "name": "tpkg2",
+          "version": "1.0.0",
+          "path": "tests/t2",
+          "depSection": "dep",
+          "indirectSteps": [
+            "tpkg2@1.0.0(dep)",
+            "tpkg1@1.0.0(dep)",
+            "test1@1.0.0(dev)"
+          ]
+        }
+      }
+    },
+    {
+      "pkgInfo": {
+        "name": "test1",
+        "version": "1.0.0",
+        "path": "test1",
+        "pkgDir": "test1",
+        "dependencies": {
+          "pkg2": "^2.0.0"
+        }
+      },
+      "localDepsByPath": {
+        "packages/pkg2-b": {
+          "name": "pkg2",
+          "version": "2.0.0",
+          "path": "packages/pkg2-b",
+          "depSection": "dep"
+        }
+      },
+      "dependentsByPath": {
+        "@scope/pkg-2": {
+          "name": "@scope/pkg-2",
+          "version": "1.0.0",
+          "path": "@scope/pkg-2",
+          "depSection": "dev"
+        },
+        "tests/@scope/pkg1": {
+          "name": "@scope/pkg1",
+          "version": "1.0.0",
+          "path": "tests/@scope/pkg1",
+          "depSection": "dev"
+        },
+        "tests/t1": {
+          "name": "tpkg1",
+          "version": "1.0.0",
+          "path": "tests/t1",
+          "depSection": "dev"
         },
         "tests/t2": {
           "name": "tpkg2",

@@ -1,4 +1,5 @@
 $fyn:
+ flattenTop: true
  layout: detail
 $pkg:
   dep:

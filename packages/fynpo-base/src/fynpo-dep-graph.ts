@@ -326,16 +326,20 @@ export class FynpoDepGraph {
   }
 
   /**
-   * resolve packages from fynpo
+   * resolve packages from fynpo and resolve their dependency relations
+   *
+   * @param indirects - set true to resolve indirect deps also
    */
-  async resolve() {
+  async resolve(indirects = false) {
     if (_.isEmpty(this.packages.byName)) {
       await this.readPackages();
     }
     this.resolveDirectDeps();
-    // we don't need indirect deps
-    // topo sort works with only direct deps
-    // this.resolveIndirectDeps();
+    // default indirects to false because
+    // topo sort requires only direct deps to work
+    if (indirects) {
+      this.resolveIndirectDeps();
+    }
   }
 
   /**

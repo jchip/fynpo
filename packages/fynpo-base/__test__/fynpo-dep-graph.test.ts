@@ -14,7 +14,7 @@ describe("getDepSection", function () {
 });
 
 describe("fynpo dep graph", () => {
-  it.only("should read only packages matching patterns in CWD", async () => {
+  it("should read only packages matching patterns in CWD", async () => {
     const saveDir = process.cwd();
     process.chdir(path.join(__dirname, "sample"));
     const graph = new FynpoDepGraph({ patterns: ["packages/*"] });
@@ -29,9 +29,9 @@ describe("fynpo dep graph", () => {
       patterns: null,
       cwd: path.join(__dirname, "sample"),
     });
-    await graph1.resolve();
+    await graph1.resolve(true);
     const topoSorted1 = JSON.stringify(graph1.getTopoSortPackages());
-    await graph1.resolve();
+    await graph1.resolve(true);
     const topoSorted2 = JSON.stringify(graph1.getTopoSortPackages());
     expect(topoSorted1).toEqual(topoSorted2);
 
@@ -40,7 +40,7 @@ describe("fynpo dep graph", () => {
       cwd: path.join(__dirname, "sample"),
     });
 
-    await graph2.resolve();
+    await graph2.resolve(true);
     const topo = graph2.getTopoSortPackages();
     const topoSorted3 = JSON.stringify(topo);
     expect(topoSorted3).toEqual(topoSorted2);
@@ -58,7 +58,7 @@ describe("fynpo dep graph", () => {
     const graph = new FynpoDepGraph({
       cwd: path.join(__dirname, "electrode"),
     });
-    await graph.resolve();
+    await graph.resolve(true);
     const topo = graph.getTopoSortPackages();
 
     const expectFile = path.join(__dirname, "electrode-topo.json");

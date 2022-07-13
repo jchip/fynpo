@@ -125,16 +125,6 @@
             "@xarc/subapp@0.3.1(dep)"
           ]
         },
-        "packages/xarc-react-redux": {
-          "name": "@xarc/react-redux",
-          "version": "0.3.1",
-          "path": "packages/xarc-react-redux",
-          "depSection": "dep",
-          "indirectSteps": [
-            "@xarc/react-redux@0.3.1(dep)",
-            "@xarc/subapp@0.3.1(dep)"
-          ]
-        },
         "packages/xarc-react-redux-observable": {
           "name": "@xarc/react-redux-observable",
           "version": "0.3.1",
@@ -153,6 +143,16 @@
           "depSection": "dep",
           "indirectSteps": [
             "@xarc/react-redux-saga@0.3.1(dep)",
+            "@xarc/react-redux@0.3.1(dep)",
+            "@xarc/subapp@0.3.1(dep)"
+          ]
+        },
+        "packages/xarc-react-redux": {
+          "name": "@xarc/react-redux",
+          "version": "0.3.1",
+          "path": "packages/xarc-react-redux",
+          "depSection": "dep",
+          "indirectSteps": [
             "@xarc/react-redux@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
           ]
@@ -280,16 +280,6 @@
             "@xarc/subapp@0.3.1(dep)"
           ]
         },
-        "packages/xarc-react-redux": {
-          "name": "@xarc/react-redux",
-          "version": "0.3.1",
-          "path": "packages/xarc-react-redux",
-          "depSection": "dep",
-          "indirectSteps": [
-            "@xarc/react-redux@0.3.1(dep)",
-            "@xarc/subapp@0.3.1(dep)"
-          ]
-        },
         "packages/xarc-react-redux-observable": {
           "name": "@xarc/react-redux-observable",
           "version": "0.3.1",
@@ -308,6 +298,16 @@
           "depSection": "dep",
           "indirectSteps": [
             "@xarc/react-redux-saga@0.3.1(dep)",
+            "@xarc/react-redux@0.3.1(dep)",
+            "@xarc/subapp@0.3.1(dep)"
+          ]
+        },
+        "packages/xarc-react-redux": {
+          "name": "@xarc/react-redux",
+          "version": "0.3.1",
+          "path": "packages/xarc-react-redux",
+          "depSection": "dep",
+          "indirectSteps": [
             "@xarc/react-redux@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
           ]
@@ -394,12 +394,6 @@
           "path": "packages/xarc-app-dev",
           "depSection": "dep"
         },
-        "packages/xarc-react": {
-          "name": "@xarc/react",
-          "version": "0.3.2",
-          "path": "packages/xarc-react",
-          "depSection": "dep"
-        },
         "packages/xarc-react-query": {
           "name": "@xarc/react-query",
           "version": "0.3.1",
@@ -422,6 +416,12 @@
           "name": "@xarc/react-router",
           "version": "0.3.1",
           "path": "packages/xarc-react-router",
+          "depSection": "dep"
+        },
+        "packages/xarc-react": {
+          "name": "@xarc/react",
+          "version": "0.3.2",
+          "path": "packages/xarc-react",
           "depSection": "dep"
         },
         "packages/xarc-create-app": {
@@ -453,6 +453,78 @@
             "@xarc/react-redux-saga@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)"
           ]
+        }
+      }
+    },
+    {
+      "pkgInfo": {
+        "name": "@xarc/react",
+        "version": "0.3.2",
+        "path": "packages/xarc-react",
+        "pkgDir": "xarc-react",
+        "dependencies": {
+          "@types/react": ">= 16",
+          "@xarc/render-context": "^1.0.6",
+          "@xarc/subapp": "^0.3.1",
+          "@xarc/tag-renderer": "^1.0.8",
+          "react": ">= 16",
+          "react-dom": ">= 16",
+          "tslib": "^2.1.0"
+        },
+        "devDependencies": {
+          "@istanbuljs/nyc-config-typescript": "^1.0.1",
+          "@types/chai": "^4.2.14",
+          "@types/mocha": "^8.2.0",
+          "@types/node": "^14.14.16",
+          "@types/react": "^16.9.49",
+          "@types/react-dom": "^16.9.8",
+          "@types/sinon": "^9.0.10",
+          "@types/sinon-chai": "^3.2.5",
+          "@typescript-eslint/eslint-plugin": "^4.11.0",
+          "@typescript-eslint/parser": "^4.11.0",
+          "@xarc/module-dev": "^3.0.2",
+          "babel-eslint": "^10.1.0",
+          "chai": "^4.2.0",
+          "eslint": "^7.16.0",
+          "eslint-config-walmart": "^2.2.1",
+          "eslint-plugin-filenames": "^1.1.0",
+          "eslint-plugin-jsdoc": "^30.7.9",
+          "mocha": "^8.2.1",
+          "nyc": "^15.1.0",
+          "sinon": "^9.2.2",
+          "sinon-chai": "^3.5.0",
+          "source-map-support": "^0.5.19",
+          "ts-node": "^9.1.1",
+          "typedoc": "^0.20.13",
+          "typescript": "^4.1.3"
+        }
+      },
+      "localDepsByPath": {
+        "packages/xarc-render-context": {
+          "name": "@xarc/render-context",
+          "version": "1.0.6",
+          "path": "packages/xarc-render-context",
+          "depSection": "dep"
+        },
+        "packages/xarc-subapp": {
+          "name": "@xarc/subapp",
+          "version": "0.3.1",
+          "path": "packages/xarc-subapp",
+          "depSection": "dep"
+        },
+        "packages/xarc-tag-renderer": {
+          "name": "@xarc/tag-renderer",
+          "version": "1.0.8",
+          "path": "packages/xarc-tag-renderer",
+          "depSection": "dep"
+        }
+      },
+      "dependentsByPath": {
+        "packages/xarc-create-app": {
+          "name": "@xarc/create-app",
+          "version": "6.1.1",
+          "path": "packages/xarc-create-app",
+          "depSection": "dev"
         }
       }
     },
@@ -971,78 +1043,6 @@
     },
     {
       "pkgInfo": {
-        "name": "@xarc/react",
-        "version": "0.3.2",
-        "path": "packages/xarc-react",
-        "pkgDir": "xarc-react",
-        "dependencies": {
-          "@types/react": ">= 16",
-          "@xarc/render-context": "^1.0.6",
-          "@xarc/subapp": "^0.3.1",
-          "@xarc/tag-renderer": "^1.0.8",
-          "react": ">= 16",
-          "react-dom": ">= 16",
-          "tslib": "^2.1.0"
-        },
-        "devDependencies": {
-          "@istanbuljs/nyc-config-typescript": "^1.0.1",
-          "@types/chai": "^4.2.14",
-          "@types/mocha": "^8.2.0",
-          "@types/node": "^14.14.16",
-          "@types/react": "^16.9.49",
-          "@types/react-dom": "^16.9.8",
-          "@types/sinon": "^9.0.10",
-          "@types/sinon-chai": "^3.2.5",
-          "@typescript-eslint/eslint-plugin": "^4.11.0",
-          "@typescript-eslint/parser": "^4.11.0",
-          "@xarc/module-dev": "^3.0.2",
-          "babel-eslint": "^10.1.0",
-          "chai": "^4.2.0",
-          "eslint": "^7.16.0",
-          "eslint-config-walmart": "^2.2.1",
-          "eslint-plugin-filenames": "^1.1.0",
-          "eslint-plugin-jsdoc": "^30.7.9",
-          "mocha": "^8.2.1",
-          "nyc": "^15.1.0",
-          "sinon": "^9.2.2",
-          "sinon-chai": "^3.5.0",
-          "source-map-support": "^0.5.19",
-          "ts-node": "^9.1.1",
-          "typedoc": "^0.20.13",
-          "typescript": "^4.1.3"
-        }
-      },
-      "localDepsByPath": {
-        "packages/xarc-render-context": {
-          "name": "@xarc/render-context",
-          "version": "1.0.6",
-          "path": "packages/xarc-render-context",
-          "depSection": "dep"
-        },
-        "packages/xarc-subapp": {
-          "name": "@xarc/subapp",
-          "version": "0.3.1",
-          "path": "packages/xarc-subapp",
-          "depSection": "dep"
-        },
-        "packages/xarc-tag-renderer": {
-          "name": "@xarc/tag-renderer",
-          "version": "1.0.8",
-          "path": "packages/xarc-tag-renderer",
-          "depSection": "dep"
-        }
-      },
-      "dependentsByPath": {
-        "packages/xarc-create-app": {
-          "name": "@xarc/create-app",
-          "version": "6.1.1",
-          "path": "packages/xarc-create-app",
-          "depSection": "dev"
-        }
-      }
-    },
-    {
-      "pkgInfo": {
         "name": "@xarc/jsx-renderer",
         "version": "1.0.9",
         "path": "packages/xarc-jsx-renderer",
@@ -1450,16 +1450,16 @@
           "path": "packages/subapp-web",
           "depSection": "dep"
         },
-        "packages/xarc-app": {
-          "name": "@xarc/app",
-          "version": "10.0.10",
-          "path": "packages/xarc-app",
-          "depSection": "dep"
-        },
         "packages/xarc-app-dev": {
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
+          "depSection": "dep"
+        },
+        "packages/xarc-app": {
+          "name": "@xarc/app",
+          "version": "10.0.10",
+          "path": "packages/xarc-app",
           "depSection": "dep"
         },
         "packages/xarc-create-app": {
