@@ -69,6 +69,21 @@ describe("fynpo dep graph", () => {
     expect(topo).toEqual(expectData);
   });
 
+  it("should resolve local dep without indirects", async () => {
+    const graph = new FynpoDepGraph({
+      cwd: path.join(__dirname, "electrode"),
+    });
+    await graph.resolve();
+    const topo = graph.getTopoSortPackages();
+
+    const expectFile = path.join(__dirname, "electrode-topo-directs.json");
+
+    // Fs.writeFileSync(expectFile, JSON.stringify(graph.getTopoSortPackages(), null, 2));
+
+    const expectData = JSON.parse(Fs.readFileSync(expectFile, "utf-8"));
+    expect(topo).toEqual(expectData);
+  });
+
   it("should resolvePackage by name and semver", async () => {
     const graph = new FynpoDepGraph({
       cwd: path.join(__dirname, "electrode"),
