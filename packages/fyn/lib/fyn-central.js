@@ -143,8 +143,8 @@ class FynCentral {
     return info.mutates ? false : true;
   }
 
-  async get(integrity) {
-    return await this.getInfo(integrity).contentPath;
+  async getContentPath(integrity) {
+    return (await this.getInfo(integrity)).contentPath;
   }
 
   async getInfo(integrity) {
@@ -158,19 +158,9 @@ class FynCentral {
     return info;
   }
 
-  /**
-   * Get the hash of a npm package's extracted content.
-   * - only consider the file names and their mtime and size because npm tar files
-   *   with a fixed timestamp to publish, so the mtime give us some assurance
-   *   to know if file changed.
-   *
-   * @param {*} integrity - shasum integrity for the package
-   * @returns void
-   */
-  async getContentShasum(integrity) {
+  async _calcContentShasum(info, pkgDir = undefined) {
     try {
-      const info = await this.getInfo(integrity);
-      const packageDir = Path.join(info.contentPath, "package");
+      const packageDir = pkgDir || Path.join(info.contentPath, "package");
       const filter = (_file, _path, extras) => {
         const { stat, dirFile } = extras;
         return { formatName: `${dirFile}-${stat.mtimeMs}-${stat.size}` };
@@ -194,12 +184,38 @@ class FynCentral {
     }
   }
 
+  /**
+   * Get the hash of a npm package's extracted content.
+   * - only consider the file names and their mtime and size because npm tar files
+   *   with a fixed timestamp to publish, so the mtime give us some assurance
+   *   to know if file changed.
+   *
+   * @param {*} integrity - shasum integrity for the package
+   * @returns void
+   */
+  async getContentShasum(integrity) {
+    try {
+      const info = await this.getInfo(integrity);
+      return this._calcContentShasum(info);
+    } catch (_err) {
+      return undefined;
+    }
+  }
+
   async getMutation(integrity) {
     const info = this._map.has(integrity)
       ? this._map.get(integrity)
       : await this._loadTree(integrity);
 
     return info.mutates;
+  }
+
+  async delete(integrity) {
+    const info = this._map.get(integrity);
+    if (info && info.exist && info.contentPath) {
+      await Fs.$.rimraf(info.contentPath);
+      this._map.delete(integrity);
+    }
   }
 
   /**
@@ -217,6 +233,7 @@ class FynCentral {
           info.mutates = tree.mutates;
         }
         info.tree = tree.$;
+        info.shaSum = tree.shaSum;
       } else {
         info.tree = tree;
       }
@@ -234,7 +251,7 @@ class FynCentral {
   async saveInfoTree(info, path) {
     await Fs.writeFile(
       Path.join(path || info.contentPath, "tree.json"),
-      JSON.stringify({ $: info.tree, mutates: info.mutates, _: 1 })
+      JSON.stringify({ $: info.tree, shaSum: info.shaSum, mutates: info.mutates, _: 1 })
     );
   }
 
@@ -340,7 +357,7 @@ class FynCentral {
     return tmpLock;
   }
 
-  async _storeTarStream(info, _stream) {
+  async _storeTarStream(info, integrity, _stream) {
     let stream = _stream;
     const tmp = `${info.contentPath}.tmp`;
 
@@ -355,10 +372,36 @@ class FynCentral {
     }
     // TODO: user could break during untar and cause corruptted module
     info.tree = await this._untarStream(stream, targetDir, info);
+    info.shaSum = await this._calcContentShasum(info, targetDir);
     await this.saveInfoTree(info, tmp);
 
     await Fs.rename(tmp, info.contentPath);
     info.exist = true;
+  }
+
+  /**
+   * Validate the central store package content by file size and timestamp
+   *
+   * @param {*} integrity - package integrity
+   *
+   * @returns true or false
+   */
+  async validate(integrity) {
+    const info = this._map.get(integrity);
+    if (info === undefined || !info.exist) {
+      return false;
+    }
+
+    if (info.validated === undefined) {
+      const sum = await this.getContentShasum(integrity);
+      if (!info.shaSum) {
+        info.shaSum = sum;
+        await this.saveInfoTree(info);
+      }
+      info.validated = info.shaSum === sum;
+    }
+
+    return info.validated;
   }
 
   async storeTarStream(pkgId, integrity, stream) {
@@ -385,7 +428,7 @@ class FynCentral {
           }
         } else {
           logger.debug("storing tar to central store", pkgId, integrity);
-          await this._storeTarStream(info, stream);
+          await this._storeTarStream(info, integrity, stream);
           stream = undefined; // eslint-disable-line
           this._map.set(integrity, info);
           logger.debug("fyn-central storeTarStream: stored", pkgId, info.contentPath);

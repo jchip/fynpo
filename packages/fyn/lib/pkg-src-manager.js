@@ -741,7 +741,22 @@ class PkgSrcManager {
           `copying pkg ${dispId} in central store mode because it mutates in postinstall step.`
         );
       } else {
-        const hasCentral = await central.has(integrity);
+        let hasCentral = await central.has(integrity);
+
+        if (hasCentral) {
+          const valid = await central.validate(integrity);
+          if (!valid) {
+            const contentPath = await central.getContentPath(integrity);
+            logger.error(`Corrupted central store package detected
+  -- CORRUPTED CENTRAL STORE PACKAGE DETECTED, removing --
+  ID: ${verId}
+  integrity: ${integrity}
+  path: '${contentPath}'
+`);
+            await central.delete(integrity);
+            hasCentral = false;
+          }
+        }
 
         if (!hasCentral) {
           await central.storeTarStream(tarId, integrity, tarStream);
