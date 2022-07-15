@@ -229,7 +229,10 @@ export type FynpoPackages = {
  *
  */
 export type FynpoTopoPackages = {
+  /** topo sorted packages */
   sorted: PackageDepData[];
+  /** topo sorted packages while ignoring circular deps, so all packages included */
+  avoidCircSorted: PackageDepData[];
   circulars: PackageDepData[];
 };
 
@@ -245,6 +248,8 @@ export type PackageDepData = {
   dependentsByPath: Record<string, PackageDepRef>;
   /** path of circular dependencies */
   pathOfCirculars?: string[];
+  /** package contains circular deps */
+  hasCircular?: boolean;
 };
 
 export type ReadFynpoOptions = {
@@ -357,7 +362,15 @@ export class FynpoDepGraph {
    *
    * @returns array of paths of package dep data
    */
-  getTopoSortPackagePaths() {
+
+  /**
+   * Return array of dep data sorted by dependency topological order
+   *
+   * @param avoidCircs - don't consider circular deps if `true`
+   *
+   * @returns array of paths of package dep data
+   */
+  getTopoSortPackagePaths(avoidCircs = false) {
     type DepCount = {
       depData: PackageDepData;
       count: number;
@@ -378,7 +391,9 @@ export class FynpoDepGraph {
     for (const path in this.depMapByPath) {
       const depData = this.depMapByPath[path];
       const count = Object.keys(depData.localDepsByPath).filter(
-        (k) => !ignoreDepSections.includes(depData.localDepsByPath[k].depSection)
+        (k) =>
+          !ignoreDepSections.includes(depData.localDepsByPath[k].depSection) &&
+          (!avoidCircs || !this.depMapByPath[depData.localDepsByPath[k].path].hasCircular)
       ).length;
       depRecords[path] = {
         depData,
@@ -414,9 +429,21 @@ export class FynpoDepGraph {
       }
     }
 
+    const circulars = Object.keys(depRecords).filter((path) => depRecords[path].count > 0);
+
+    let avoidCircSorted = [];
+
+    if (!avoidCircs && circulars.length > 0) {
+      for (const p of circulars) {
+        this.depMapByPath[p].hasCircular = true;
+      }
+      avoidCircSorted = this.getTopoSortPackagePaths(true).sorted;
+    }
+
     return {
       sorted,
-      circulars: Object.keys(depRecords).filter((path) => depRecords[path].count > 0),
+      avoidCircSorted,
+      circulars,
     };
   }
 
@@ -429,6 +456,7 @@ export class FynpoDepGraph {
     const topo = this.getTopoSortPackagePaths();
     return {
       sorted: topo.sorted.map((p) => this.depMapByPath[p]),
+      avoidCircSorted: topo.avoidCircSorted.map((p) => this.depMapByPath[p]),
       circulars: topo.circulars.map((p) => this.depMapByPath[p]),
     };
   }
