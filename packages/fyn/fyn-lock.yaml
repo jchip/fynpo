@@ -5615,8 +5615,8 @@ pacote:
   jchip/pacote: 9.4.0
  9.4.0:
   top: 1
-  $: sha512-rs1Vn+2dBVRJQRixkgXehT4LqJ5org8JsS01B8JXhOR/F4rK9jIVlPpRRIJMHGTzkNWwdhRYQIBlVAXlJb/sdw==
-  _: '~url-spec~{"urlType":"github","semver":"jchip/pacote","_resolved":"github:jchip/pacote#986f120ac64c2fb5ac72d70df66393fd45511454"}'
+  $: sha512-QihA4Js3Eu0JgfkT6c4M81CnoGlk1OrbTxcTiVXWdlDahiLbKpwk7m0TLw2o8bunQoaIZ7TK3mBl90fv0G3n1Q==
+  _: '~url-spec~{"urlType":"github","semver":"jchip/pacote","_resolved":"github:jchip/pacote#1401d545d3caba17a9b3e21819c4ef520ebfd93a"}'
   dependencies:
    bluebird: ^3.5.3
    cacache: ^11.3.2
