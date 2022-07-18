@@ -3,7 +3,7 @@ $fyn:
  flattenTop: true
 $pkg:
  dev:
-  fynpo: ^1.1.42
+  fynpo: ^1.1.43
 callsites:
  _latest: 4.0.0
  _:
@@ -12,22 +12,22 @@ callsites:
   $: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==
   _: 'https://registry.npmjs.org/callsites/-/callsites-3.1.0.tgz'
 fyn:
- _latest: 1.1.39
+ _latest: 1.1.40
  _:
-  ^1.1.39: 1.1.39
- 1.1.39:
-  $: sha512-mg05t7/ma95j5nLyinbY9g1IRBZ41tF7DTsbojcB4P/YQdCmqG33t8t+tlOySIRMVLkvoF1GJ61XjfQ5kLHPgg==
-  _: 'https://registry.npmjs.org/fyn/-/fyn-1.1.39.tgz'
+  ^1.1.40: 1.1.40
+ 1.1.40:
+  $: sha512-Rjp8aG11zzgTRwb7+G2bDpJEs3Jf3OI5rGUEox+s6cbv2/yzCoa94o3zdgeQ8k0yLQBD+OXIR2etTzuAJTeQng==
+  _: 'https://registry.npmjs.org/fyn/-/fyn-1.1.40.tgz'
 fynpo:
- _latest: 1.1.42
+ _latest: 1.1.43
  _:
-  ^1.1.42: 1.1.42
- 1.1.42:
+  ^1.1.43: 1.1.43
+ 1.1.43:
   top: 1
-  $: sha512-Uu5KFKmOZIVFAvEGIPV+48R3fstxAZBbC0Ks6SbpU9i6HBvrWV0STWaqem8Z8NxrnnJmGtoik4AuoHky9yEzJA==
-  _: 'https://registry.npmjs.org/fynpo/-/fynpo-1.1.42.tgz'
+  $: sha512-7yyV6BGmGBdERUx0Zvm1Vxvcc30SPruCUAXbWQJsUoWyPuWYc8zHqBGv20KwSw5UbvPEuAvPaPLdjNH6xjuNhw==
+  _: 'https://registry.npmjs.org/fynpo/-/fynpo-1.1.43.tgz'
   dependencies:
-   fyn: ^1.1.39
+   fyn: ^1.1.40
    import-fresh: 3.3.0
    resolve-global: 1.0.0
 global-dirs:
