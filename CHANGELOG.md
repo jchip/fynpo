@@ -1,3 +1,39 @@
+# 7/18/2022
+
+## Packages
+
+-   `@fynpo/base@1.1.16` `(1.1.15 => 1.1.16)`
+-   `fyn@1.1.40` `(1.1.39 => 1.1.40)`
+-   `fynpo@1.1.43` `(1.1.42 => 1.1.43)`
+
+## Commits
+
+-   `packages/fynpo-base`
+
+    -   fix: best effort to deal with circular deps [commit](https://github.com/electrode-io/fynpo/commit/b69086952e7c4021f79906e51ea167462b72dbe9)
+    -   fix: add test for fynpo-base [commit](https://github.com/electrode-io/fynpo/commit/916c78c27977d3d19ba6ceb3e3817836cba03315)
+    -   fix: fynpo-base and fyn tests [commit](https://github.com/electrode-io/fynpo/commit/d9a03612ad1a24001eacb6b6c4d93a50aaa43c27)
+    -   fix: ignore optional and peer dependencies for topo sort [commit](https://github.com/electrode-io/fynpo/commit/e7f682fe96da0fbbc3f75b6b982b765f293adf7a)
+
+-   `packages/fyn`
+
+    -   fix: fyn validate central store package [commit](https://github.com/electrode-io/fynpo/commit/1a23bd4773f22264e81eb29b236694bc12337bfe)
+    -   fix: update pacote [commit](https://github.com/electrode-io/fynpo/commit/b6ca1b569d4cbfd47865e664bffa3013ebc2690e)
+    -   fix: fynpo-base and fyn tests [commit](https://github.com/electrode-io/fynpo/commit/d9a03612ad1a24001eacb6b6c4d93a50aaa43c27)
+    -   fix: avoid build local when installing top level modules [commit](https://github.com/electrode-io/fynpo/commit/64f963d8b014ffddcfecdece7f4f10fc087c8402)
+
+-   `packages/fynpo`
+
+    -   fix: allow installing fynpo in unbundled form locally [commit](https://github.com/electrode-io/fynpo/commit/b22e2da6c9293f58ace769e4d2f8109f0ce55a47)
+
+-   `testing`
+
+    -   fix: run testing in ci check [commit](https://github.com/electrode-io/fynpo/commit/310d86ceb71de3e66aeaa23d5567e77e463e3516)
+
+-   `MISC`
+
+    -   update fynpo version [commit](https://github.com/electrode-io/fynpo/commit/f667bd7ec7d429e4dc1471c87f9c05b19f8ec82e)
+
 # 5/20/2022
 
 ## Packages
