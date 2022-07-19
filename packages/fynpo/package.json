@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "homepage": "https://jchip.github.io/fynpo/",
   "scripts": {
-    "compile": "tsc",
+    "compile": "swc -C module.type=commonjs -C sourceMaps=true src -d lib",
     "build": "rm -rf dist && webpack",
     "docs": "xrun xarc/docs",
     "test": "xrun xarc/test-only",
@@ -117,6 +117,8 @@
     "@babel/preset-flow": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "^1.2.218",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.9.6",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
@@ -124,11 +126,11 @@
     "@xarc/module-dev": "^4.0.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.0.4",
+    "eslint": "^8.1.0",
     "eslint-config-walmart": "^2.2.1",
     "eslint-plugin-filenames": "^1.1.0",
     "eslint-plugin-jsdoc": "^30.7.9",
     "eslint-plugin-tsdoc": "^0.2.11",
-    "eslint": "^8.1.0",
     "jest": "^27.3.1",
     "publish-util": "^2.0.0",
     "source-map-support": "^0.5.19",
@@ -136,9 +138,9 @@
     "ts-node": "^10.4.0",
     "typedoc": "^0.22.7",
     "typescript": "^4.4.4",
+    "webpack": "^5.64.4",
     "webpack-bundle-analyzer": "^4.5.0",
-    "webpack-cli": "^4.9.1",
-    "webpack": "^5.64.4"
+    "webpack-cli": "^4.9.1"
   },
   "nyc": {
     "all": true,
