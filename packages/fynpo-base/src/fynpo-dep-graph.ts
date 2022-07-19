@@ -229,10 +229,11 @@ export type FynpoPackages = {
  *
  */
 export type FynpoTopoPackages = {
-  /** topo sorted packages */
+  /** packages sorted topoly, excluding ones with circular deps */
+  noCircSorted: PackageDepData[];
+  /** all packages sorted topoly, include ones with circular deps */
   sorted: PackageDepData[];
-  /** topo sorted packages while ignoring circular deps, so all packages included */
-  avoidCircSorted: PackageDepData[];
+  /** packages with circular deps */
   circulars: PackageDepData[];
 };
 
@@ -385,16 +386,22 @@ export class FynpoDepGraph {
     // - when fyn is about to do local build for a dep, it should check if there's
     //   circular dep and avoid it.
     const ignoreDepSections = ["opt", "peer"];
+
     //
     // first start with packages that has zero local dependencies
     //
     for (const path in this.depMapByPath) {
       const depData = this.depMapByPath[path];
-      const count = Object.keys(depData.localDepsByPath).filter(
-        (k) =>
-          !ignoreDepSections.includes(depData.localDepsByPath[k].depSection) &&
-          (!avoidCircs || !this.depMapByPath[depData.localDepsByPath[k].path].hasCircular)
-      ).length;
+      const count = Object.keys(depData.localDepsByPath).filter((k) => {
+        if (
+          ignoreDepSections.includes(depData.localDepsByPath[k].depSection) ||
+          (avoidCircs && this.depMapByPath[depData.localDepsByPath[k].path].hasCircular)
+        ) {
+          return false;
+        }
+
+        return true;
+      }).length;
       depRecords[path] = {
         depData,
         count,
@@ -431,18 +438,23 @@ export class FynpoDepGraph {
 
     const circulars = Object.keys(depRecords).filter((path) => depRecords[path].count > 0);
 
-    let avoidCircSorted = [];
+    let allSorted = [];
 
     if (!avoidCircs && circulars.length > 0) {
       for (const p of circulars) {
         this.depMapByPath[p].hasCircular = true;
       }
-      avoidCircSorted = this.getTopoSortPackagePaths(true).sorted;
+      allSorted = this.getTopoSortPackagePaths(true).sorted;
+    } else {
+      allSorted = sorted;
     }
 
     return {
-      sorted,
-      avoidCircSorted,
+      /** paths of packages sorted topoly, excluding ones with circular deps */
+      noCircSorted: sorted,
+      /** paths of all packages sorted, include ones with circular deps */
+      sorted: allSorted,
+      /** paths of packages with circular deps */
       circulars,
     };
   }
@@ -456,7 +468,7 @@ export class FynpoDepGraph {
     const topo = this.getTopoSortPackagePaths();
     return {
       sorted: topo.sorted.map((p) => this.depMapByPath[p]),
-      avoidCircSorted: topo.avoidCircSorted.map((p) => this.depMapByPath[p]),
+      noCircSorted: topo.noCircSorted.map((p) => this.depMapByPath[p]),
       circulars: topo.circulars.map((p) => this.depMapByPath[p]),
     };
   }

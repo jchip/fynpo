@@ -97,6 +97,7 @@
     "npm-packlist": "jchip/npm-packlist",
     "optional-require": "^1.1.8",
     "prettier": "2.4.1",
+    "regenerator-runtime": "^0.13.9",
     "resolve-from": "^5.0.0",
     "resolve-global": "1.0.0",
     "semver": "^7.3.5",

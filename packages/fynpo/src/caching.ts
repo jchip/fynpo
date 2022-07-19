@@ -279,7 +279,7 @@ export class PkgBuildCache {
       const repoMeta = await this.readRepoPkgCacheMetaByPath(localPath);
       if (!repoMeta) {
         logger.info(
-          `missing local dep cache meta - '${pkgInfo.path}' -> '${localPath}' - doing full build`
+          `doing full build in '${pkgInfo.path}'. missing cache meta for its dep '${localPath}'`
         );
         this.exist = false;
         return;

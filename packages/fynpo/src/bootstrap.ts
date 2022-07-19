@@ -124,6 +124,14 @@ ${output.stderr}
     await this._topoRunner.start({
       concurrency,
       processor: async (pkgInfo: FynpoPackageInfo, depData: PackageDepData) => {
+        const circulars = this._topoRunner.circulars;
+        this._topoRunner.circulars = [];
+        if (circulars.length) {
+          circulars.forEach((circ) => {
+            logger.warn("detected circular deps", circ.join(" > "));
+          });
+        }
+
         const colorId = chalk.magenta(pkgInfoId(pkgInfo));
         if (skip && skip.includes(pkgInfo.name)) {
           logger.info("bootstrap skipping", colorId);

@@ -3,7 +3,7 @@
 // before it's run.
 //
 
-/* eslint-disable complexity */
+/* eslint-disable complexity, max-params */
 
 import Promise from "bluebird";
 import _ from "lodash";
@@ -23,6 +23,7 @@ export class TopoRunner {
   _totalTime: number;
   _errors: ItemQueueResult<PackageRunInfo>[];
   runInfo: Record<string, PackageRunInfo>;
+  circulars: string[][];
 
   constructor(topo: FynpoTopoPackages, opts) {
     this.runInfo = {};
@@ -35,9 +36,10 @@ export class TopoRunner {
     this._errors = [];
     this._totalTime = 0;
     this._opts = opts;
+    this.circulars = [];
   }
 
-  run(info: PackageRunInfo, queue: PackageRunInfo[], nesting = false) {
+  run(info: PackageRunInfo, queue: PackageRunInfo[], trace: string[], nesting = false) {
     if (!info) {
       return true;
     }
@@ -70,10 +72,19 @@ export class TopoRunner {
     }
 
     let pending = 0;
+
     for (const path in info.depData.localDepsByPath) {
-      if (!this.run(this.runInfo[path], queue, true)) {
-        pending++;
-        break;
+      if (trace.includes(path) || info.depData.pkgInfo.path === path) {
+        const fullTraces = trace
+          .concat(info.depData.pkgInfo.path, path)
+          .map((x) => (x === path ? `*${path}*` : x));
+        this.circulars.push(fullTraces);
+      } else {
+        const nTrace = [].concat(trace, info.depData.pkgInfo.path);
+        if (!this.run(this.runInfo[path], queue, nTrace, true)) {
+          pending++;
+          break;
+        }
       }
     }
 
@@ -89,7 +100,7 @@ export class TopoRunner {
     const queue: PackageRunInfo[] = [];
 
     _.each(this.runInfo, (info: PackageRunInfo) => {
-      this.run(info, queue);
+      this.run(info, queue, []);
     });
 
     return queue;

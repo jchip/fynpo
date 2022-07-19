@@ -26,7 +26,7 @@ describe("fynpo dep graph", () => {
 
   it("should read all packages when patterns is empty", async () => {
     const graph1 = new FynpoDepGraph({
-      patterns: null,
+      patterns: undefined,
       cwd: path.join(__dirname, "sample"),
     });
     await graph1.resolve(true);
@@ -47,13 +47,11 @@ describe("fynpo dep graph", () => {
 
     const expectFile = path.join(__dirname, "sample-topo.json");
 
+    // Fs.writeFileSync(expectFile, JSON.stringify(graph1.getTopoSortPackages(), null, 2));
+
     const expectData = JSON.parse(Fs.readFileSync(expectFile, "utf-8"));
 
-    expectData.avoidCircSorted = topo.avoidCircSorted;
-
     expect(topo).toEqual(expectData);
-
-    // Fs.writeFileSync(expectFile, JSON.stringify(graph1.getTopoSortPackages(), null, 2));
   });
 
   it("should read packages of the circ1 project", async () => {
@@ -79,8 +77,6 @@ describe("fynpo dep graph", () => {
 
     const expectData = JSON.parse(Fs.readFileSync(expectFile, "utf-8"));
 
-    expectData.avoidCircSorted = topo.avoidCircSorted;
-
     expect(topo).toEqual(expectData);
   });
 
@@ -96,8 +92,6 @@ describe("fynpo dep graph", () => {
     // Fs.writeFileSync(expectFile, JSON.stringify(graph.getTopoSortPackages(), null, 2));
 
     const expectData = JSON.parse(Fs.readFileSync(expectFile, "utf-8"));
-
-    expectData.avoidCircSorted = topo.avoidCircSorted;
 
     expect(topo).toEqual(expectData);
   });
@@ -131,7 +125,7 @@ describe("fynpo dep graph", () => {
 
   it("addDepByPath should add dependency", async () => {
     const graph = new FynpoDepGraph({
-      patterns: null,
+      patterns: undefined,
       cwd: path.join(__dirname, "sample"),
     });
     await graph.readPackages();
@@ -146,7 +140,7 @@ describe("fynpo dep graph", () => {
 
   it("addDepById should add dependency", async () => {
     const graph = new FynpoDepGraph({
-      patterns: null,
+      patterns: undefined,
       cwd: path.join(__dirname, "sample"),
     });
     await graph.readPackages();
@@ -163,7 +157,7 @@ describe("fynpo dep graph", () => {
 
   it("addDepByPath/addDepById should handle non-existent path/id", async () => {
     const graph = new FynpoDepGraph({
-      patterns: null,
+      patterns: undefined,
       cwd: path.join(__dirname, "sample"),
     });
     await graph.resolve();
