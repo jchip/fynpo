@@ -25,7 +25,7 @@ const DIR_SYMLINK_TYPE = isWin32 ? "junction" : "dir";
  *
  * Mainly to check package.json os and cpu per https://docs.npmjs.com/cli/v6/configuring-npm/package-json#os
  *
- * @param {*} rules the rules
+ * @param {*} inRules the rules
  * @param {*} userValue value to check
  *
  * @returns true|false
@@ -337,7 +337,13 @@ const fyntil = {
     }
   },
   fynDir:
-    Path.basename(__dirname) === "util" ? Path.join(__dirname, "../..") : Path.join(__dirname, "..")
+    Path.basename(__dirname) === "util"
+      ? Path.join(__dirname, "../..")
+      : Path.join(__dirname, ".."),
+
+  hasNpmScope(n) {
+    return n && n[0] === "@" && n.indexOf("/") > 1;
+  }
 };
 
 module.exports = fyntil;

@@ -74,6 +74,10 @@ export class TopoRunner {
     let pending = 0;
 
     for (const path in info.depData.localDepsByPath) {
+      const localDep = info.depData.localDepsByPath[path];
+      if (localDep && localDep.semver.startsWith("weaklink:")) {
+        continue;
+      }
       if (trace.includes(path) || info.depData.pkgInfo.path === path) {
         const fullTraces = trace
           .concat(info.depData.pkgInfo.path, path)

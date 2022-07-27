@@ -227,6 +227,14 @@ class DepItem {
     return (this._circular = false);
   }
 
+  isSymlinkLocal() {
+    return semverUtil.isSymlinkLocal(this.localType);
+  }
+
+  isHardlinkLocal() {
+    return semverUtil.isHardlinkLocal(this.localType);
+  }
+
   get depPath() {
     const deps = [];
     let cur = this; // eslint-disable-line

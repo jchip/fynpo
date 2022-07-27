@@ -183,7 +183,7 @@ class PkgOptResolver {
 
       const dist = meta.versions[version].dist;
       logger.debug("opt resolver linking local package", name, version, dist);
-      if (local === "sym") {
+      if (semverUtil.isSymlinkLocal(local)) {
         // await this._depLinker.symlinkLocalPackage(fvInstalledPath, dist.fullPath);
         throw new Error("only hard linking local mode supported now. symlinking local deprecated");
       } else {

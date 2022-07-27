@@ -47,37 +47,43 @@
           "name": "@xarc/index-page",
           "version": "1.0.9",
           "path": "packages/xarc-index-page",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/xarc-jsx-renderer": {
           "name": "@xarc/jsx-renderer",
           "version": "1.0.9",
           "path": "packages/xarc-jsx-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/xarc-react": {
           "name": "@xarc/react",
           "version": "0.3.2",
           "path": "packages/xarc-react",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/xarc-subapp": {
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/xarc-tag-renderer": {
           "name": "@xarc/tag-renderer",
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/subapp-server": {
           "name": "subapp-server",
           "version": "1.3.15",
           "path": "packages/subapp-server",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-server@1.3.15(dep)",
             "@xarc/index-page@1.0.9(dep)",
@@ -89,6 +95,7 @@
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -99,6 +106,7 @@
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -110,6 +118,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-query",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-query@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -120,6 +129,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-recoil",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-recoil@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -130,6 +140,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-observable",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-observable@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -141,6 +152,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-saga",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-saga@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -152,6 +164,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -162,6 +175,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-router",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-router@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -211,7 +225,8 @@
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         }
       },
       "dependentsByPath": {
@@ -219,31 +234,36 @@
           "name": "subapp-server",
           "version": "1.3.15",
           "path": "packages/subapp-server",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         },
         "packages/xarc-index-page": {
           "name": "@xarc/index-page",
           "version": "1.0.9",
           "path": "packages/xarc-index-page",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.7"
         },
         "packages/xarc-react": {
           "name": "@xarc/react",
           "version": "0.3.2",
           "path": "packages/xarc-react",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         },
         "packages/xarc-subapp": {
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         },
         "packages/xarc-app-dev": {
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -254,6 +274,7 @@
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -265,6 +286,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-query",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-query@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -275,6 +297,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-recoil",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-recoil@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -285,6 +308,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-observable",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-observable@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -296,6 +320,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-saga",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-saga@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -307,6 +332,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -317,6 +343,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-router",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-router@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -378,13 +405,15 @@
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/xarc-tag-renderer": {
           "name": "@xarc/tag-renderer",
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         }
       },
       "dependentsByPath": {
@@ -392,43 +421,50 @@
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-react-query": {
           "name": "@xarc/react-query",
           "version": "0.3.1",
           "path": "packages/xarc-react-query",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-react-recoil": {
           "name": "@xarc/react-recoil",
           "version": "0.3.1",
           "path": "packages/xarc-react-recoil",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-react-redux": {
           "name": "@xarc/react-redux",
           "version": "0.3.1",
           "path": "packages/xarc-react-redux",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-react-router": {
           "name": "@xarc/react-router",
           "version": "0.3.1",
           "path": "packages/xarc-react-router",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-react": {
           "name": "@xarc/react",
           "version": "0.3.2",
           "path": "packages/xarc-react",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-create-app": {
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)"
@@ -439,6 +475,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-observable",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-observable@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)"
@@ -449,6 +486,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-saga",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-saga@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)"
@@ -504,19 +542,22 @@
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/xarc-subapp": {
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-tag-renderer": {
           "name": "@xarc/tag-renderer",
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         }
       },
       "dependentsByPath": {
@@ -524,7 +565,8 @@
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^0.3.1"
         }
       }
     },
@@ -581,13 +623,15 @@
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-render-context": {
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-router@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -598,6 +642,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-router@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -662,13 +707,15 @@
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-render-context": {
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -679,6 +726,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -690,19 +738,22 @@
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^0.3.0"
         },
         "packages/xarc-react-redux-observable": {
           "name": "@xarc/react-redux-observable",
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-observable",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-react-redux-saga": {
           "name": "@xarc/react-redux-saga",
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-saga",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         }
       }
     },
@@ -754,13 +805,15 @@
           "name": "@xarc/react-redux",
           "version": "0.3.1",
           "path": "packages/xarc-react-redux",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-subapp": {
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-saga@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)"
@@ -771,6 +824,7 @@
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-saga@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -782,6 +836,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-saga@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -840,13 +895,15 @@
           "name": "@xarc/react-redux",
           "version": "0.3.1",
           "path": "packages/xarc-react-redux",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-subapp": {
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-observable@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)"
@@ -857,6 +914,7 @@
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-observable@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -868,6 +926,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-observable@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -931,13 +990,15 @@
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-render-context": {
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-recoil@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -948,6 +1009,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-recoil@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -1009,13 +1071,15 @@
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-render-context": {
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-query@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -1026,6 +1090,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-query@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -1037,7 +1102,8 @@
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^0.3.0"
         }
       }
     },
@@ -1097,7 +1163,8 @@
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         }
       },
       "dependentsByPath": {
@@ -1105,13 +1172,15 @@
           "name": "subapp-server",
           "version": "1.3.15",
           "path": "packages/subapp-server",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.9"
         },
         "packages/xarc-index-page": {
           "name": "@xarc/index-page",
           "version": "1.0.9",
           "path": "packages/xarc-index-page",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         }
       }
     },
@@ -1160,19 +1229,22 @@
           "name": "@xarc/jsx-renderer",
           "version": "1.0.9",
           "path": "packages/xarc-jsx-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         },
         "packages/xarc-render-context": {
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/xarc-tag-renderer": {
           "name": "@xarc/tag-renderer",
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.7"
         }
       },
       "dependentsByPath": {
@@ -1180,7 +1252,8 @@
           "name": "subapp-server",
           "version": "1.3.15",
           "path": "packages/subapp-server",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.9"
         }
       }
     },
@@ -1219,19 +1292,22 @@
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.1.0"
         },
         "packages/xarc-webpack": {
           "name": "@xarc/webpack",
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.1.0"
         },
         "packages/xarc-create-app": {
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)"
@@ -1284,19 +1360,22 @@
           "name": "electrode-archetype-webpack-dll-dev",
           "version": "2.0.2",
           "path": "packages/electrode-archetype-webpack-dll-dev",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/xarc-webpack": {
           "name": "@xarc/webpack",
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.5"
         },
         "packages/electrode-archetype-webpack-dll": {
           "name": "electrode-archetype-webpack-dll",
           "version": "2.0.2",
           "path": "packages/electrode-archetype-webpack-dll",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "electrode-archetype-webpack-dll@2.0.2(dev)",
             "electrode-archetype-webpack-dll-dev@2.0.2(dev)"
@@ -1307,6 +1386,7 @@
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/webpack@11.0.8(dep)"
@@ -1317,6 +1397,7 @@
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -1357,7 +1438,8 @@
           "name": "webpack-config-composer",
           "version": "1.1.5",
           "path": "packages/webpack-config-composer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         }
       },
       "dependentsByPath": {
@@ -1365,7 +1447,8 @@
           "name": "electrode-archetype-webpack-dll",
           "version": "2.0.2",
           "path": "packages/electrode-archetype-webpack-dll",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../electrode-archetype-webpack-dll-dev"
         }
       }
     },
@@ -1389,13 +1472,15 @@
           "name": "electrode-archetype-webpack-dll-dev",
           "version": "2.0.2",
           "path": "packages/electrode-archetype-webpack-dll-dev",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../electrode-archetype-webpack-dll-dev"
         },
         "packages/webpack-config-composer": {
           "name": "webpack-config-composer",
           "version": "1.1.5",
           "path": "packages/webpack-config-composer",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "electrode-archetype-webpack-dll@2.0.2(dev)",
             "electrode-archetype-webpack-dll-dev@2.0.2(dev)"
@@ -1424,49 +1509,57 @@
           "name": "subapp-pbundle",
           "version": "0.0.44",
           "path": "packages/subapp-pbundle",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/subapp-react": {
           "name": "subapp-react",
           "version": "0.0.42",
           "path": "packages/subapp-react",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/subapp-redux": {
           "name": "subapp-redux",
           "version": "1.0.50",
           "path": "packages/subapp-redux",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/subapp-server": {
           "name": "subapp-server",
           "version": "1.3.15",
           "path": "packages/subapp-server",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/subapp-web": {
           "name": "subapp-web",
           "version": "1.0.50",
           "path": "packages/subapp-web",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/xarc-app-dev": {
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/xarc-app": {
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/xarc-create-app": {
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app@10.0.10(dev)"
@@ -1477,6 +1570,7 @@
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/webpack@11.0.8(dev)",
             "@xarc/app@10.0.10(dev)"
@@ -1533,7 +1627,8 @@
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         }
       },
       "dependentsByPath": {
@@ -1541,43 +1636,50 @@
           "name": "subapp-pbundle",
           "version": "0.0.44",
           "path": "packages/subapp-pbundle",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.6"
         },
         "packages/subapp-react": {
           "name": "subapp-react",
           "version": "0.0.42",
           "path": "packages/subapp-react",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.10"
         },
         "packages/subapp-web": {
           "name": "subapp-web",
           "version": "1.0.50",
           "path": "packages/subapp-web",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.6"
         },
         "packages/xarc-app-dev": {
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.10"
         },
         "packages/xarc-create-app": {
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.9"
         },
         "packages/xarc-webpack": {
           "name": "@xarc/webpack",
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.10"
         },
         "packages/subapp-redux": {
           "name": "subapp-redux",
           "version": "1.0.50",
           "path": "packages/subapp-redux",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-redux@1.0.50(dep)",
             "subapp-web@1.0.50(dep)"
@@ -1619,31 +1721,36 @@
           "name": "@xarc/index-page",
           "version": "1.0.9",
           "path": "packages/xarc-index-page",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.9"
         },
         "packages/xarc-jsx-renderer": {
           "name": "@xarc/jsx-renderer",
           "version": "1.0.9",
           "path": "packages/xarc-jsx-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.9"
         },
         "packages/xarc-tag-renderer": {
           "name": "@xarc/tag-renderer",
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         },
         "packages/subapp-util": {
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/xarc-render-context": {
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-server@1.3.15(dep)",
             "@xarc/index-page@1.0.9(dep)",
@@ -1671,25 +1778,29 @@
           "name": "subapp-pbundle",
           "version": "0.0.44",
           "path": "packages/subapp-pbundle",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         },
         "packages/subapp-react": {
           "name": "subapp-react",
           "version": "0.0.42",
           "path": "packages/subapp-react",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         },
         "packages/subapp-redux": {
           "name": "subapp-redux",
           "version": "1.0.50",
           "path": "packages/subapp-redux",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         },
         "packages/subapp-web": {
           "name": "subapp-web",
           "version": "1.0.50",
           "path": "packages/subapp-web",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         }
       }
     },
@@ -1707,61 +1818,71 @@
           "name": "@xarc/opt-eslint",
           "version": "2.0.1",
           "path": "packages/xarc-opt-eslint",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-jest": {
           "name": "@xarc/opt-jest",
           "version": "1.0.1",
           "path": "packages/xarc-opt-jest",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-karma": {
           "name": "@xarc/opt-karma",
           "version": "2.0.2",
           "path": "packages/xarc-opt-karma",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-less": {
           "name": "@xarc/opt-less",
           "version": "1.0.1",
           "path": "packages/xarc-opt-less",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-mocha": {
           "name": "@xarc/opt-mocha",
           "version": "1.0.1",
           "path": "packages/xarc-opt-mocha",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-postcss": {
           "name": "@xarc/opt-postcss",
           "version": "1.0.1",
           "path": "packages/xarc-opt-postcss",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-preact": {
           "name": "@xarc/opt-preact",
           "version": "1.0.1",
           "path": "packages/xarc-opt-preact",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-react": {
           "name": "@xarc/opt-react",
           "version": "2.0.1",
           "path": "packages/xarc-opt-react",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-sass": {
           "name": "@xarc/opt-sass",
           "version": "1.0.1",
           "path": "packages/xarc-opt-sass",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-stylus": {
           "name": "@xarc/opt-stylus",
           "version": "1.0.1",
           "path": "packages/xarc-opt-stylus",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       }
     },
@@ -1785,7 +1906,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -1810,7 +1932,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -1835,7 +1958,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -1859,7 +1983,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -1889,7 +2014,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -1919,7 +2045,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -1944,7 +2071,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -1991,7 +2119,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -2018,7 +2147,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -2048,7 +2178,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -2077,7 +2208,8 @@
           "name": "electrode-ui-logger",
           "version": "1.1.6",
           "path": "packages/electrode-ui-logger",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.3.2"
         }
       }
     },
@@ -2104,7 +2236,8 @@
           "name": "electrode-ui-config",
           "version": "1.3.2",
           "path": "packages/electrode-ui-config",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.3.2"
         }
       },
       "dependentsByPath": {}
@@ -2150,13 +2283,15 @@
           "name": "electrode-react-webapp",
           "version": "4.0.4",
           "path": "packages/electrode-react-webapp",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../electrode-redux-router-engine"
         },
         "packages/subapp-pbundle": {
           "name": "subapp-pbundle",
           "version": "0.0.44",
           "path": "packages/subapp-pbundle",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-pbundle@0.0.44(dep)",
             "subapp-web@1.0.50(dep)",
@@ -2168,6 +2303,7 @@
           "version": "0.0.42",
           "path": "packages/subapp-react",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-react@0.0.42(dep)",
             "subapp-web@1.0.50(dep)",
@@ -2179,6 +2315,7 @@
           "version": "1.0.50",
           "path": "packages/subapp-redux",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-redux@1.0.50(dep)",
             "subapp-web@1.0.50(dep)",
@@ -2190,6 +2327,7 @@
           "version": "1.0.50",
           "path": "packages/subapp-web",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "subapp-web@1.0.50(dev)",
             "electrode-react-webapp@4.0.4(dev)"
@@ -2245,7 +2383,8 @@
           "name": "electrode-redux-router-engine",
           "version": "5.0.0",
           "path": "packages/electrode-redux-router-engine",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../electrode-redux-router-engine"
         }
       },
       "dependentsByPath": {
@@ -2253,13 +2392,15 @@
           "name": "subapp-web",
           "version": "1.0.50",
           "path": "packages/subapp-web",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^3.8.9"
         },
         "packages/subapp-pbundle": {
           "name": "subapp-pbundle",
           "version": "0.0.44",
           "path": "packages/subapp-pbundle",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-pbundle@0.0.44(dep)",
             "subapp-web@1.0.50(dep)"
@@ -2270,6 +2411,7 @@
           "version": "0.0.42",
           "path": "packages/subapp-react",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-react@0.0.42(dep)",
             "subapp-web@1.0.50(dep)"
@@ -2280,6 +2422,7 @@
           "version": "1.0.50",
           "path": "packages/subapp-redux",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-redux@1.0.50(dep)",
             "subapp-web@1.0.50(dep)"
@@ -2330,31 +2473,36 @@
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/xarc-app": {
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.6"
         },
         "packages/electrode-react-webapp": {
           "name": "electrode-react-webapp",
           "version": "4.0.4",
           "path": "packages/electrode-react-webapp",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^3.8.9"
         },
         "packages/subapp-pkg-util": {
           "name": "subapp-pkg-util",
           "version": "0.0.1",
           "path": "packages/subapp-pkg-util",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         },
         "packages/electrode-redux-router-engine": {
           "name": "electrode-redux-router-engine",
           "version": "5.0.0",
           "path": "packages/electrode-redux-router-engine",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "subapp-web@1.0.50(dev)",
             "electrode-react-webapp@4.0.4(dev)"
@@ -2366,19 +2514,22 @@
           "name": "subapp-pbundle",
           "version": "0.0.44",
           "path": "packages/subapp-pbundle",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.50"
         },
         "packages/subapp-react": {
           "name": "subapp-react",
           "version": "0.0.42",
           "path": "packages/subapp-react",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.50"
         },
         "packages/subapp-redux": {
           "name": "subapp-redux",
           "version": "1.0.50",
           "path": "packages/subapp-redux",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.50"
         }
       }
     },
@@ -2422,25 +2573,29 @@
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/subapp-web": {
           "name": "subapp-web",
           "version": "1.0.50",
           "path": "packages/subapp-web",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.50"
         },
         "packages/subapp-pkg-util": {
           "name": "subapp-pkg-util",
           "version": "0.0.1",
           "path": "packages/subapp-pkg-util",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         },
         "packages/xarc-app": {
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-redux@1.0.50(dep)",
             "subapp-web@1.0.50(dep)"
@@ -2451,6 +2606,7 @@
           "version": "4.0.4",
           "path": "packages/electrode-react-webapp",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-redux@1.0.50(dep)",
             "subapp-web@1.0.50(dep)"
@@ -2461,6 +2617,7 @@
           "version": "5.0.0",
           "path": "packages/electrode-redux-router-engine",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-redux@1.0.50(dep)",
             "subapp-web@1.0.50(dep)",
@@ -2513,31 +2670,36 @@
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/subapp-web": {
           "name": "subapp-web",
           "version": "1.0.50",
           "path": "packages/subapp-web",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.50"
         },
         "packages/xarc-app": {
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.10"
         },
         "packages/subapp-pkg-util": {
           "name": "subapp-pkg-util",
           "version": "0.0.1",
           "path": "packages/subapp-pkg-util",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         },
         "packages/electrode-react-webapp": {
           "name": "electrode-react-webapp",
           "version": "4.0.4",
           "path": "packages/electrode-react-webapp",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-react@0.0.42(dep)",
             "subapp-web@1.0.50(dep)"
@@ -2548,6 +2710,7 @@
           "version": "5.0.0",
           "path": "packages/electrode-redux-router-engine",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-react@0.0.42(dep)",
             "subapp-web@1.0.50(dep)",
@@ -2597,31 +2760,36 @@
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/subapp-web": {
           "name": "subapp-web",
           "version": "1.0.50",
           "path": "packages/subapp-web",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.50"
         },
         "packages/xarc-app": {
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.6"
         },
         "packages/subapp-pkg-util": {
           "name": "subapp-pkg-util",
           "version": "0.0.1",
           "path": "packages/subapp-pkg-util",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         },
         "packages/electrode-react-webapp": {
           "name": "electrode-react-webapp",
           "version": "4.0.4",
           "path": "packages/electrode-react-webapp",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-pbundle@0.0.44(dep)",
             "subapp-web@1.0.50(dep)"
@@ -2632,6 +2800,7 @@
           "version": "5.0.0",
           "path": "packages/electrode-redux-router-engine",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-pbundle@0.0.44(dep)",
             "subapp-web@1.0.50(dep)",
@@ -2660,19 +2829,22 @@
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^2.0.2"
         },
         "packages/xarc-webpack": {
           "name": "@xarc/webpack",
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^2.0.2"
         },
         "packages/xarc-create-app": {
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -2724,13 +2896,15 @@
           "name": "@xarc/webpack",
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "packages/xarc-app-dev": {
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/webpack@11.0.8(dep)"
@@ -2741,6 +2915,7 @@
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -2817,37 +2992,43 @@
           "name": "@xarc/dev-base",
           "version": "0.1.0",
           "path": "packages/xarc-dev-base",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.1.0"
         },
         "packages/electrode-cdn-file-loader": {
           "name": "electrode-cdn-file-loader",
           "version": "1.1.1",
           "path": "packages/electrode-cdn-file-loader",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "packages/electrode-node-resolver": {
           "name": "electrode-node-resolver",
           "version": "2.0.2",
           "path": "packages/electrode-node-resolver",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^2.0.2"
         },
         "packages/webpack-config-composer": {
           "name": "webpack-config-composer",
           "version": "1.1.5",
           "path": "packages/webpack-config-composer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.5"
         },
         "packages/xarc-app": {
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.10"
         },
         "packages/subapp-util": {
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/webpack@11.0.8(dev)",
             "@xarc/app@10.0.10(dev)"
@@ -2859,13 +3040,15 @@
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^11.0.8"
         },
         "packages/xarc-create-app": {
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)"
@@ -2982,43 +3165,50 @@
           "name": "@xarc/dev-base",
           "version": "0.1.0",
           "path": "packages/xarc-dev-base",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.1.0"
         },
         "packages/xarc-subapp": {
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-webpack": {
           "name": "@xarc/webpack",
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^11.0.8"
         },
         "packages/electrode-node-resolver": {
           "name": "electrode-node-resolver",
           "version": "2.0.2",
           "path": "packages/electrode-node-resolver",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^2.0.2"
         },
         "packages/subapp-util": {
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/xarc-app": {
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.10"
         },
         "packages/xarc-render-context": {
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3029,6 +3219,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3039,6 +3230,7 @@
           "version": "1.1.1",
           "path": "packages/electrode-cdn-file-loader",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/webpack@11.0.8(dep)"
@@ -3049,6 +3241,7 @@
           "version": "1.1.5",
           "path": "packages/webpack-config-composer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/webpack@11.0.8(dep)"
@@ -3060,7 +3253,8 @@
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.9"
         }
       }
     },
@@ -3105,37 +3299,43 @@
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.9"
         },
         "packages/xarc-app-dev": {
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.9"
         },
         "packages/xarc-react": {
           "name": "@xarc/react",
           "version": "0.3.2",
           "path": "packages/xarc-react",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^0.3.1"
         },
         "packages/xarc-react-query": {
           "name": "@xarc/react-query",
           "version": "0.3.1",
           "path": "packages/xarc-react-query",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^0.3.0"
         },
         "packages/xarc-react-redux": {
           "name": "@xarc/react-redux",
           "version": "0.3.1",
           "path": "packages/xarc-react-redux",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^0.3.0"
         },
         "packages/subapp-util": {
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app@10.0.10(dev)"
@@ -3146,6 +3346,7 @@
           "version": "0.1.0",
           "path": "packages/xarc-dev-base",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)"
@@ -3156,6 +3357,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)"
@@ -3166,6 +3368,7 @@
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -3177,6 +3380,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -3188,6 +3392,7 @@
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)"
@@ -3198,6 +3403,7 @@
           "version": "1.1.1",
           "path": "packages/electrode-cdn-file-loader",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -3209,6 +3415,7 @@
           "version": "2.0.2",
           "path": "packages/electrode-node-resolver",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -3220,6 +3427,7 @@
           "version": "1.1.5",
           "path": "packages/webpack-config-composer",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -3278,37 +3486,43 @@
           "name": "@xarc/index-page",
           "version": "1.0.9",
           "path": "packages/xarc-index-page",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/xarc-jsx-renderer": {
           "name": "@xarc/jsx-renderer",
           "version": "1.0.9",
           "path": "packages/xarc-jsx-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/xarc-react": {
           "name": "@xarc/react",
           "version": "0.3.2",
           "path": "packages/xarc-react",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/xarc-subapp": {
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/xarc-tag-renderer": {
           "name": "@xarc/tag-renderer",
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/subapp-server": {
           "name": "subapp-server",
           "version": "1.3.15",
           "path": "packages/subapp-server",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-server@1.3.15(dep)",
             "@xarc/index-page@1.0.9(dep)",
@@ -3320,6 +3534,7 @@
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3330,6 +3545,7 @@
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -3341,6 +3557,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-query",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-query@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3351,6 +3568,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-recoil",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-recoil@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3361,6 +3579,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-observable",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-observable@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -3372,6 +3591,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-saga",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-saga@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -3383,6 +3603,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3393,6 +3614,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-router",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-router@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3442,7 +3664,8 @@
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         }
       },
       "dependentsByPath": {
@@ -3450,31 +3673,36 @@
           "name": "subapp-server",
           "version": "1.3.15",
           "path": "packages/subapp-server",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         },
         "packages/xarc-index-page": {
           "name": "@xarc/index-page",
           "version": "1.0.9",
           "path": "packages/xarc-index-page",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.7"
         },
         "packages/xarc-react": {
           "name": "@xarc/react",
           "version": "0.3.2",
           "path": "packages/xarc-react",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         },
         "packages/xarc-subapp": {
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         },
         "packages/xarc-app-dev": {
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3485,6 +3713,7 @@
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -3496,6 +3725,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-query",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-query@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3506,6 +3736,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-recoil",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-recoil@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3516,6 +3747,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-observable",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-observable@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -3527,6 +3759,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-saga",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-saga@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -3538,6 +3771,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3548,6 +3782,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-router",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-router@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3609,13 +3844,15 @@
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/xarc-tag-renderer": {
           "name": "@xarc/tag-renderer",
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         }
       },
       "dependentsByPath": {
@@ -3623,43 +3860,50 @@
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-react-query": {
           "name": "@xarc/react-query",
           "version": "0.3.1",
           "path": "packages/xarc-react-query",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-react-recoil": {
           "name": "@xarc/react-recoil",
           "version": "0.3.1",
           "path": "packages/xarc-react-recoil",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-react-redux": {
           "name": "@xarc/react-redux",
           "version": "0.3.1",
           "path": "packages/xarc-react-redux",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-react-router": {
           "name": "@xarc/react-router",
           "version": "0.3.1",
           "path": "packages/xarc-react-router",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-react": {
           "name": "@xarc/react",
           "version": "0.3.2",
           "path": "packages/xarc-react",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-create-app": {
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)"
@@ -3670,6 +3914,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-observable",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-observable@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)"
@@ -3680,6 +3925,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-saga",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-saga@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)"
@@ -3735,19 +3981,22 @@
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/xarc-subapp": {
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-tag-renderer": {
           "name": "@xarc/tag-renderer",
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         }
       },
       "dependentsByPath": {
@@ -3755,7 +4004,8 @@
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^0.3.1"
         }
       }
     },
@@ -3812,13 +4062,15 @@
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-render-context": {
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-router@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3829,6 +4081,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-router@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3893,13 +4146,15 @@
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-render-context": {
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3910,6 +4165,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -3921,19 +4177,22 @@
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^0.3.0"
         },
         "packages/xarc-react-redux-observable": {
           "name": "@xarc/react-redux-observable",
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-observable",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-react-redux-saga": {
           "name": "@xarc/react-redux-saga",
           "version": "0.3.1",
           "path": "packages/xarc-react-redux-saga",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         }
       }
     },
@@ -3985,13 +4244,15 @@
           "name": "@xarc/react-redux",
           "version": "0.3.1",
           "path": "packages/xarc-react-redux",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-subapp": {
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-saga@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)"
@@ -4002,6 +4263,7 @@
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-saga@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -4013,6 +4275,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-saga@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -4071,13 +4334,15 @@
           "name": "@xarc/react-redux",
           "version": "0.3.1",
           "path": "packages/xarc-react-redux",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-subapp": {
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-observable@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)"
@@ -4088,6 +4353,7 @@
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-observable@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -4099,6 +4365,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-redux-observable@0.3.1(dep)",
             "@xarc/react-redux@0.3.1(dep)",
@@ -4162,13 +4429,15 @@
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-render-context": {
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-recoil@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -4179,6 +4448,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-recoil@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -4240,13 +4510,15 @@
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-render-context": {
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-query@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -4257,6 +4529,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/react-query@0.3.1(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -4268,7 +4541,8 @@
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^0.3.0"
         }
       }
     },
@@ -4328,7 +4602,8 @@
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         }
       },
       "dependentsByPath": {
@@ -4336,13 +4611,15 @@
           "name": "subapp-server",
           "version": "1.3.15",
           "path": "packages/subapp-server",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.9"
         },
         "packages/xarc-index-page": {
           "name": "@xarc/index-page",
           "version": "1.0.9",
           "path": "packages/xarc-index-page",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         }
       }
     },
@@ -4391,19 +4668,22 @@
           "name": "@xarc/jsx-renderer",
           "version": "1.0.9",
           "path": "packages/xarc-jsx-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         },
         "packages/xarc-render-context": {
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.6"
         },
         "packages/xarc-tag-renderer": {
           "name": "@xarc/tag-renderer",
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.7"
         }
       },
       "dependentsByPath": {
@@ -4411,7 +4691,8 @@
           "name": "subapp-server",
           "version": "1.3.15",
           "path": "packages/subapp-server",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.9"
         }
       }
     },
@@ -4450,19 +4731,22 @@
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.1.0"
         },
         "packages/xarc-webpack": {
           "name": "@xarc/webpack",
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.1.0"
         },
         "packages/xarc-create-app": {
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)"
@@ -4515,19 +4799,22 @@
           "name": "electrode-archetype-webpack-dll-dev",
           "version": "2.0.2",
           "path": "packages/electrode-archetype-webpack-dll-dev",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/xarc-webpack": {
           "name": "@xarc/webpack",
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.5"
         },
         "packages/electrode-archetype-webpack-dll": {
           "name": "electrode-archetype-webpack-dll",
           "version": "2.0.2",
           "path": "packages/electrode-archetype-webpack-dll",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "electrode-archetype-webpack-dll@2.0.2(dev)",
             "electrode-archetype-webpack-dll-dev@2.0.2(dev)"
@@ -4538,6 +4825,7 @@
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/webpack@11.0.8(dep)"
@@ -4548,6 +4836,7 @@
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -4588,7 +4877,8 @@
           "name": "webpack-config-composer",
           "version": "1.1.5",
           "path": "packages/webpack-config-composer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         }
       },
       "dependentsByPath": {
@@ -4596,7 +4886,8 @@
           "name": "electrode-archetype-webpack-dll",
           "version": "2.0.2",
           "path": "packages/electrode-archetype-webpack-dll",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../electrode-archetype-webpack-dll-dev"
         }
       }
     },
@@ -4620,13 +4911,15 @@
           "name": "electrode-archetype-webpack-dll-dev",
           "version": "2.0.2",
           "path": "packages/electrode-archetype-webpack-dll-dev",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../electrode-archetype-webpack-dll-dev"
         },
         "packages/webpack-config-composer": {
           "name": "webpack-config-composer",
           "version": "1.1.5",
           "path": "packages/webpack-config-composer",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "electrode-archetype-webpack-dll@2.0.2(dev)",
             "electrode-archetype-webpack-dll-dev@2.0.2(dev)"
@@ -4655,49 +4948,57 @@
           "name": "subapp-pbundle",
           "version": "0.0.44",
           "path": "packages/subapp-pbundle",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/subapp-react": {
           "name": "subapp-react",
           "version": "0.0.42",
           "path": "packages/subapp-react",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/subapp-redux": {
           "name": "subapp-redux",
           "version": "1.0.50",
           "path": "packages/subapp-redux",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/subapp-server": {
           "name": "subapp-server",
           "version": "1.3.15",
           "path": "packages/subapp-server",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/subapp-web": {
           "name": "subapp-web",
           "version": "1.0.50",
           "path": "packages/subapp-web",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/xarc-app-dev": {
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/xarc-app": {
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/xarc-create-app": {
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app@10.0.10(dev)"
@@ -4708,6 +5009,7 @@
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/webpack@11.0.8(dev)",
             "@xarc/app@10.0.10(dev)"
@@ -4764,7 +5066,8 @@
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         }
       },
       "dependentsByPath": {
@@ -4772,43 +5075,50 @@
           "name": "subapp-pbundle",
           "version": "0.0.44",
           "path": "packages/subapp-pbundle",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.6"
         },
         "packages/subapp-react": {
           "name": "subapp-react",
           "version": "0.0.42",
           "path": "packages/subapp-react",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.10"
         },
         "packages/subapp-web": {
           "name": "subapp-web",
           "version": "1.0.50",
           "path": "packages/subapp-web",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.6"
         },
         "packages/xarc-app-dev": {
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.10"
         },
         "packages/xarc-create-app": {
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.9"
         },
         "packages/xarc-webpack": {
           "name": "@xarc/webpack",
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.10"
         },
         "packages/subapp-redux": {
           "name": "subapp-redux",
           "version": "1.0.50",
           "path": "packages/subapp-redux",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-redux@1.0.50(dep)",
             "subapp-web@1.0.50(dep)"
@@ -4850,31 +5160,36 @@
           "name": "@xarc/index-page",
           "version": "1.0.9",
           "path": "packages/xarc-index-page",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.9"
         },
         "packages/xarc-jsx-renderer": {
           "name": "@xarc/jsx-renderer",
           "version": "1.0.9",
           "path": "packages/xarc-jsx-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.9"
         },
         "packages/xarc-tag-renderer": {
           "name": "@xarc/tag-renderer",
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.8"
         },
         "packages/subapp-util": {
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/xarc-render-context": {
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-server@1.3.15(dep)",
             "@xarc/index-page@1.0.9(dep)",
@@ -4902,25 +5217,29 @@
           "name": "subapp-pbundle",
           "version": "0.0.44",
           "path": "packages/subapp-pbundle",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         },
         "packages/subapp-react": {
           "name": "subapp-react",
           "version": "0.0.42",
           "path": "packages/subapp-react",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         },
         "packages/subapp-redux": {
           "name": "subapp-redux",
           "version": "1.0.50",
           "path": "packages/subapp-redux",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         },
         "packages/subapp-web": {
           "name": "subapp-web",
           "version": "1.0.50",
           "path": "packages/subapp-web",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         }
       }
     },
@@ -4938,61 +5257,71 @@
           "name": "@xarc/opt-eslint",
           "version": "2.0.1",
           "path": "packages/xarc-opt-eslint",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-jest": {
           "name": "@xarc/opt-jest",
           "version": "1.0.1",
           "path": "packages/xarc-opt-jest",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-karma": {
           "name": "@xarc/opt-karma",
           "version": "2.0.2",
           "path": "packages/xarc-opt-karma",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-less": {
           "name": "@xarc/opt-less",
           "version": "1.0.1",
           "path": "packages/xarc-opt-less",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-mocha": {
           "name": "@xarc/opt-mocha",
           "version": "1.0.1",
           "path": "packages/xarc-opt-mocha",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-postcss": {
           "name": "@xarc/opt-postcss",
           "version": "1.0.1",
           "path": "packages/xarc-opt-postcss",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-preact": {
           "name": "@xarc/opt-preact",
           "version": "1.0.1",
           "path": "packages/xarc-opt-preact",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-react": {
           "name": "@xarc/opt-react",
           "version": "2.0.1",
           "path": "packages/xarc-opt-react",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-sass": {
           "name": "@xarc/opt-sass",
           "version": "1.0.1",
           "path": "packages/xarc-opt-sass",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         },
         "packages/xarc-opt-stylus": {
           "name": "@xarc/opt-stylus",
           "version": "1.0.1",
           "path": "packages/xarc-opt-stylus",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       }
     },
@@ -5016,7 +5345,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -5041,7 +5371,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -5066,7 +5397,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -5090,7 +5422,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -5120,7 +5453,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -5150,7 +5484,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -5175,7 +5510,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -5222,7 +5558,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -5249,7 +5586,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -5279,7 +5617,8 @@
           "name": "opt-archetype-check",
           "version": "1.0.0",
           "path": "packages/opt-archetype-check",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../opt-archetype-check"
         }
       },
       "dependentsByPath": {}
@@ -5308,7 +5647,8 @@
           "name": "electrode-ui-logger",
           "version": "1.1.6",
           "path": "packages/electrode-ui-logger",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.3.2"
         }
       }
     },
@@ -5335,7 +5675,8 @@
           "name": "electrode-ui-config",
           "version": "1.3.2",
           "path": "packages/electrode-ui-config",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.3.2"
         }
       },
       "dependentsByPath": {}
@@ -5381,13 +5722,15 @@
           "name": "electrode-react-webapp",
           "version": "4.0.4",
           "path": "packages/electrode-react-webapp",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../electrode-redux-router-engine"
         },
         "packages/subapp-pbundle": {
           "name": "subapp-pbundle",
           "version": "0.0.44",
           "path": "packages/subapp-pbundle",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-pbundle@0.0.44(dep)",
             "subapp-web@1.0.50(dep)",
@@ -5399,6 +5742,7 @@
           "version": "0.0.42",
           "path": "packages/subapp-react",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-react@0.0.42(dep)",
             "subapp-web@1.0.50(dep)",
@@ -5410,6 +5754,7 @@
           "version": "1.0.50",
           "path": "packages/subapp-redux",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-redux@1.0.50(dep)",
             "subapp-web@1.0.50(dep)",
@@ -5421,6 +5766,7 @@
           "version": "1.0.50",
           "path": "packages/subapp-web",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "subapp-web@1.0.50(dev)",
             "electrode-react-webapp@4.0.4(dev)"
@@ -5476,7 +5822,8 @@
           "name": "electrode-redux-router-engine",
           "version": "5.0.0",
           "path": "packages/electrode-redux-router-engine",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../electrode-redux-router-engine"
         }
       },
       "dependentsByPath": {
@@ -5484,13 +5831,15 @@
           "name": "subapp-web",
           "version": "1.0.50",
           "path": "packages/subapp-web",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^3.8.9"
         },
         "packages/subapp-pbundle": {
           "name": "subapp-pbundle",
           "version": "0.0.44",
           "path": "packages/subapp-pbundle",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-pbundle@0.0.44(dep)",
             "subapp-web@1.0.50(dep)"
@@ -5501,6 +5850,7 @@
           "version": "0.0.42",
           "path": "packages/subapp-react",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-react@0.0.42(dep)",
             "subapp-web@1.0.50(dep)"
@@ -5511,6 +5861,7 @@
           "version": "1.0.50",
           "path": "packages/subapp-redux",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-redux@1.0.50(dep)",
             "subapp-web@1.0.50(dep)"
@@ -5561,31 +5912,36 @@
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/xarc-app": {
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.6"
         },
         "packages/electrode-react-webapp": {
           "name": "electrode-react-webapp",
           "version": "4.0.4",
           "path": "packages/electrode-react-webapp",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^3.8.9"
         },
         "packages/subapp-pkg-util": {
           "name": "subapp-pkg-util",
           "version": "0.0.1",
           "path": "packages/subapp-pkg-util",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         },
         "packages/electrode-redux-router-engine": {
           "name": "electrode-redux-router-engine",
           "version": "5.0.0",
           "path": "packages/electrode-redux-router-engine",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "subapp-web@1.0.50(dev)",
             "electrode-react-webapp@4.0.4(dev)"
@@ -5597,19 +5953,22 @@
           "name": "subapp-pbundle",
           "version": "0.0.44",
           "path": "packages/subapp-pbundle",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.50"
         },
         "packages/subapp-react": {
           "name": "subapp-react",
           "version": "0.0.42",
           "path": "packages/subapp-react",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.50"
         },
         "packages/subapp-redux": {
           "name": "subapp-redux",
           "version": "1.0.50",
           "path": "packages/subapp-redux",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.50"
         }
       }
     },
@@ -5653,25 +6012,29 @@
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/subapp-web": {
           "name": "subapp-web",
           "version": "1.0.50",
           "path": "packages/subapp-web",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.50"
         },
         "packages/subapp-pkg-util": {
           "name": "subapp-pkg-util",
           "version": "0.0.1",
           "path": "packages/subapp-pkg-util",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         },
         "packages/xarc-app": {
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-redux@1.0.50(dep)",
             "subapp-web@1.0.50(dep)"
@@ -5682,6 +6045,7 @@
           "version": "4.0.4",
           "path": "packages/electrode-react-webapp",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-redux@1.0.50(dep)",
             "subapp-web@1.0.50(dep)"
@@ -5692,6 +6056,7 @@
           "version": "5.0.0",
           "path": "packages/electrode-redux-router-engine",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-redux@1.0.50(dep)",
             "subapp-web@1.0.50(dep)",
@@ -5744,31 +6109,36 @@
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/subapp-web": {
           "name": "subapp-web",
           "version": "1.0.50",
           "path": "packages/subapp-web",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.50"
         },
         "packages/xarc-app": {
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.10"
         },
         "packages/subapp-pkg-util": {
           "name": "subapp-pkg-util",
           "version": "0.0.1",
           "path": "packages/subapp-pkg-util",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         },
         "packages/electrode-react-webapp": {
           "name": "electrode-react-webapp",
           "version": "4.0.4",
           "path": "packages/electrode-react-webapp",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-react@0.0.42(dep)",
             "subapp-web@1.0.50(dep)"
@@ -5779,6 +6149,7 @@
           "version": "5.0.0",
           "path": "packages/electrode-redux-router-engine",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-react@0.0.42(dep)",
             "subapp-web@1.0.50(dep)",
@@ -5828,31 +6199,36 @@
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/subapp-web": {
           "name": "subapp-web",
           "version": "1.0.50",
           "path": "packages/subapp-web",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.50"
         },
         "packages/xarc-app": {
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.6"
         },
         "packages/subapp-pkg-util": {
           "name": "subapp-pkg-util",
           "version": "0.0.1",
           "path": "packages/subapp-pkg-util",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "../subapp-pkg-util"
         },
         "packages/electrode-react-webapp": {
           "name": "electrode-react-webapp",
           "version": "4.0.4",
           "path": "packages/electrode-react-webapp",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-pbundle@0.0.44(dep)",
             "subapp-web@1.0.50(dep)"
@@ -5863,6 +6239,7 @@
           "version": "5.0.0",
           "path": "packages/electrode-redux-router-engine",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "subapp-pbundle@0.0.44(dep)",
             "subapp-web@1.0.50(dep)",
@@ -5891,19 +6268,22 @@
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^2.0.2"
         },
         "packages/xarc-webpack": {
           "name": "@xarc/webpack",
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^2.0.2"
         },
         "packages/xarc-create-app": {
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -5955,13 +6335,15 @@
           "name": "@xarc/webpack",
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "packages/xarc-app-dev": {
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/webpack@11.0.8(dep)"
@@ -5972,6 +6354,7 @@
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -6048,37 +6431,43 @@
           "name": "@xarc/dev-base",
           "version": "0.1.0",
           "path": "packages/xarc-dev-base",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.1.0"
         },
         "packages/electrode-cdn-file-loader": {
           "name": "electrode-cdn-file-loader",
           "version": "1.1.1",
           "path": "packages/electrode-cdn-file-loader",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "packages/electrode-node-resolver": {
           "name": "electrode-node-resolver",
           "version": "2.0.2",
           "path": "packages/electrode-node-resolver",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^2.0.2"
         },
         "packages/webpack-config-composer": {
           "name": "webpack-config-composer",
           "version": "1.1.5",
           "path": "packages/webpack-config-composer",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.5"
         },
         "packages/xarc-app": {
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.10"
         },
         "packages/subapp-util": {
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/webpack@11.0.8(dev)",
             "@xarc/app@10.0.10(dev)"
@@ -6090,13 +6479,15 @@
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^11.0.8"
         },
         "packages/xarc-create-app": {
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)"
@@ -6213,43 +6604,50 @@
           "name": "@xarc/dev-base",
           "version": "0.1.0",
           "path": "packages/xarc-dev-base",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.1.0"
         },
         "packages/xarc-subapp": {
           "name": "@xarc/subapp",
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^0.3.1"
         },
         "packages/xarc-webpack": {
           "name": "@xarc/webpack",
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^11.0.8"
         },
         "packages/electrode-node-resolver": {
           "name": "electrode-node-resolver",
           "version": "2.0.2",
           "path": "packages/electrode-node-resolver",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^2.0.2"
         },
         "packages/subapp-util": {
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.1.2"
         },
         "packages/xarc-app": {
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.10"
         },
         "packages/xarc-render-context": {
           "name": "@xarc/render-context",
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -6260,6 +6658,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/subapp@0.3.1(dep)"
@@ -6270,6 +6669,7 @@
           "version": "1.1.1",
           "path": "packages/electrode-cdn-file-loader",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/webpack@11.0.8(dep)"
@@ -6280,6 +6680,7 @@
           "version": "1.1.5",
           "path": "packages/webpack-config-composer",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@xarc/app-dev@10.0.11(dep)",
             "@xarc/webpack@11.0.8(dep)"
@@ -6291,7 +6692,8 @@
           "name": "@xarc/create-app",
           "version": "6.1.1",
           "path": "packages/xarc-create-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.9"
         }
       }
     },
@@ -6336,37 +6738,43 @@
           "name": "@xarc/app",
           "version": "10.0.10",
           "path": "packages/xarc-app",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.9"
         },
         "packages/xarc-app-dev": {
           "name": "@xarc/app-dev",
           "version": "10.0.11",
           "path": "packages/xarc-app-dev",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^10.0.9"
         },
         "packages/xarc-react": {
           "name": "@xarc/react",
           "version": "0.3.2",
           "path": "packages/xarc-react",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^0.3.1"
         },
         "packages/xarc-react-query": {
           "name": "@xarc/react-query",
           "version": "0.3.1",
           "path": "packages/xarc-react-query",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^0.3.0"
         },
         "packages/xarc-react-redux": {
           "name": "@xarc/react-redux",
           "version": "0.3.1",
           "path": "packages/xarc-react-redux",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^0.3.0"
         },
         "packages/subapp-util": {
           "name": "subapp-util",
           "version": "1.1.2",
           "path": "packages/subapp-util",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app@10.0.10(dev)"
@@ -6377,6 +6785,7 @@
           "version": "0.1.0",
           "path": "packages/xarc-dev-base",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)"
@@ -6387,6 +6796,7 @@
           "version": "0.3.1",
           "path": "packages/xarc-subapp",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)"
@@ -6397,6 +6807,7 @@
           "version": "1.0.6",
           "path": "packages/xarc-render-context",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -6408,6 +6819,7 @@
           "version": "1.0.8",
           "path": "packages/xarc-tag-renderer",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -6419,6 +6831,7 @@
           "version": "11.0.8",
           "path": "packages/xarc-webpack",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)"
@@ -6429,6 +6842,7 @@
           "version": "1.1.1",
           "path": "packages/electrode-cdn-file-loader",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -6440,6 +6854,7 @@
           "version": "2.0.2",
           "path": "packages/electrode-node-resolver",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",
@@ -6451,6 +6866,7 @@
           "version": "1.1.5",
           "path": "packages/webpack-config-composer",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@xarc/create-app@6.1.1(dev)",
             "@xarc/app-dev@10.0.11(dev)",

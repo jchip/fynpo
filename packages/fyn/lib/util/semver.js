@@ -124,6 +124,14 @@ function getAsFilepath(semver) {
     return semver.substr(5);
   }
 
+  if (semver.startsWith("symlink:")) {
+    return semver.substr(8);
+  }
+
+  if (semver.startsWith("hardlink:") || semver.startsWith("weaklink:")) {
+    return semver.substr(9);
+  }
+
   const a = semver[0];
   const b = semver[1];
 
@@ -142,6 +150,24 @@ function getAsFilepath(semver) {
   }
 
   return false;
+}
+
+/**
+ * Check if a semver specified for a package looks like a path.
+ *
+ * Assumptions:
+ * - semver specified in package.json and dependency on local package should be
+ *   outside of the package.json directory, so the way to refer it is through an
+ *   absolute path or using `../`.
+ * - If user insist on having the package reside under same directory, then must
+ *   prefix path with `./`.
+ * - Do not support refering to homedir with `~`
+ *
+ * @param {*} semver semver to check
+ * @returns true or false
+ */
+function isSemverLookLikePath(semver) {
+  return Path.isAbsolute(semver) || semver.startsWith(".");
 }
 
 /*
@@ -166,21 +192,56 @@ function checkUrl(semver) {
   // semver.startsWith("git:") ||
   // semver.startswith("git+") ||
   // semver.startsWith("github:")
+  // local links: symlink:, weaklink:, hardlink:
 
   const ix = semver.indexOf(":");
-  if (ix > 0) {
+  if (ix > 1) {
     return semver.substr(0, ix);
   }
 
-  // check for github simple form
-  // - it should not start with:
-  //   - @ (scope npm package)
-  //   - . relative path
-  //   - / absolute path
-  //   - ~ user home dir path
-  const c = semver[0];
-  if (c !== "@" && c !== "." && c !== "~" && semver.indexOf("/") > 0) {
+  //
+  // check for github simple form, ie: `username/repo`
+  // - it should not look like a path to a local package
+  // - it's in the form of `x/y`
+  //
+  if (!isSemverLookLikePath(semver) && semver.indexOf("/") > 1) {
     return "github";
+  }
+
+  return false;
+}
+
+const localLinkTypes = {
+  link: "sym",
+  weaklink: "sym",
+  symlink: "sym",
+  hardlink: "hard"
+};
+
+function isLocalLinkUrl(type) {
+  return localLinkTypes[type];
+}
+
+function isSymlinkLocal(v) {
+  return v === localLinkTypes.symlink;
+}
+
+function isHardlinkLocal(v) {
+  return v === localLinkTypes.hardlink;
+}
+
+function checkRemoteUrl(semver) {
+  const urlType = checkUrl(semver);
+  if (urlType && localLinkTypes[urlType]) {
+    return false;
+  }
+  return urlType;
+}
+
+function checkLocalUrl(semver) {
+  const urlType = checkUrl(semver);
+  if (urlType && localLinkTypes[urlType]) {
+    return urlType;
   }
 
   return false;
@@ -211,37 +272,39 @@ function fixBadSv(semver) {
 /**
  * analyze a semver to detect its type
  *
- * @param {*} semver
- * @returns
+ * @param {*} semver semver to analyze
+ *
+ * @returns semver object
  */
 function analyze(semver) {
   const sv = { $: semver };
 
   const urlType = checkUrl(semver);
 
-  const setHardLocal = fp => {
+  const setLocal = (fp, type) => {
     if (fp) {
       sv.path = fp;
-      sv.localType = "hard";
+      sv.localType = type;
     }
   };
 
   if (urlType) {
-    if (urlType === "sym") {
-      sv.path = semver.substr(4);
-      sv.localType = "sym";
-    } else if (urlType === "sym1") {
-      sv.path = semver.substr(5);
-      sv.localType = "sym1";
-    } else if (urlType === "file" || urlType === "link") {
-      setHardLocal(semver.substr(5));
+    if (urlType === "hardlink") {
+      setLocal(semver.substr(5), localLinkTypes.hardlink);
+    } else if (
+      urlType === "file" ||
+      urlType === "link" ||
+      urlType === "weaklink" ||
+      urlType === "symlink"
+    ) {
+      setLocal(getAsFilepath(semver), localLinkTypes.symlink);
     } else {
       sv.urlType = urlType;
     }
   } else {
     const fpSv = getAsFilepath(semver);
     if (fpSv) {
-      setHardLocal(fpSv);
+      setLocal(fpSv, localLinkTypes.hardlink);
     } else if (!Semver.coerce(semver)) {
       sv.$ = fixBadSv(semver);
     }
@@ -289,7 +352,13 @@ const semverLib = {
 
   getAsFilepath,
 
-  checkUrl
+  checkUrl,
+  checkLocalUrl,
+  checkRemoteUrl,
+  isSemverLookLikePath,
+  isLocalLinkUrl,
+  isSymlinkLocal,
+  isHardlinkLocal
 };
 
 module.exports = semverLib;

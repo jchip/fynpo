@@ -13,13 +13,15 @@
           "name": "pkg1",
           "version": "1.0.0",
           "path": "packages/pkg1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "@scope/pkg-2": {
           "name": "@scope/pkg-2",
           "version": "1.0.0",
           "path": "@scope/pkg-2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@scope/pkg-2@1.0.0(dep)",
             "pkg1@1.0.0(dep)"
@@ -30,6 +32,7 @@
           "version": "1.0.0",
           "path": "tests/@scope/pkg1",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@scope/pkg1@1.0.0(dep)",
             "pkg1@1.0.0(dep)"
@@ -40,6 +43,7 @@
           "version": "1.0.0",
           "path": "tests/t1",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg1@1.0.0(dep)",
             "pkg1@1.0.0(dep)"
@@ -50,6 +54,7 @@
           "version": "1.0.0",
           "path": "tests/t2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)",
@@ -73,7 +78,8 @@
           "name": "pkg2",
           "version": "1.0.0",
           "path": "packages/pkg2",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {
@@ -81,25 +87,29 @@
           "name": "@scope/pkg-2",
           "version": "1.0.0",
           "path": "@scope/pkg-2",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "tests/@scope/pkg1": {
           "name": "@scope/pkg1",
           "version": "1.0.0",
           "path": "tests/@scope/pkg1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "tests/t1": {
           "name": "tpkg1",
           "version": "1.0.0",
           "path": "tests/t1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "tests/t2": {
           "name": "tpkg2",
           "version": "1.0.0",
           "path": "tests/t2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)"
@@ -120,19 +130,22 @@
           "name": "test1",
           "version": "1.0.0",
           "path": "test1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^2.0.0"
         },
         "tests/@scope/pkg1": {
           "name": "@scope/pkg1",
           "version": "1.0.0",
           "path": "tests/@scope/pkg1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^3.0.0"
         },
         "@scope/pkg-2": {
           "name": "@scope/pkg-2",
           "version": "1.0.0",
           "path": "@scope/pkg-2",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@scope/pkg-2@1.0.0(dev)",
             "test1@1.0.0(dev)"
@@ -143,6 +156,7 @@
           "version": "1.0.0",
           "path": "tests/t1",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "tpkg1@1.0.0(dev)",
             "test1@1.0.0(dev)"
@@ -153,6 +167,7 @@
           "version": "1.0.0",
           "path": "tests/t2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)",
@@ -176,7 +191,8 @@
           "name": "pkg2",
           "version": "2.0.0",
           "path": "packages/pkg2-b",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^2.0.0"
         }
       },
       "dependentsByPath": {
@@ -184,25 +200,29 @@
           "name": "@scope/pkg-2",
           "version": "1.0.0",
           "path": "@scope/pkg-2",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^1.0.0"
         },
         "tests/@scope/pkg1": {
           "name": "@scope/pkg1",
           "version": "1.0.0",
           "path": "tests/@scope/pkg1",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^1.0.0"
         },
         "tests/t1": {
           "name": "tpkg1",
           "version": "1.0.0",
           "path": "tests/t1",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^1.0.0"
         },
         "tests/t2": {
           "name": "tpkg2",
           "version": "1.0.0",
           "path": "tests/t2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)"
@@ -228,19 +248,22 @@
           "name": "pkg1",
           "version": "1.0.0",
           "path": "packages/pkg1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "test1": {
           "name": "test1",
           "version": "1.0.0",
           "path": "test1",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^1.0.0"
         },
         "packages/pkg2": {
           "name": "pkg2",
           "version": "1.0.0",
           "path": "packages/pkg2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg1@1.0.0(dep)",
             "pkg1@1.0.0(dep)"
@@ -251,6 +274,7 @@
           "version": "2.0.0",
           "path": "packages/pkg2-b",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "tpkg1@1.0.0(dev)",
             "test1@1.0.0(dev)"
@@ -262,7 +286,8 @@
           "name": "tpkg2",
           "version": "1.0.0",
           "path": "tests/t2",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       }
     },
@@ -281,13 +306,15 @@
           "name": "tpkg1",
           "version": "1.0.0",
           "path": "tests/t1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "packages/pkg1": {
           "name": "pkg1",
           "version": "1.0.0",
           "path": "packages/pkg1",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)"
@@ -298,6 +325,7 @@
           "version": "1.0.0",
           "path": "packages/pkg2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)",
@@ -309,6 +337,7 @@
           "version": "1.0.0",
           "path": "test1",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)"
@@ -319,6 +348,7 @@
           "version": "2.0.0",
           "path": "packages/pkg2-b",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)",
@@ -347,25 +377,29 @@
           "name": "pkg1",
           "version": "1.0.0",
           "path": "packages/pkg1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "packages/pkg2-b": {
           "name": "pkg2",
           "version": "2.0.0",
           "path": "packages/pkg2-b",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^3.0.0"
         },
         "test1": {
           "name": "test1",
           "version": "1.0.0",
           "path": "test1",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^1.0.0"
         },
         "packages/pkg2": {
           "name": "pkg2",
           "version": "1.0.0",
           "path": "packages/pkg2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@scope/pkg1@1.0.0(dep)",
             "pkg1@1.0.0(dep)"
@@ -392,19 +426,22 @@
           "name": "pkg1",
           "version": "1.0.0",
           "path": "packages/pkg1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "test1": {
           "name": "test1",
           "version": "1.0.0",
           "path": "test1",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^1.0.0"
         },
         "packages/pkg2": {
           "name": "pkg2",
           "version": "1.0.0",
           "path": "packages/pkg2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@scope/pkg-2@1.0.0(dep)",
             "pkg1@1.0.0(dep)"
@@ -415,6 +452,7 @@
           "version": "2.0.0",
           "path": "packages/pkg2-b",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@scope/pkg-2@1.0.0(dev)",
             "test1@1.0.0(dev)"
@@ -438,7 +476,8 @@
           "name": "icir1",
           "version": "1.0.0",
           "path": "packages/icir1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {},
@@ -459,7 +498,8 @@
           "name": "icir1",
           "version": "1.0.0",
           "path": "packages/icir1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {
@@ -467,7 +507,8 @@
           "name": "icir2",
           "version": "1.0.0",
           "path": "packages/icir2",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "hasCircular": true
@@ -487,7 +528,8 @@
           "name": "icir3",
           "version": "1.0.0",
           "path": "packages/icir3",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {
@@ -495,7 +537,8 @@
           "name": "icir1",
           "version": "1.0.0",
           "path": "packages/icir1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "pathOfCirculars": [
@@ -518,7 +561,8 @@
           "name": "icir2",
           "version": "1.0.0",
           "path": "packages/icir2",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {
@@ -526,13 +570,15 @@
           "name": "icir3",
           "version": "1.0.0",
           "path": "packages/icir3",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "packages/ifoo1": {
           "name": "ifoo1",
           "version": "1.0.0",
           "path": "packages/ifoo1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "pathOfCirculars": [
@@ -555,7 +601,8 @@
           "name": "cir1",
           "version": "1.0.0",
           "path": "packages/cir1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {},
@@ -576,7 +623,8 @@
           "name": "cir1",
           "version": "1.0.0",
           "path": "packages/cir1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {
@@ -584,7 +632,8 @@
           "name": "cir1",
           "version": "1.0.0",
           "path": "packages/cir1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "pathOfCirculars": [
@@ -607,7 +656,8 @@
           "name": "cir2",
           "version": "1.0.0",
           "path": "packages/cir2",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {
@@ -615,13 +665,15 @@
           "name": "cir2",
           "version": "1.0.0",
           "path": "packages/cir2",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "packages/foo1": {
           "name": "foo1",
           "version": "1.0.0",
           "path": "packages/foo1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "pathOfCirculars": [
@@ -644,13 +696,15 @@
           "name": "pkg1",
           "version": "1.0.0",
           "path": "packages/pkg1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "@scope/pkg-2": {
           "name": "@scope/pkg-2",
           "version": "1.0.0",
           "path": "@scope/pkg-2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@scope/pkg-2@1.0.0(dep)",
             "pkg1@1.0.0(dep)"
@@ -661,6 +715,7 @@
           "version": "1.0.0",
           "path": "tests/@scope/pkg1",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@scope/pkg1@1.0.0(dep)",
             "pkg1@1.0.0(dep)"
@@ -671,6 +726,7 @@
           "version": "1.0.0",
           "path": "tests/t1",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg1@1.0.0(dep)",
             "pkg1@1.0.0(dep)"
@@ -681,6 +737,7 @@
           "version": "1.0.0",
           "path": "tests/t2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)",
@@ -704,7 +761,8 @@
           "name": "pkg2",
           "version": "1.0.0",
           "path": "packages/pkg2",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {
@@ -712,25 +770,29 @@
           "name": "@scope/pkg-2",
           "version": "1.0.0",
           "path": "@scope/pkg-2",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "tests/@scope/pkg1": {
           "name": "@scope/pkg1",
           "version": "1.0.0",
           "path": "tests/@scope/pkg1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "tests/t1": {
           "name": "tpkg1",
           "version": "1.0.0",
           "path": "tests/t1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "tests/t2": {
           "name": "tpkg2",
           "version": "1.0.0",
           "path": "tests/t2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)"
@@ -751,19 +813,22 @@
           "name": "test1",
           "version": "1.0.0",
           "path": "test1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^2.0.0"
         },
         "tests/@scope/pkg1": {
           "name": "@scope/pkg1",
           "version": "1.0.0",
           "path": "tests/@scope/pkg1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^3.0.0"
         },
         "@scope/pkg-2": {
           "name": "@scope/pkg-2",
           "version": "1.0.0",
           "path": "@scope/pkg-2",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@scope/pkg-2@1.0.0(dev)",
             "test1@1.0.0(dev)"
@@ -774,6 +839,7 @@
           "version": "1.0.0",
           "path": "tests/t1",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "tpkg1@1.0.0(dev)",
             "test1@1.0.0(dev)"
@@ -784,6 +850,7 @@
           "version": "1.0.0",
           "path": "tests/t2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)",
@@ -807,7 +874,8 @@
           "name": "pkg2",
           "version": "2.0.0",
           "path": "packages/pkg2-b",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^2.0.0"
         }
       },
       "dependentsByPath": {
@@ -815,25 +883,29 @@
           "name": "@scope/pkg-2",
           "version": "1.0.0",
           "path": "@scope/pkg-2",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^1.0.0"
         },
         "tests/@scope/pkg1": {
           "name": "@scope/pkg1",
           "version": "1.0.0",
           "path": "tests/@scope/pkg1",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^1.0.0"
         },
         "tests/t1": {
           "name": "tpkg1",
           "version": "1.0.0",
           "path": "tests/t1",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^1.0.0"
         },
         "tests/t2": {
           "name": "tpkg2",
           "version": "1.0.0",
           "path": "tests/t2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)"
@@ -859,19 +931,22 @@
           "name": "pkg1",
           "version": "1.0.0",
           "path": "packages/pkg1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "test1": {
           "name": "test1",
           "version": "1.0.0",
           "path": "test1",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^1.0.0"
         },
         "packages/pkg2": {
           "name": "pkg2",
           "version": "1.0.0",
           "path": "packages/pkg2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg1@1.0.0(dep)",
             "pkg1@1.0.0(dep)"
@@ -882,6 +957,7 @@
           "version": "2.0.0",
           "path": "packages/pkg2-b",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "tpkg1@1.0.0(dev)",
             "test1@1.0.0(dev)"
@@ -893,7 +969,8 @@
           "name": "tpkg2",
           "version": "1.0.0",
           "path": "tests/t2",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       }
     },
@@ -912,13 +989,15 @@
           "name": "tpkg1",
           "version": "1.0.0",
           "path": "tests/t1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "packages/pkg1": {
           "name": "pkg1",
           "version": "1.0.0",
           "path": "packages/pkg1",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)"
@@ -929,6 +1008,7 @@
           "version": "1.0.0",
           "path": "packages/pkg2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)",
@@ -940,6 +1020,7 @@
           "version": "1.0.0",
           "path": "test1",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)"
@@ -950,6 +1031,7 @@
           "version": "2.0.0",
           "path": "packages/pkg2-b",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "tpkg2@1.0.0(dep)",
             "tpkg1@1.0.0(dep)",
@@ -978,25 +1060,29 @@
           "name": "pkg1",
           "version": "1.0.0",
           "path": "packages/pkg1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "packages/pkg2-b": {
           "name": "pkg2",
           "version": "2.0.0",
           "path": "packages/pkg2-b",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^3.0.0"
         },
         "test1": {
           "name": "test1",
           "version": "1.0.0",
           "path": "test1",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^1.0.0"
         },
         "packages/pkg2": {
           "name": "pkg2",
           "version": "1.0.0",
           "path": "packages/pkg2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@scope/pkg1@1.0.0(dep)",
             "pkg1@1.0.0(dep)"
@@ -1023,19 +1109,22 @@
           "name": "pkg1",
           "version": "1.0.0",
           "path": "packages/pkg1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "test1": {
           "name": "test1",
           "version": "1.0.0",
           "path": "test1",
-          "depSection": "dev"
+          "depSection": "dev",
+          "semver": "^1.0.0"
         },
         "packages/pkg2": {
           "name": "pkg2",
           "version": "1.0.0",
           "path": "packages/pkg2",
           "depSection": "dep",
+          "semver": "",
           "indirectSteps": [
             "@scope/pkg-2@1.0.0(dep)",
             "pkg1@1.0.0(dep)"
@@ -1046,6 +1135,7 @@
           "version": "2.0.0",
           "path": "packages/pkg2-b",
           "depSection": "dev",
+          "semver": "",
           "indirectSteps": [
             "@scope/pkg-2@1.0.0(dev)",
             "test1@1.0.0(dev)"
@@ -1071,7 +1161,8 @@
           "name": "cir2",
           "version": "1.0.0",
           "path": "packages/cir2",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {
@@ -1079,13 +1170,15 @@
           "name": "cir2",
           "version": "1.0.0",
           "path": "packages/cir2",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "packages/foo1": {
           "name": "foo1",
           "version": "1.0.0",
           "path": "packages/foo1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "pathOfCirculars": [
@@ -1108,7 +1201,8 @@
           "name": "cir1",
           "version": "1.0.0",
           "path": "packages/cir1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {
@@ -1116,7 +1210,8 @@
           "name": "cir1",
           "version": "1.0.0",
           "path": "packages/cir1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "pathOfCirculars": [
@@ -1139,7 +1234,8 @@
           "name": "cir1",
           "version": "1.0.0",
           "path": "packages/cir1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {},
@@ -1160,7 +1256,8 @@
           "name": "icir2",
           "version": "1.0.0",
           "path": "packages/icir2",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {
@@ -1168,13 +1265,15 @@
           "name": "icir3",
           "version": "1.0.0",
           "path": "packages/icir3",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         },
         "packages/ifoo1": {
           "name": "ifoo1",
           "version": "1.0.0",
           "path": "packages/ifoo1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "pathOfCirculars": [
@@ -1197,7 +1296,8 @@
           "name": "icir3",
           "version": "1.0.0",
           "path": "packages/icir3",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {
@@ -1205,7 +1305,8 @@
           "name": "icir1",
           "version": "1.0.0",
           "path": "packages/icir1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "pathOfCirculars": [
@@ -1228,7 +1329,8 @@
           "name": "icir1",
           "version": "1.0.0",
           "path": "packages/icir1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {
@@ -1236,7 +1338,8 @@
           "name": "icir2",
           "version": "1.0.0",
           "path": "packages/icir2",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "hasCircular": true
@@ -1256,7 +1359,8 @@
           "name": "icir1",
           "version": "1.0.0",
           "path": "packages/icir1",
-          "depSection": "dep"
+          "depSection": "dep",
+          "semver": "^1.0.0"
         }
       },
       "dependentsByPath": {},

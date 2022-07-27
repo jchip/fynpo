@@ -17,7 +17,8 @@ const { runNpmScript } = require("./util/run-npm-script");
 const xaa = require("./util/xaa");
 const { AggregateError } = require("@jchip/error");
 
-const { RESOLVE_ORDER, RSEMVERS, LOCK_RSEMVERS, SEMVER } = require("./symbols");
+const { RESOLVE_ORDER, RSEMVERS, LOCK_RSEMVERS, SEMVER, DEP_ITEM } = require("./symbols");
+const semverUtil = require("./util/semver");
 
 /* eslint-disable max-statements,no-magic-numbers,no-empty,complexity,prefer-template,max-len, max-depth, no-param-reassign */
 
@@ -69,8 +70,22 @@ class PkgInstaller {
     }
     depInfo.linkLocal = true;
 
+    // const depItem = depInfo[DEP_ITEM];
     const vdir = this._fyn.getInstalledPkgDir(depInfo.name, depInfo.version, depInfo);
-    if (depInfo.local === "hard") {
+
+    if (semverUtil.isSymlinkLocal(depInfo.local)) {
+      const outDir = Path.join(vdir, "..");
+      try {
+        await Fs.unlink(vdir);
+      } catch {}
+      try {
+        if (fynTil.hasNpmScope(depInfo.name)) {
+          await Fs.$.mkdirp(outDir);
+        }
+      } catch {}
+      const relTargetDir = Path.relative(outDir, depInfo.dir);
+      await Fs.symlink(relTargetDir, vdir, "dir");
+    } else if (depInfo.local === "hard") {
       const { sourceMaps } = this._fyn._options;
       this._localLinks[Path.relative(this._fyn._cwd, vdir)] = {
         srcDir: Path.relative(this._fyn._cwd, depInfo.dir),
@@ -80,7 +95,7 @@ class PkgInstaller {
     } else {
       // await this._depLinker.symlinkLocalPackage(vdir, depInfo.dir);
       // await this._depLinker.loadLocalPackageAppFynLink(depInfo, vdir);
-      throw new Error("only hard linking local mode supported now.  symlinking local deprecated");
+      throw new Error(`Unknown local package link type ${depInfo.local}`);
     }
   }
 
@@ -95,7 +110,7 @@ class PkgInstaller {
     for (const depInfo of this.toLink) {
       // can't touch package.json if package is a symlink to the real
       // local package.
-      if (depInfo.local === "sym" || depInfo._removed) {
+      if (semverUtil.isSymlinkLocal(depInfo.local) || depInfo._removed) {
         continue;
       }
       depInfo.json._from = `${depInfo.name}@${depInfo[SEMVER]}`;
@@ -105,6 +120,9 @@ class PkgInstaller {
         const pkgJson = depInfo.json;
         logger.debug("linked dependencies for", pkgJson.name, pkgJson.version);
       }
+      //
+      // write some extra fields to package.json like npm does
+      //
       if (depInfo.str.trim() === outputStr.trim()) {
         continue;
       }

@@ -9,6 +9,7 @@ const _ = require("lodash");
 const logger = require("./logger");
 const logFormat = require("./util/log-format");
 const fynTil = require("./util/fyntil");
+const semverLib = require("./util/semver");
 
 /*
  * generate data to link all packages' resolution
@@ -162,15 +163,15 @@ class PkgDepLinker {
     throw new Error("symlinking local package deprecated, only hard linking.");
   }
 
-  _createLinkName(targetNmDir, name) {
-    const sha1 = Crypto.createHash("sha1")
-      .update(targetNmDir)
-      .update(name)
-      .digest("base64")
-      .replace(/\//g, "_")
-      .replace(/=/g, "");
-    return `${name.replace(/[@\/]/g, "_")}-${sha1}`;
-  }
+  // _createLinkName(targetNmDir, name) {
+  //   const sha1 = Crypto.createHash("sha1")
+  //     .update(targetNmDir)
+  //     .update(name)
+  //     .digest("base64")
+  //     .replace(/\//g, "_")
+  //     .replace(/=/g, "");
+  //   return `${name.replace(/[@\/]/g, "_")}-${sha1}`;
+  // }
 
   //
   // Save fynlink data of a local package for the package and the app.
@@ -205,7 +206,7 @@ class PkgDepLinker {
     }
 
     // for a locally linked package, the dep data is in the __fyn_link__ JSON file
-    if (depInfo.local === "sym") {
+    if (semverLib.isSymlinkLocal(depInfo.local)) {
       throw new Error("sym linking local package deprecated. only hard linking.");
 
       // await this.loadLocalPackageAppFynLink(depInfo, installedDir);

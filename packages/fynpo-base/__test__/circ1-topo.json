@@ -1,0 +1,298 @@
+{
+  "sorted": [
+    {
+      "pkgInfo": {
+        "name": "x",
+        "version": "1.0.0",
+        "path": "packages/x",
+        "pkgDir": "x"
+      },
+      "localDepsByPath": {},
+      "dependentsByPath": {
+        "packages/b": {
+          "name": "b",
+          "version": "1.0.0",
+          "path": "packages/b",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      }
+    },
+    {
+      "pkgInfo": {
+        "name": "b",
+        "version": "1.0.0",
+        "path": "packages/b",
+        "pkgDir": "b",
+        "dependencies": {
+          "c": "^1",
+          "x": "^1"
+        }
+      },
+      "localDepsByPath": {
+        "packages/c": {
+          "name": "c",
+          "version": "1.0.0",
+          "path": "packages/c",
+          "depSection": "dep",
+          "semver": "^1"
+        },
+        "packages/x": {
+          "name": "x",
+          "version": "1.0.0",
+          "path": "packages/x",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      },
+      "dependentsByPath": {
+        "packages/a": {
+          "name": "a",
+          "version": "1.0.0",
+          "path": "packages/a",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      },
+      "hasCircular": true
+    },
+    {
+      "pkgInfo": {
+        "name": "d",
+        "version": "1.0.0",
+        "path": "packages/d",
+        "pkgDir": "d",
+        "dependencies": {
+          "c": "^1"
+        }
+      },
+      "localDepsByPath": {
+        "packages/c": {
+          "name": "c",
+          "version": "1.0.0",
+          "path": "packages/c",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      },
+      "dependentsByPath": {},
+      "hasCircular": true
+    },
+    {
+      "pkgInfo": {
+        "name": "c",
+        "version": "1.0.0",
+        "path": "packages/c",
+        "pkgDir": "c",
+        "dependencies": {
+          "a": "^1"
+        }
+      },
+      "localDepsByPath": {
+        "packages/a": {
+          "name": "a",
+          "version": "1.0.0",
+          "path": "packages/a",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      },
+      "dependentsByPath": {
+        "packages/b": {
+          "name": "b",
+          "version": "1.0.0",
+          "path": "packages/b",
+          "depSection": "dep",
+          "semver": "^1"
+        },
+        "packages/d": {
+          "name": "d",
+          "version": "1.0.0",
+          "path": "packages/d",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      },
+      "hasCircular": true
+    },
+    {
+      "pkgInfo": {
+        "name": "a",
+        "version": "1.0.0",
+        "path": "packages/a",
+        "pkgDir": "a",
+        "dependencies": {
+          "b": "^1"
+        }
+      },
+      "localDepsByPath": {
+        "packages/b": {
+          "name": "b",
+          "version": "1.0.0",
+          "path": "packages/b",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      },
+      "dependentsByPath": {
+        "packages/c": {
+          "name": "c",
+          "version": "1.0.0",
+          "path": "packages/c",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      },
+      "hasCircular": true
+    }
+  ],
+  "noCircSorted": [
+    {
+      "pkgInfo": {
+        "name": "x",
+        "version": "1.0.0",
+        "path": "packages/x",
+        "pkgDir": "x"
+      },
+      "localDepsByPath": {},
+      "dependentsByPath": {
+        "packages/b": {
+          "name": "b",
+          "version": "1.0.0",
+          "path": "packages/b",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      }
+    }
+  ],
+  "circulars": [
+    {
+      "pkgInfo": {
+        "name": "a",
+        "version": "1.0.0",
+        "path": "packages/a",
+        "pkgDir": "a",
+        "dependencies": {
+          "b": "^1"
+        }
+      },
+      "localDepsByPath": {
+        "packages/b": {
+          "name": "b",
+          "version": "1.0.0",
+          "path": "packages/b",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      },
+      "dependentsByPath": {
+        "packages/c": {
+          "name": "c",
+          "version": "1.0.0",
+          "path": "packages/c",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      },
+      "hasCircular": true
+    },
+    {
+      "pkgInfo": {
+        "name": "b",
+        "version": "1.0.0",
+        "path": "packages/b",
+        "pkgDir": "b",
+        "dependencies": {
+          "c": "^1",
+          "x": "^1"
+        }
+      },
+      "localDepsByPath": {
+        "packages/c": {
+          "name": "c",
+          "version": "1.0.0",
+          "path": "packages/c",
+          "depSection": "dep",
+          "semver": "^1"
+        },
+        "packages/x": {
+          "name": "x",
+          "version": "1.0.0",
+          "path": "packages/x",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      },
+      "dependentsByPath": {
+        "packages/a": {
+          "name": "a",
+          "version": "1.0.0",
+          "path": "packages/a",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      },
+      "hasCircular": true
+    },
+    {
+      "pkgInfo": {
+        "name": "c",
+        "version": "1.0.0",
+        "path": "packages/c",
+        "pkgDir": "c",
+        "dependencies": {
+          "a": "^1"
+        }
+      },
+      "localDepsByPath": {
+        "packages/a": {
+          "name": "a",
+          "version": "1.0.0",
+          "path": "packages/a",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      },
+      "dependentsByPath": {
+        "packages/b": {
+          "name": "b",
+          "version": "1.0.0",
+          "path": "packages/b",
+          "depSection": "dep",
+          "semver": "^1"
+        },
+        "packages/d": {
+          "name": "d",
+          "version": "1.0.0",
+          "path": "packages/d",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      },
+      "hasCircular": true
+    },
+    {
+      "pkgInfo": {
+        "name": "d",
+        "version": "1.0.0",
+        "path": "packages/d",
+        "pkgDir": "d",
+        "dependencies": {
+          "c": "^1"
+        }
+      },
+      "localDepsByPath": {
+        "packages/c": {
+          "name": "c",
+          "version": "1.0.0",
+          "path": "packages/c",
+          "depSection": "dep",
+          "semver": "^1"
+        }
+      },
+      "dependentsByPath": {},
+      "hasCircular": true
+    }
+  ]
+}

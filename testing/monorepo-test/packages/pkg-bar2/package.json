@@ -1,5 +1,5 @@
 {
-  "name": "pkg-bar",
+  "name": "pkg-bar2",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -20,15 +20,7 @@
     "url": ""
   },
   "dependencies": {
-    "pkg-foo": "symlink:^1.0.0",
-    "pkg-foo2": "^1.0.0",
-    "@test/pkg-s1": "symlink:../pkg-s1",
-    "pkg-bar2": "symlink:^1.0.0"
+    "pkg-bar": "^1.0.0"
   },
-  "devDependencies": {
-    "@test/pkg-w1": "weaklink:^1.0.0"
-  },
-  "optionalDependencies": {
-    "@test/pkg-s2": "^1.0.0"
-  }
+  "devDependencies": {}
 }

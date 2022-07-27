@@ -1,0 +1,29 @@
+{
+  "name": "@test/pkg-s1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "homepage": "",
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "files": [
+    "src",
+    "lib",
+    "dist"
+  ],
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "dist": {
+    "localPath": "../pkg-s1",
+    "fullPath": "/Users/jchen26/dev/pub/fynpo/testing/monorepo-test/packages/pkg-s1"
+  },
+  "_fyn": {},
+  "_from": "@test/pkg-s1@../pkg-s1",
+  "_id": "@test/pkg-s1@1.0.0-fynlocal_h"
+}

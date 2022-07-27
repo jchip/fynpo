@@ -10,6 +10,15 @@ import { posixify } from "./util";
 import isPathInside from "is-path-inside";
 
 /**
+ * The types of linking available for installing dep from a local package
+ *
+ * `symlink` - create a symlink in `node_modules` to the dir of local pkg, which should handle its own deps
+ * `hardlink` - hard link only published files, and install the downstream deps
+ * `weaklink` - just create a symlink but don't add the pkg to dep graph
+ */
+export type DepLinkType = "symlink" | "hardlink" | "weaklink";
+
+/**
  * Basic information about a package: name, version, and its path in the monorepo
  */
 export type PackageBasicInfo = {
@@ -57,6 +66,10 @@ const DepSectionMap = {
  */
 export function getDepSection(fullName: string): DEP_SECTIONS {
   return DepSectionMap[fullName] || "dep";
+}
+
+export function isWeakLink(semver: string): boolean {
+  return semver.startsWith("weaklink:");
 }
 
 /**
@@ -167,6 +180,10 @@ export type PackageDepRef = PackageBasicInfo & {
    * - `dep`, `dev`, `opt`, `peer`
    */
   depSection: DEP_SECTIONS;
+  /**
+   * The semver specified
+   */
+  semver: string;
   /**
    * if the dependency was pulled by an intermediate package,
    * this list the packages that lead up to it.
@@ -310,6 +327,21 @@ export function pkgInfoId(info: PackageBasicInfo) {
   return pkgId(info.name, info.version);
 }
 
+// don't take optionalDependecies or peerDependencies into consideration
+// TODO: also do not consider devDependencies
+// - should calculate detail circular dep info and return that for logging
+// - when fyn is about to do local build for a dep, it should check if there's
+//   circular dep and avoid it.
+const ignoreDepSections: DEP_SECTIONS[] = ["opt", "peer"];
+
+export function skipDepInGraph(ref: PackageDepRef): boolean {
+  return (
+    ignoreDepSections.includes(ref.depSection) ||
+    // don't consider weaklink deps as part of the graph
+    isWeakLink(ref.semver)
+  );
+}
+
 /**
  * fynpo dep graph manager
  */
@@ -380,13 +412,6 @@ export class FynpoDepGraph {
     const depRecords: Record<string, DepCount> = {};
     const changed = [];
 
-    // don't take optionalDependecies or peerDependencies into consideration
-    // TODO: also do not consider devDependencies
-    // - should calculate detail circular dep info and return that for logging
-    // - when fyn is about to do local build for a dep, it should check if there's
-    //   circular dep and avoid it.
-    const ignoreDepSections = ["opt", "peer"];
-
     //
     // first start with packages that has zero local dependencies
     //
@@ -394,7 +419,7 @@ export class FynpoDepGraph {
       const depData = this.depMapByPath[path];
       const count = Object.keys(depData.localDepsByPath).filter((k) => {
         if (
-          ignoreDepSections.includes(depData.localDepsByPath[k].depSection) ||
+          skipDepInGraph(depData.localDepsByPath[k]) ||
           (avoidCircs && this.depMapByPath[depData.localDepsByPath[k].path].hasCircular)
         ) {
           return false;
@@ -426,7 +451,7 @@ export class FynpoDepGraph {
         for (const path in record.depData.dependentsByPath) {
           const record2 = depRecords[path];
           /* istanbul ignore else */
-          if (record2.count > 0) {
+          if (!skipDepInGraph(record.depData.dependentsByPath[path]) && record2.count > 0) {
             record2.count--;
             if (record2.count === 0) {
               changed.push(path);
@@ -687,7 +712,10 @@ export class FynpoDepGraph {
           this.resolvedCache[semId] = pkgInfoId(depPkg);
         }
 
-        this.addDep(pkgInfo, depPkg, section);
+        // add dep if it's not weaklink:
+        if (!isWeakLink(semver)) {
+          this.addDep(pkgInfo, depPkg, section, undefined, semver);
+        }
       });
     };
 
@@ -787,6 +815,7 @@ export class FynpoDepGraph {
    * @param depPkg package to depend on
    * @param depSection section in package.json
    * @param indirectSteps intermediate dep steps
+   * @param semver the original semver specified
    *
    * @returns boolean - whether dep is added (it's not if it already exist)
    */
@@ -794,7 +823,8 @@ export class FynpoDepGraph {
     pkgInfo: FynpoPackageInfo,
     depPkg: FynpoPackageInfo,
     depSection: DEP_SECTIONS,
-    indirectSteps?: string[]
+    indirectSteps?: string[],
+    semver = ""
   ) {
     const dataPkg = this.depMapByPath[pkgInfo.path];
     const dataDep = this.depMapByPath[depPkg.path];
@@ -809,6 +839,7 @@ export class FynpoDepGraph {
       version: depPkg.version,
       path: depPkg.path,
       depSection,
+      semver,
     };
 
     dataDep.dependentsByPath[pkgInfo.path] = {
@@ -816,6 +847,7 @@ export class FynpoDepGraph {
       version: pkgInfo.version,
       path: pkgInfo.path,
       depSection,
+      semver,
     };
 
     if (indirectSteps) {
@@ -880,7 +912,7 @@ export class FynpoDepGraph {
         }
 
         // check if pkg is already part of localDeps
-        if (!dataPkg.localDepsByPath[depInfo.path]) {
+        if (!dataPkg.localDepsByPath[depInfo.path] && !isWeakLink(depRef.semver)) {
           change++;
           this.addDep(pkgInfo, depInfo, sec, stepsCopy);
         }

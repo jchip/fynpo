@@ -145,14 +145,7 @@ class PkgSrcManager {
   }
 
   getSemverAsFilepath(semver) {
-    if (semver.startsWith("file:")) {
-      return semver.substr(5);
-    } else if (semver.startsWith("/") || semver.startsWith("./") || semver.startsWith("../")) {
-      return semver;
-    } else if (semver.startsWith("~/")) {
-      return Path.join(os.homedir(), semver.substr(1));
-    }
-    return false;
+    return semver.getAsFilepath(semver);
   }
 
   getLocalPackageMeta(item, resolved) {

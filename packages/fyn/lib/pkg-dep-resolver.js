@@ -17,7 +17,7 @@ const simpleSemverCompare = semverUtil.simpleCompare;
 const logFormat = require("./util/log-format");
 const { LONG_WAIT_META } = require("./log-items");
 const { checkPkgOsCpu, relativePath, unSlashNpmScope } = require("./util/fyntil");
-const { getDepSection, makeDepStep } = require("@fynpo/base");
+const { getDepSection, makeDepStep, isWeakLink } = require("@fynpo/base");
 const xaa = require("./util/xaa");
 const { AggregateError } = require("@jchip/error");
 
@@ -271,6 +271,10 @@ class PkgDepResolver {
               return false;
             }
           }
+          if (x && x.localType && x.localType !== "hard") {
+            logger.info("skip build local for symlink local package at", x.semverPath);
+            return false;
+          }
           return x;
         });
 
@@ -380,7 +384,8 @@ class PkgDepResolver {
    * @param {*} dev
    * @param {*} noPrefetch
    * @param {*} deepResolve
-   * @returns
+   *
+   * @returns dependencies items
    */
   makePkgDepItems(pkg, depItem, dev, noPrefetch, deepResolve) {
     const bundled = pkg.bundleDependencies;
@@ -448,7 +453,9 @@ class PkgDepResolver {
     };
 
     const joinFynDep = depSec => {
-      if (!this._fyn.fynlocal) return pkg[depSec];
+      if (!this._fyn.fynlocal) {
+        return pkg[depSec];
+      }
 
       const deps = Object.assign({}, pkg[depSec]);
 
@@ -467,22 +474,36 @@ class PkgDepResolver {
         for (const name in deps) {
           if (
             this._fyn.checkNoFynLocal(name) ||
-            !fynpo.graph.getPackageByName(name) ||
-            semverUtil.checkUrl(deps[name])
+            // fynpo don't have a local package with the given name
+            !fynpo.graph.getPackageByName(name)
           ) {
             continue;
+          }
+
+          const urlType = semverUtil.checkUrl(deps[name]);
+          let semver = deps[name];
+
+          if (urlType) {
+            if (!semverUtil.isLocalLinkUrl(urlType)) {
+              continue;
+            }
+            semver = semverUtil.analyze(semver).path;
+            if (semverUtil.isSemverLookLikePath(semver)) {
+              continue;
+            }
           }
 
           //
           // Check if there is a fynpo package that match 'name@semver'?
           //
-          const semver = this.getAutoSemver(deps[name]);
+          // const semver = this.getAutoSemver(deps[name]);
           const fynpoPkg = fynpo.graph.resolvePackage(name, semver, false);
 
           if (fynpoPkg) {
             locals.push(fynpoPkg);
             const fullPkgDir = Path.join(fynpo.dir, fynpoPkg.path);
-            fynDeps[name] = relativePath(fromDir, fullPkgDir, true);
+            fynDeps[name] =
+              (urlType ? `${urlType}:` : "") + relativePath(fromDir, fullPkgDir, true);
           } else {
             const dispName = logFormat.pkgId(name);
             const versions = fynpo.graph.packages.byName[name].map(x => x.version).join(", ");
@@ -498,7 +519,10 @@ class PkgDepResolver {
             const steps = revSteps.reverse();
             locals.forEach(x => {
               const sec = getDepSection(depSec);
-              if (fynpo.graph.addDep(fynpoPkg, x, sec, steps)) {
+              if (
+                !isWeakLink(fynpoPkg[depSec][x.name]) &&
+                fynpo.graph.addDep(fynpoPkg, x, sec, steps)
+              ) {
                 fynpo.indirects.push({
                   fromPkg: _.pick(fynpoPkg, ["name", "version", "path"]),
                   onPkg: _.pick(x, ["name", "version", "path"]),
@@ -528,8 +552,9 @@ class PkgDepResolver {
         }
         const dispSec = chalk.cyan(`fyn.${depSec}`);
         const dispSemver = chalk.blue(fynDeps[name]);
+        const svObj = semverUtil.analyze(fynDeps[name]);
         try {
-          Fs.statSync(Path.join(fromDir, fynDeps[name]));
+          Fs.statSync(Path.join(fromDir, svObj.path));
           deps[name] = fynDeps[name];
           if (!this._options.deDuping) {
             logger.verbose(`${dispSec} ${dispName} of ${ownerName} will use`, dispSemver);
@@ -721,7 +746,7 @@ class PkgDepResolver {
     // TODO: remove support for local sym linked packages
     if (
       !pkgV.extracted &&
-      pkgV.local !== "sym" &&
+      !semverUtil.isSymlinkLocal(pkgV.local) &&
       (this._fyn.alwaysFetchDist ||
         (metaJson._hasShrinkwrap && !metaJson._shrinkwrap) ||
         metaJson.bundleDependencies ||
@@ -755,8 +780,15 @@ class PkgDepResolver {
         if (deepRes) {
           logger.debug("Auto deep resolving", logFormat.pkgId(item));
         }
-        // Alice, do not go down the rabbit hole, it will never end.
-        if (!item.isCircular()) {
+
+        //
+        // Resolved a package, got its dependencies, now need to add them to the
+        // queue in order to fetch their meta and resolve to a version.
+        // - However, avoid circulars which will lead to infinite loop.
+        // - Also avoid doing this if dep item is a symlink local package, which would have to
+        //   provide its own node modules.
+        //
+        if (!item.isCircular() && !semverUtil.isSymlinkLocal(item.localType)) {
           pkgDepth.depItems.push(
             this.makePkgDepItems(meta.versions[resolved], item, false, deepRes)
           );
@@ -1024,7 +1056,14 @@ ${item.depPath.join(" > ")}`
   }
 
   _resolveWithMeta({ item, meta, force, noLocal, lockOnly }) {
-    let resolved = item.nestedResolve(item.name, item.semver);
+    //
+    // a symlink local package provides its own node modules, which can't be used
+    // for the current install, so no nest resolve from them.
+    // strictly speaking, this is unneccessary because we don't resolve deps of a symlink dep item
+    // so there are nothing to nest resolve from anyways, but checking it here avoids the useless
+    // nestedResolve work
+    //
+    let resolved = !item.isSymlinkLocal() && item.nestedResolve(item.name, item.semver);
 
     if (resolved) {
       if (!meta.versions.hasOwnProperty(resolved)) {
