@@ -37,7 +37,7 @@ const {
 } = require("./symbols");
 
 const failMetaMsg = name =>
-  `Unable to retrieve meta for package ${name} - If you've updated its version recently, try to run fyn with '--refresh-meta' again`;
+  `Unable resolve version for package ${name} - If you've updated its version recently, try to run fyn with '--refresh-meta' again`;
 
 /*
  * Package dependencies resolver
@@ -1048,9 +1048,11 @@ class PkgDepResolver {
     return meta.versions ? meta.versions[resolved] && resolved : resolved;
   }
 
-  _failUnsatisfySemver(item) {
+  _failUnsatisfySemver(item, src) {
     throw new Error(
-      `Unable to find a version from lock data that satisfied semver ${item.name}@${item.semver}
+      `Unable to find a version of package ${item.name} from ${src} that satisfied semver ${
+        item.name
+      }@${item.semver}
 ${item.depPath.join(" > ")}`
     );
   }
@@ -1075,7 +1077,7 @@ ${item.depPath.join(" > ")}`
 
     if (!resolved) {
       if (!force) return false;
-      this._failUnsatisfySemver(item);
+      this._failUnsatisfySemver(item, "meta");
     }
 
     if (semverUtil.isLocal(resolved)) {
@@ -1210,7 +1212,7 @@ ${item.depPath.join(" > ")}`
     }
 
     if (force) {
-      this._failUnsatisfySemver(item);
+      this._failUnsatisfySemver(item, "lock data");
     }
 
     // unable to resolve with lock data
