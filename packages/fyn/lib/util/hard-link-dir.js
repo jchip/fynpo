@@ -17,7 +17,8 @@ const fynTil = require("./fyntil");
 const logger = require("../logger");
 const { SourceMapGenerator } = require("source-map");
 const ci = require("ci-info");
-
+const optionalRequire = require("optional-require")(eval("require")); // eslint-disable-line
+const rclonefile = optionalRequire("../rclonefile");
 /**
  * Hard link a file
  *
@@ -53,13 +54,41 @@ async function linkFile(srcFp, destFp, srcStat) {
 }
 
 /**
+ * Copy on write link file
+ *
+ * - If not supported, then use linkFile
+ *
+ * @param {*} srcFp
+ * @param {*} destFp
+ * @param {*} srcStat
+ */
+async function cowLinkFile(srcFp, destFp, srcStat) {
+  if (!rclonefile) {
+    return linkFile(srcFp, destFp, srcStat);
+  }
+
+  try {
+    return await rclonefile.cloneFile(srcFp, destFp);
+  } catch (e) {
+    if (!(e.code === "EEXIST" || e.message === "File exists")) {
+      throw e;
+    }
+
+    await Fs.unlink(destFp);
+    return rclonefile.cloneFile(srcFp, destFp);
+  }
+}
+
+/**
  * Copy a file
  * @param {*} srcFp
  * @param {*} destFp
  * @returns
  */
 async function copyFile(srcFp, destFp) {
-  if (Fs.copyFile) {
+  if (rclonefile) {
+    return rclonefile.cloneFile(srcFp, destFp);
+  } else if (Fs.copyFile) {
     return Fs.copyFile(srcFp, destFp);
   } else {
     const srcData = await Fs.readFile(srcFp);
@@ -321,7 +350,7 @@ async function linkPackTree({ tree, src, dest, sym1, sourceMaps }) {
     if (fynTil.strToBool(process.env.FYN_LOCAL_COPY_MODE)) {
       await copyFile(srcFp, destFp);
     } else {
-      await linkFile(srcFp, destFp);
+      await cowLinkFile(srcFp, destFp);
     }
 
     await handleSourceMap({ file, destFiles, src, dest, srcFp, destFp, sourceMaps });
@@ -367,6 +396,7 @@ async function linkSym1(src, dest) {
 module.exports = {
   link,
   linkFile,
+  cowLinkFile,
   copyFile,
   linkSym1,
   generatePackTree,
