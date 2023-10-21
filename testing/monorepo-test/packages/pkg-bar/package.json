@@ -6,7 +6,7 @@
   "homepage": "",
   "license": "UNLICENSED",
   "scripts": {
-    "test": "mocha -c test"
+    "test": "echo test script for monorepo-test/packages/pkg-bar"
   },
   "author": "",
   "files": [

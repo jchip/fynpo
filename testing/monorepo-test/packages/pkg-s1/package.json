@@ -6,7 +6,7 @@
   "homepage": "",
   "license": "UNLICENSED",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo test script for monorepo-test/packages/pkg-s1"
   },
   "author": "",
   "files": [
