@@ -13,7 +13,6 @@
 const Promise = require("bluebird");
 const cacache = require("cacache");
 const createDefer = require("./util/defer");
-const os = require("os");
 const pacote = require("pacote");
 const _ = require("lodash");
 const chalk = require("chalk");
@@ -145,7 +144,7 @@ class PkgSrcManager {
   }
 
   getSemverAsFilepath(semver) {
-    return semver.getAsFilepath(semver);
+    return semverUtil.getAsFilepath(semver);
   }
 
   getLocalPackageMeta(item, resolved) {

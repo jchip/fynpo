@@ -48,7 +48,7 @@ describe("caching", function () {
           "package.json": "VQo4UChJPO2XGkjGlGWMAZdWYzt2NzlW15t_7dH0tHE",
           "src/caching.ts": "Zu-Zjp9SAClM72XTfjITTFNMCDAjpxXENZCfyqU3jIw",
           "src/fynpo-config.ts": "mAsUoflw0MnDPE8iDc46lBAcdqsfPJuYhT6EgI0uP4A",
-          "src/fynpo-dep-graph.ts": "MmlybPveo3T6uSDJj0LLgYFRtG2TjSY-d9oNhgLUNDU",
+          "src/fynpo-dep-graph.ts": "W4WqQ7o9rN7l741xEib32Yi5tn225ig-v2qvTgjgq_o",
           "src/index.ts": "yoHkq_p4cev5WqsvL4Vazlv7d8InZPOwZmLSoyEqYdQ",
           "src/minimatch-group.ts": "UN5STAONMz_Qq-PwRfS8W7ujtgTyYSXVq5OrXvuURPY",
           "src/test-read-fynpo-packages.ts": "8O1tCcx4uVPR211o07W65DBdhfdFLCrvSuESIN-hY1k",
@@ -56,7 +56,7 @@ describe("caching", function () {
         },
         extra: {},
       },
-      hash: "cR7Y3vRLFOdq2vfKgxSCiWMLHyYpMAHqq6rnrR5J_kY",
+      hash: "_cqzBRLUx32ANwe-4JmdhUIeGbRZuNluhI-l5XC7YGw",
     };
     expect(input).toEqual(expectInput);
 

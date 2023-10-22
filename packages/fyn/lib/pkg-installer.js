@@ -17,7 +17,7 @@ const { runNpmScript } = require("./util/run-npm-script");
 const xaa = require("./util/xaa");
 const { AggregateError } = require("@jchip/error");
 
-const { RESOLVE_ORDER, RSEMVERS, LOCK_RSEMVERS, SEMVER, DEP_ITEM } = require("./symbols");
+const { RESOLVE_ORDER, RSEMVERS, LOCK_RSEMVERS, SEMVER } = require("./symbols");
 const semverUtil = require("./util/semver");
 
 /* eslint-disable max-statements,no-magic-numbers,no-empty,complexity,prefer-template,max-len, max-depth, no-param-reassign */

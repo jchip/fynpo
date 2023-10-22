@@ -155,10 +155,10 @@ describe("pkg-dep-resolver", function() {
       .then(() => {
         expect(error).to.exist;
         expect(error.errors).to.exist;
-        expect(error.message).includes("Unable to retrieve meta for package mod-a");
+        expect(error.message).includes("Unable resolve version for package mod-a");
         const message = error.errors.map(e => e.message).join("\n");
         expect(message).includes(
-          `Unable to find a version from lock data that satisfied semver mod-a@^14.0.0`
+          `Unable to find a version of package mod-a from meta that satisfied semver mod-a@^14.0.0`
         );
       });
   }).timeout(10000);
@@ -186,10 +186,10 @@ describe("pkg-dep-resolver", function() {
       .then(() => {
         expect(error).to.exist;
         expect(error.errors).to.exist;
-        expect(error.message).includes("Unable to retrieve meta for package mod-a");
+        expect(error.message).includes("Unable resolve version for package mod-a");
         const message = error.errors.map(e => e.message).join("\n");
         expect(message).includes(
-          `Unable to find a version from lock data that satisfied semver mod-a@blah`
+          `Unable to find a version of package mod-a from meta that satisfied semver mod-a@blah`
         );
       });
   }).timeout(10000);
