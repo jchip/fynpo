@@ -1,7 +1,7 @@
 "use strict";
 
 const Path = require("path");
-const Promise = require("bluebird");
+const Promise = require("./util/aveazul");
 const _ = require("lodash");
 const chalk = require("chalk");
 const Fs = require("./util/file-ops");
@@ -307,20 +307,21 @@ class PkgInstaller {
       (await this._fyn.central.getContentShasum(integrity));
 
     let runningScript;
-    return Promise.each(depInfo.install, installScript => {
-      runningScript = installScript;
-      return runNpmScript({
-        appDir: this._fyn.cwd,
-        fyn: this._fyn,
-        scripts: [installScript],
-        depInfo
-      }).then(() => {
-        depInfo.json._fyn[installScript] = true;
-        if (depInfo.fynLinkData) {
-          depInfo.fynLinkData[installScript] = true;
-        }
-      });
-    })
+    return xaa
+      .each(depInfo.install, installScript => {
+        runningScript = installScript;
+        return runNpmScript({
+          appDir: this._fyn.cwd,
+          fyn: this._fyn,
+          scripts: [installScript],
+          depInfo
+        }).then(() => {
+          depInfo.json._fyn[installScript] = true;
+          if (depInfo.fynLinkData) {
+            depInfo.fynLinkData[installScript] = true;
+          }
+        });
+      })
       .then(async () => {
         if (centralBeforeSha) {
           const afterSha = await this._fyn.central.getContentShasum(integrity);

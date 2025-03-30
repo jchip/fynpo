@@ -4,7 +4,7 @@
 const Fs = require("../lib/util/file-ops");
 const Os = require("os");
 const Path = require("path");
-const Promise = require("bluebird");
+const Promise = require("aveazul");
 const Fyn = require("../lib/fyn");
 const _ = require("lodash");
 const PkgInstaller = require("../lib/pkg-installer");
@@ -188,7 +188,8 @@ class FynCli {
       stopOnError: true,
       processItem: item => {
         let found;
-        return Promise.try(() => this._fyn._pkgSrcMgr.fetchLocalItem(item))
+        return xaa
+          .wrap(() => this._fyn._pkgSrcMgr.fetchLocalItem(item))
           .then(meta => meta || this.fyn.pkgSrcMgr.fetchMeta(item))
           .then(meta => {
             if (!meta) {
@@ -382,7 +383,8 @@ class FynCli {
     let failure;
     let installLocked;
     const start = Date.now();
-    return Promise.try(() => this.fyn._initializePkg())
+    return Promise
+      .try(() => this.fyn._initializePkg())
       .then(async () => {
         checkNewVersion(this.fyn._options);
 

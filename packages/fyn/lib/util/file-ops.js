@@ -1,6 +1,6 @@
 "use strict";
 
-const Promise = require("bluebird");
+const Promise = require("./aveazul");
 const opfs = require("opfs");
 const lockfile = require("lockfile");
 const win32Opfs = require("./file-ops-win32");

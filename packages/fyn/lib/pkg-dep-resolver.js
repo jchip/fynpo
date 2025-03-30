@@ -7,7 +7,6 @@ const Fs = require("./util/file-ops");
 const Path = require("path");
 const semverUtil = require("./util/semver");
 const Semver = require("semver");
-const Promise = require("bluebird");
 const chalk = require("chalk");
 const logger = require("./logger");
 const DepItem = require("./dep-item");
@@ -1200,17 +1199,19 @@ ${item.depPath.join(" > ")}`
 
   resolveItem(item) {
     const tryLocal = () => {
-      return Promise.try(() => this._pkgSrcMgr.fetchLocalItem(item)).then(meta => {
-        if (meta) {
-          const updated = this._fyn.depLocker.update(item, meta);
-          return this._resolveWithMeta({ item, meta: updated, force: true });
-        }
-        return false;
-      });
+      return xaa
+        .wrap(() => this._pkgSrcMgr.fetchLocalItem(item))
+        .then(meta => {
+          if (meta) {
+            const updated = this._fyn.depLocker.update(item, meta);
+            return this._resolveWithMeta({ item, meta: updated, force: true });
+          }
+          return false;
+        });
     };
 
     const tryLock = () => {
-      return Promise.try(() => {
+      return xaa.wrap(() => {
         const r = this._resolveWithLockData(item);
 
         if (r) {
@@ -1283,7 +1284,7 @@ ${item.depPath.join(" > ")}`
 
         depthData[item.name].items = [];
 
-        return Promise.each(items, x => this.resolveItem(x));
+        return xaa.each(items, x => this.resolveItem(x));
       });
   }
 }

@@ -6,13 +6,13 @@ const Path = require("path");
 const Fs = require("./util/file-ops");
 const ssri = require("ssri");
 const Tar = require("tar");
-const Promise = require("bluebird");
 const { missPipe } = require("./util/fyntil");
 const { linkFile, copyFile } = require("./util/hard-link-dir");
 const logger = require("./logger");
 const { AggregateError } = require("@jchip/error");
 const filterScanDir = require("filter-scan-dir");
 const Crypto = require("crypto");
+const xaa = require("xaa");
 
 /**
  * convert a directory tree structure to a flatten one like:
@@ -274,7 +274,7 @@ class FynCentral {
         await Fs.$.mkdirp(Path.join(destDir, dir));
       }
 
-      await Promise.map(
+      await xaa.map(
         list.files,
         file => {
           const src = Path.join(info.contentPath, "package", file);

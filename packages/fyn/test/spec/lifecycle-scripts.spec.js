@@ -5,6 +5,7 @@ const Path = require("path");
 const xstdout = require("xstdout");
 const logger = require("../../lib/logger");
 const chalk = require("chalk");
+const xaa = require("xaa");
 
 describe("lifecycle-scripts", function() {
   logger.setItemType(false);
@@ -36,13 +37,17 @@ describe("lifecycle-scripts", function() {
 
   it("should execute a script from package.json", () => {
     const intercept = xstdout.intercept(true);
-    const promise = new LifecycleScripts(Path.join(__dirname, "../fixtures/lifecycle-scripts/f1"))
-      .execute(["test"])
+    const ls = new LifecycleScripts(Path.join(__dirname, "../fixtures/lifecycle-scripts/f1"));
+
+    const promise = xaa
+      .wrap(() => ls.execute(["test"]))
       .then(() => {
         intercept.restore();
         expect(intercept.stdout[2].trim()).to.equal("hello");
       })
-      .catch(err => failRestore(err, intercept));
+      .catch(err => {
+        failRestore(err, intercept);
+      });
 
     return promise;
   });

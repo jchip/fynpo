@@ -2,7 +2,7 @@
 
 const Path = require("path");
 const chalk = require("chalk");
-const Promise = require("bluebird");
+const Promise = require("aveazul");
 const FynCli = require("./fyn-cli");
 const _ = require("lodash");
 const CliLogger = require("../lib/cli-logger");

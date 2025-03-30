@@ -10,7 +10,6 @@ const Path = require("path");
 const optionalRequire = require("optional-require")(eval("require"));
 const assert = require("assert");
 const xsh = require("xsh");
-const Promise = require("bluebird");
 const chalk = require("chalk");
 const _ = require("lodash");
 const logger = require("./logger");
@@ -19,6 +18,7 @@ const VisualExec = require("visual-exec");
 const fyntil = require("./util/fyntil");
 const requireAt = require("require-at");
 const { setupNodeGypEnv } = require("./util/setup-node-gyp");
+const xaa = require("xaa");
 
 const npmConfigEnv = require("./util/npm-config-env");
 const { AggregateError } = require("@jchip/error");
@@ -28,8 +28,6 @@ const readPkgJson = dir => {
     return {};
   });
 };
-
-xsh.Promise = Promise;
 
 // When released, all code are bundled into dist/fyn.js
 // When running from original source, this is under lib/lifecycle-scripts.js
@@ -84,7 +82,7 @@ class LifecycleScripts {
   }
 
   execute(aliases, silent) {
-    return Promise.try(() => this._execute(aliases, silent));
+    return xaa.wrap(() => this._execute(aliases, silent));
   }
 
   async _initialize() {

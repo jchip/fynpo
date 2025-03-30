@@ -3,7 +3,8 @@
 /* eslint-disable max-params, no-param-reassign */
 
 const _ = require("lodash");
-const Promise = require("bluebird");
+const xaa = require("xaa");
+const Promise = require("./aveazul");
 
 exports.isWin32 = process.platform === "win32";
 
@@ -18,7 +19,7 @@ exports.retry = function retry(func, checks, tries, wait) {
         Array.isArray(checks) ? checks.indexOf(err.code) >= 0 : checks(err)
       ).then(canRetry => {
         if (!canRetry) throw err;
-        return Promise.delay(wait).then(() => retry(func, checks, tries, wait));
+        return xaa.delay(wait).then(() => retry(func, checks, tries, wait));
       });
     });
   }

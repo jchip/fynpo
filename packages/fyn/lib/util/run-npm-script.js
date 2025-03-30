@@ -2,7 +2,7 @@
 
 /* eslint-disable no-param-reassign */
 
-const Promise = require("bluebird");
+const Promise = require("./aveazul");
 const LifecycleScripts = require("../lifecycle-scripts");
 const chalk = require("chalk");
 const logFormat = require("./log-format");

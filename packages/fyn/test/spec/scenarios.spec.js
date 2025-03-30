@@ -6,7 +6,7 @@ const Fs = require("fs");
 const Path = require("path");
 const _ = require("lodash");
 const Yaml = require("js-yaml");
-const Promise = require("bluebird");
+const Promise = require("aveazul");
 const rimraf = require("rimraf");
 const dirTree = require("../dir-tree");
 const fynRun = require("../../cli/fyn");
@@ -16,6 +16,7 @@ const mockNpm = require("../fixtures/mock-npm");
 const optionalRequire = require("optional-require")(require);
 const sortObjKeys = require("../../lib/util/sort-obj-keys");
 const ci = require("ci-info");
+const xaa = require("xaa");
 
 const BASE_ARGS = ["--pg=none", "-q=none", "--no-rcfile"];
 const getFynDirArg = dir => `--fyn-dir=${dir}`;
@@ -257,7 +258,7 @@ const debug = false;
             throw err;
           })
           .then(() => stepAction.verify(cwd, scenarioDir))
-          .delay(10)
+          .then(() => xaa.delay(10))
           .finally(() => stepAction.after());
       });
 

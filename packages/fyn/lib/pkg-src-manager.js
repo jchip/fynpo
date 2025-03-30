@@ -10,7 +10,6 @@
 
 /* eslint-disable no-magic-numbers, prefer-template, max-statements, no-param-reassign */
 
-const Promise = require("bluebird");
 const cacache = require("cacache");
 const createDefer = require("./util/defer");
 const os = require("os");
@@ -819,7 +818,7 @@ class PkgSrcManager {
     return {
       then: (r, e) => promise.then(r, e),
       catch: e => promise.catch(e),
-      tap: f => promise.tap(f),
+      tap: f => promise.then(x => (f(x), x)),
       promise,
       startTime
     };
