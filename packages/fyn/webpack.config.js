@@ -3,6 +3,7 @@
 const Path = require("path");
 const webpack = require("webpack");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 const base = {
   mode: "production",
@@ -18,13 +19,15 @@ const base = {
     innerGraph: false,
     chunkIds: "named",
     moduleIds: "named",
-    nodeEnv: "production"
+    nodeEnv: "production",
+    splitChunks: false
   },
   plugins: [
     new webpack.BannerPlugin({
       banner: "#!/usr/bin/env node",
       raw: true
     }),
+    new NodePolyfillPlugin(),
     process.env.ANALYZE_BUNDLE && new BundleAnalyzerPlugin()
   ].filter(x => x),
   resolve: {

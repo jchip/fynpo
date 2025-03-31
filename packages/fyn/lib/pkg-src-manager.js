@@ -14,6 +14,7 @@ const cacache = require("cacache");
 const createDefer = require("./util/defer");
 const os = require("os");
 const pacote = require("pacote");
+const xaa = require("./util/xaa");
 const _ = require("lodash");
 const chalk = require("chalk");
 const Fs = require("./util/file-ops");
@@ -315,21 +316,20 @@ class PkgSrcManager {
     //
     const pacoteRequest = () => {
       logger.debug(`pacote.packument ${qItem.packumentUrl}`);
+      const pacoteOpts = this.getPacoteOpts({
+        fullMetadata: true,
+        "fetch-retries": 3,
+        "cache-policy": "ignore",
+        "cache-key": qItem.cacheKey,
+        memoize: false
+      });
       return pacote
-        .packument(
-          pkgName,
-          this.getPacoteOpts({
-            "full-metadata": true,
-            "fetch-retries": 3,
-            "cache-policy": "ignore",
-            "cache-key": qItem.cacheKey,
-            memoize: false
-          })
-        )
-        .tap(x => {
+        .packument(pkgName, pacoteOpts)
+        .then(x => {
           this._metaStat.inTx--;
           if (x.readme) delete x.readme; // don't need this
           updateItem(x._cached ? "cached" : "200");
+          return x;
         })
         .catch(err => {
           const msg = `pacote failed fetching packument of ${pkgName}`;
@@ -356,6 +356,7 @@ class PkgSrcManager {
           );
         }
         cacache.refresh(this._cacheDir, qItem.cacheKey);
+
         qItem.defer.resolve(x);
       })
       .catch(err => {
@@ -664,25 +665,60 @@ class PkgSrcManager {
     return this._inflights.meta.add(pkgKey, promise);
   }
 
+  createPacoteStreamHandler(pkgId) {
+    const streamHandler = {
+      stream: null,
+      defer: null,
+      started: createDefer(),
+      resetStream: function(err) {
+        if (this.stream && this.stream.destroy) {
+          this.stream.destroy();
+        }
+        this.stream = null;
+        if (err && this.defer) {
+          this.defer.reject(err);
+        }
+        this.defer = null;
+        this.started = createDefer();
+      },
+      handler: function(_stream) {
+        const self = streamHandler;
+        if (self.stream) {
+          self.resetStream(new Error(`Pacote streamHandler called again for ${pkgId}`));
+        }
+        self.stream = _stream;
+        self.started.resolve(_stream);
+        self.defer = createDefer();
+
+        _stream.once("end", () => {
+          if (_stream.destroy) {
+            _stream.destroy();
+          }
+          self.defer.resolve();
+        });
+        _stream.once("error", err => {
+          self.resetStream(err);
+        });
+        _stream.on("data", _.noop);
+
+        return self.defer.promise;
+      }
+    };
+
+    return streamHandler;
+  }
+
   pacotePrefetch(pkgId, pkgInfo, integrity) {
-    const stream = this.pacoteTarballStream(pkgId, pkgInfo, integrity);
-
-    const defer = createDefer();
-    stream.once("end", () => {
-      if (stream.destroy) stream.destroy();
-      defer.resolve();
-    });
-    stream.once("error", defer.reject);
-    stream.on("data", _.noop);
-
-    return defer.promise;
+    const streamHandler = this.createPacoteStreamHandler(pkgId);
+    const promise = this.pacoteTarballStream(pkgId, pkgInfo, integrity, streamHandler.handler);
+    return { promise, streamHandler };
   }
 
   cacacheTarballStream(integrity) {
     return cacache.get.stream.byDigest(this._cacheDir, integrity);
   }
 
-  pacoteTarballStream(pkgId, pkgInfo, integrity) {
+  pacoteTarballStream(pkgId, pkgInfo, integrity, streamHandler) {
     const opts = this.getPacoteOpts({
       // pacote please reuse manifest
       fullMeta: true,
@@ -691,7 +727,7 @@ class PkgSrcManager {
       // https://github.com/zkat/pacote/blob/3d0354ab990ce7adb6f5b4899e7ed9ffef4fca61/lib/fetchers/registry/tarball.js#L23
       resolved: _.get(pkgInfo, "dist.tarball")
     });
-    return pacote.tarball.stream(pkgId, opts);
+    return pacote.tarball.stream(pkgId, streamHandler, opts);
   }
 
   getIntegrity(item) {
@@ -721,9 +757,12 @@ class PkgSrcManager {
     const tarId = this.tarballFetchId(pkgInfo);
 
     const tarStream = async () => {
-      return integrity && (await cacache.get.hasContent(this._cacheDir, integrity))
-        ? this.cacacheTarballStream(integrity)
-        : this.pacoteTarballStream(tarId, pkgInfo, integrity);
+      if (integrity && (await cacache.get.hasContent(this._cacheDir, integrity))) {
+        return this.cacacheTarballStream(integrity);
+      }
+      const prefetch = this.pacotePrefetch(tarId, pkgInfo, integrity);
+
+      return prefetch.streamHandler.started.promise;
     };
 
     // TODO: probably don't want to do central for github/url/file tarballs
@@ -784,8 +823,9 @@ class PkgSrcManager {
       this._fetching.push(pkgId);
 
       logger.updateItem(FETCH_PACKAGE, `${this._fetching.length} ${this._fetchingMsg}`);
+      const promise = this.pacotePrefetch(pkgId, pkgInfo, integrity).promise;
 
-      return this.pacotePrefetch(pkgId, pkgInfo, integrity).then(() => {
+      return promise.then(() => {
         const status = chalk.cyan(`200`);
         const time = logFormat.time(Date.now() - fetchStartTime);
         const ix = this._fetching.indexOf(pkgId);

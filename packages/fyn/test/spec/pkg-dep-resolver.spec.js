@@ -10,14 +10,20 @@ const _ = require("lodash");
 const rimraf = require("rimraf");
 const logger = require("../../lib/logger");
 const chalk = require("chalk");
+const pacote = require("pacote");
 
 describe("pkg-dep-resolver", function() {
   logger.setItemType(false);
   chalk.enabled = false;
   let server;
   let fynDir;
+  let registryUrl;
+
   before(() => {
-    return mockNpm({ logLevel: "warn" }).then(s => (server = s));
+    return mockNpm({ logLevel: "warn" }).then(s => {
+      server = s;
+      registryUrl = `http://localhost:${server.info.port}`;
+    });
   });
 
   after(() => {
@@ -73,14 +79,16 @@ describe("pkg-dep-resolver", function() {
 
   const checkResolvedData = (fyn, file) => {
     const expected = Yaml.safeLoad(Fs.readFileSync(file).toString());
-    expect(sortRequests(fyn._data)).to.deep.equal(sortRequests(expected));
+    const actual = JSON.parse(JSON.stringify(fyn._data));
+    expect(sortRequests(actual)).to.deep.equal(sortRequests(expected));
   };
 
-  const testPkgAFixture = deepResolve => {
+  const testPkgFixture = opts => {
+    const { pkgDir, deepResolve } = opts;
     const fyn = new Fyn({
       opts: {
-        registry: `http://localhost:${server.info.port}`,
-        pkgFile: Path.join(__dirname, "../fixtures/pkg-a/package.json"),
+        registry: registryUrl,
+        pkgFile: Path.join(__dirname, `../fixtures/${pkgDir}/package.json`),
         targetDir: "xout",
         cwd: fynDir,
         fynDir,
@@ -89,7 +97,7 @@ describe("pkg-dep-resolver", function() {
       }
     });
     const outFname = `fyn-data${deepResolve ? "-dr" : ""}.yaml`;
-    const expectOutput = `../fixtures/pkg-a/${outFname}`;
+    const expectOutput = `../fixtures/${pkgDir}/${outFname}`;
     return fyn.resolveDependencies().then(() => {
       cleanData(fyn._data.pkgs);
       cleanData(fyn._data.badPkgs);
@@ -98,9 +106,33 @@ describe("pkg-dep-resolver", function() {
     });
   };
 
+  const testPkgAFixture = deepResolve => testPkgFixture({ pkgDir: "pkg-a", deepResolve });
+
+  it("should use pacote to retrieve packument", () => {
+    return pacote
+      .packument("mod-a", {
+        registry: `http://localhost:${server.info.port}`
+      })
+      .then(x => {
+        expect(x).to.exist;
+        expect(x.name).to.equal("mod-a");
+        expect(x.versions).to.exist;
+        expect(x.versions["0.1.0"]).to.exist;
+        expect(x.versions["0.1.0"].dist).to.exist;
+        expect(x.versions["0.1.0"].dist.tarball).to.exist;
+        expect(x.readme).to.exist;
+        expect(x.readme).to.equal("#mod-a\n");
+        expect(x._attachments).to.exist;
+      });
+  });
+
+  it("should resolve optional dependencies for pkg-b fixture", () => {
+    return testPkgFixture({ pkgDir: "pkg-b", deepResolve: false });
+  });
+
   it("should resolve dependencies once for pkg-a fixture @deepResolve true", () => {
     return testPkgAFixture(true);
-  }).timeout(10000);
+  });
 
   it("should resolve dependencies repeatedly for pkg-a fixture @deepResolve true", () => {
     return testPkgAFixture(true)
