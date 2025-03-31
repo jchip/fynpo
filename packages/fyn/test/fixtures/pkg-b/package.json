@@ -1,0 +1,10 @@
+{
+  "name": "pkg-b",
+  "description": "packga fixture for verifying a single optional dep passes",
+  "version": "1.0.0",
+  "dependencies": {
+  },
+  "optionalDependencies": {
+    "mod-e": "^2.0.0"
+  }
+}

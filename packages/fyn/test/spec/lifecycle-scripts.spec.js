@@ -120,7 +120,7 @@ describe("lifecycle-scripts", function() {
     const intercept = xstdout.intercept(true);
     const ls = new LifecycleScripts(Path.join(__dirname, "../fixtures/lifecycle-scripts/f3"));
     const promise = ls
-      .execute("test", true)
+      .execute("test1", true)
       .then(() => {
         intercept.restore();
         const output = extractOutput(intercept);
@@ -135,7 +135,7 @@ describe("lifecycle-scripts", function() {
     const promise = new LifecycleScripts({
       dir: Path.join(__dirname, "../fixtures/lifecycle-scripts/f2")
     })
-      .execute("test")
+      .execute("test-not-exist")
       .then(x => {
         expect(x).to.equal(false);
       });

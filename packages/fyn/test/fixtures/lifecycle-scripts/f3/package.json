@@ -5,6 +5,7 @@
     "test_c1": "foo-bar"
   },
   "scripts": {
-    "test": "echo $npm_package_config_test_c1"
+    "test": "echo $npm_package_config_test_c1",
+    "test1": "echo foo-bar"
   }
 }

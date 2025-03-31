@@ -1,0 +1,75 @@
+pkgs:
+  mod-a:
+    0.4.5:
+      opt: 1
+      requests:
+        - - opt
+          - opt;^2.0.0;mod-e@2.1.1
+          - opt;^0.4.0
+      src: opt
+      dsrc: opt
+      dist:
+        shasum: 81baf0666f4a229840739049377fcdfa9d38a874
+        tarball: 'http://localhost:4873/mod-a/-/mod-a-0.4.5.tgz'
+      name: mod-a
+      version: 0.4.5
+      res: {}
+      priority: 800000000
+      preInstalled: true
+      _hasNonOpt: false
+      firstReqIdx: 0
+      promoted: true
+  mod-e:
+    2.1.1:
+      opt: 1
+      requests:
+        - - opt
+          - opt;^2.0.0
+      src: opt
+      dsrc: opt
+      dist:
+        shasum: 95642cdbbf8d5f9bf7e5418475f0fe2cddf8412f
+        tarball: 'http://localhost:4873/mod-e/-/mod-e-2.1.1.tgz'
+      name: mod-e
+      version: 2.1.1
+      res:
+        dep:
+          mod-f:
+            semver: ^2.0.0
+            resolved: 2.1.1
+        opt:
+          mod-a:
+            semver: ^0.4.0
+            resolved: 0.4.5
+      priority: 800000000
+      hasPI: 1
+      top: true
+      preInstalled: true
+      _hasNonOpt: false
+      firstReqIdx: 0
+      promoted: true
+  mod-f:
+    2.1.1:
+      opt: 1
+      requests:
+        - - opt
+          - opt;^2.0.0;mod-e@2.1.1
+          - dep;^2.0.0
+      src: opt
+      dsrc: dep
+      dist:
+        shasum: be96f36d9fdf8baf29f698b567490afa48127729
+        tarball: 'http://localhost:4873/mod-f/-/mod-f-2.1.1.tgz'
+      name: mod-f
+      version: 2.1.1
+      res: {}
+      priority: 800000000
+      _hasNonOpt: false
+      firstReqIdx: 0
+      promoted: true
+badPkgs: {}
+res:
+  opt:
+    mod-e:
+      semver: ^2.0.0
+      resolved: 2.1.1
