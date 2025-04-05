@@ -15,7 +15,7 @@
   },
   "license": "Artistic-2.0",
   "dependencies": {
-    "aveazul": "^0.1.3",
+    "aveazul": "^1.0.0",
     "cacache": "jchip/cacache",
     "mississippi": "^3.0.0",
     "npm-packlist": "jchip/npm-packlist",

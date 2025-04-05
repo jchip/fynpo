@@ -1,0 +1,40 @@
+$fyn:
+ layout: detail
+ flattenTop: true
+$pkg:
+ dep:
+  aveazul: ^1.0.1
+'@jchip/error':
+ _latest: 1.0.3
+ _:
+  ^1.0.3: 1.0.3
+ 1.0.3:
+  $: sha512-4mh+7ucOm55u7USv2mwumdp7r020J+bZ1PkkUi+Zn+AAzU1+QoXVmN/5W2thZ1kkpHjJXS7tY1SDkUjI2FZgvw==
+  _: 'https://registry.npmjs.org/@jchip/error/-/error-1.0.3.tgz'
+aveazul:
+ _latest: 1.0.1
+ _:
+  ^1.0.1: 1.0.1
+ 1.0.1:
+  top: 1
+  $: sha512-rvjmoi1Nv8V9Pvfe0TF/JrJM9q0tqcQCnRHmoIeyPrmPuLTJtd0hfR6wVxXBV45EuZFI96M7R5uUMACqepEF5Q==
+  _: 'https://registry.npmjs.org/aveazul/-/aveazul-1.0.1.tgz'
+  dependencies:
+   '@jchip/error': ^1.0.3
+   xaa: ^1.8.0
+tslib:
+ _latest: 2.8.1
+ _:
+  ^2.6.2: 2.8.1
+ 2.8.1:
+  $: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==
+  _: 'https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz'
+xaa:
+ _latest: 1.8.0
+ _:
+  ^1.8.0: 1.8.0
+ 1.8.0:
+  $: sha512-XPNHZLhbO/KyboMyJaJnqma/KUSRAkMUHZpNRVbilvsloJErKsTaOcxxte79u3Hj4UixCHR+y+p+DFp7rZ7MWQ==
+  _: 'https://registry.npmjs.org/xaa/-/xaa-1.8.0.tgz'
+  dependencies:
+   tslib: ^2.6.2
