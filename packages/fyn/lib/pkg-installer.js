@@ -441,7 +441,7 @@ class PkgInstaller {
       if (itemRes && itemRes.error) {
         throw new AggregateError(
           [itemRes.error],
-          `install fail because local package build failed`
+          `install fail because local package build failed: ${depInfo.dir}`
         );
       }
     }

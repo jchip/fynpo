@@ -10,8 +10,8 @@
 
 /* eslint-disable no-magic-numbers, prefer-template, max-statements, no-param-reassign */
 
+const Promise = require("aveazul");
 const cacache = require("cacache");
-const createDefer = require("./util/defer");
 const os = require("os");
 const pacote = require("pacote");
 const _ = require("lodash");
@@ -557,7 +557,7 @@ class PkgSrcManager {
         cacheKey,
         item,
         packumentUrl,
-        defer: createDefer()
+        defer: Promise.defer()
       };
 
       this._netQ.addItem(netQItem);
@@ -667,7 +667,7 @@ class PkgSrcManager {
   pacotePrefetch(pkgId, pkgInfo, integrity) {
     const stream = this.pacoteTarballStream(pkgId, pkgInfo, integrity);
 
-    const defer = createDefer();
+    const defer = Promise.defer();
     stream.once("end", () => {
       if (stream.destroy) stream.destroy();
       defer.resolve();
@@ -691,6 +691,7 @@ class PkgSrcManager {
       // https://github.com/zkat/pacote/blob/3d0354ab990ce7adb6f5b4899e7ed9ffef4fca61/lib/fetchers/registry/tarball.js#L23
       resolved: _.get(pkgInfo, "dist.tarball")
     });
+
     return pacote.tarball.stream(pkgId, opts);
   }
 

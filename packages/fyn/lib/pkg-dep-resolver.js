@@ -11,7 +11,6 @@ const chalk = require("chalk");
 const logger = require("./logger");
 const DepItem = require("./dep-item");
 const PromiseQueue = require("./util/promise-queue");
-const createDefer = require("./util/defer");
 const simpleSemverCompare = semverUtil.simpleCompare;
 const logFormat = require("./util/log-format");
 const { LONG_WAIT_META } = require("./log-items");
@@ -19,6 +18,7 @@ const { checkPkgOsCpu, relativePath, unSlashNpmScope } = require("./util/fyntil"
 const { getDepSection, makeDepStep } = require("@fynpo/base");
 const xaa = require("./util/xaa");
 const { AggregateError } = require("@jchip/error");
+const Promise = require("aveazul");
 
 const {
   SEMVER,
@@ -67,7 +67,7 @@ class PkgDepResolver {
       stopOnError: true,
       processItem: x => this.processItem(x)
     });
-    this._defer = createDefer();
+    this._defer = Promise.defer();
     this._promiseQ.on("done", x => {
       return this.done(x);
     });
@@ -643,7 +643,7 @@ class PkgDepResolver {
       if (sysCheck !== true) {
         logger.info(`optional dependencies ${sysCheck}`);
       } else {
-        logger.verbose("adding package", item.name, item.semver, item.resolved, "to opt check");
+        logger.verbose("adding package to opt check:", item.name, item.semver, item.resolved);
 
         this._optResolver.add({ item, meta });
       }

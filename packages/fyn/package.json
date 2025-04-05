@@ -84,7 +84,8 @@
   "dependencies": {
     "@fynpo/base": "^1.1.16",
     "@jchip/error": "^1.0.3",
-    "aveazul": "^0.1.3",
+    "aveazul": "^1.0.1",
+    "bluebird": "^3.7.2",
     "cacache": "jchip/cacache",
     "chalk": "^4.1.2",
     "check-pkg-new-version-engine": "^1.0.3",
@@ -118,7 +119,7 @@
     "tar": "^4.4.19",
     "visual-exec": "^0.1.14",
     "visual-logger": "^1.1.3",
-    "xaa": "^1.7.0",
+    "xaa": "^1.8.0",
     "xenv-config": "^1.3.0",
     "xsh": "^0.4.5",
     "yamljs": "^0.3.0"
@@ -129,6 +130,8 @@
     "@babel/preset-env": "^7.2.0",
     "@babel/preset-flow": "^7.16.0",
     "@xarc/module-dev": "^3.0.0",
+    "agentkeepalive": "^3.5.3",
+    "aveazul": "^1.0.2",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.0.4",
     "chai": "^4.2.0",
@@ -215,10 +218,5 @@
       "@xarc/module-dev/config/test/setup.js"
     ],
     "recursive": true
-  },
-  "fyn": {
-    "dependencies": {
-      "aveazul": "../../../aveazul"
-    }
   }
 }
