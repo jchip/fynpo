@@ -28,8 +28,8 @@
     "build"
   ],
   "files": [
-    "lib",
     "dist",
+    "lib",
     "templates"
   ],
   "author": "Walmart GTP.js Team and Contributors",
@@ -137,6 +137,7 @@
     "source-map-support": "^0.5.19",
     "ts-jest": "^27.0.7",
     "ts-node": "^10.4.0",
+    "tsx": "^4.19.4",
     "typedoc": "^0.22.7",
     "typescript": "^4.4.4",
     "webpack": "^5.64.4",
