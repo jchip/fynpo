@@ -1,3 +1,21 @@
+# 6/1/2025
+
+## Packages
+
+-   `fyn@1.1.42` `(1.1.41 => 1.1.42)`
+-   `fynpo@1.1.45` `(1.1.44 => 1.1.45)`
+
+## Commits
+
+-   `packages/fyn`
+
+    -   update circular error message [commit](https://github.com/electrode-io/fynpo/commit/7a26cdd152e41d944eec80884e0ec8027b297bcd)
+
+-   `packages/fynpo`
+
+    -   fynpo: update dependencies [commit](https://github.com/electrode-io/fynpo/commit/81ee5151c5ec4e81745e4d7b30da2f4bb95f71a1)
+    -   update circular error message [commit](https://github.com/electrode-io/fynpo/commit/7a26cdd152e41d944eec80884e0ec8027b297bcd)
+
 # 5/31/2025
 
 ## Packages
