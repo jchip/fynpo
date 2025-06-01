@@ -5,7 +5,7 @@
 
 /* eslint-disable complexity, max-params */
 
-import Promise from "bluebird";
+import Promise from "aveazul";
 import _ from "lodash";
 import ItemQueue, { ItemQueueResult } from "item-queue";
 import { FynpoTopoPackages, PackageDepData, pkgInfoId } from "@fynpo/base";

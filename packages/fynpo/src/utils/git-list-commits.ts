@@ -1,4 +1,4 @@
-import Promise from "bluebird";
+import Promise from "aveazul";
 import Path from "path";
 import Fs from "fs";
 import minimatch from "minimatch";

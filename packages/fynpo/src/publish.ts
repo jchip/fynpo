@@ -1,7 +1,7 @@
 import xsh from "xsh";
 import Path from "path";
 import Fs from "fs";
-import Promise from "bluebird";
+import Promise from "aveazul";
 import { logger } from "./logger";
 import * as utils from "./utils";
 import * as _ from "lodash";

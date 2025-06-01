@@ -6,7 +6,7 @@ import _ from "lodash";
 import xsh from "xsh";
 import { logger } from "./logger";
 import { readChangelogVersions } from "./read-changelog-versions";
-import Promise from "bluebird";
+import Promise from "aveazul";
 import Chalk from "chalk";
 import assert from "assert";
 import semver from "semver";

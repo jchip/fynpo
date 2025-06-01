@@ -15,7 +15,7 @@
 import Fs from "fs";
 import xsh from "xsh";
 import Path from "path";
-import Promise from "bluebird";
+import Promise from "aveazul";
 xsh.Promise = Promise;
 xsh.envPath.addToFront(Path.join(__dirname, "../node_modules/.bin"));
 import _ from "lodash";
