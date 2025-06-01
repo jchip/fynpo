@@ -1,3 +1,52 @@
+# 5/31/2025
+
+## Packages
+
+-   `@fynpo/base@1.1.17` `(1.1.16 => 1.1.17)`
+-   `fyn@1.1.41` `(1.1.40 => 1.1.41)`
+-   `fynpo@1.1.44` `(1.1.43 => 1.1.44)`
+-   `pkg-preper@0.1.1` `(0.1.0 => 0.1.1)`
+
+## Commits
+
+-   `packages/fynpo-base`
+
+    -   fix: fynpo detect and avoid circular deps [commit](https://github.com/electrode-io/fynpo/commit/67073c98160d82cfb2aeb086a47798e0d9c6bec2)
+
+-   `packages/bluebird`
+
+    -   chore: fix bluebird aveazul wrap test [commit](https://github.com/electrode-io/fynpo/commit/9f918d6325c0fb4fb08cd1e3fa33b0d11904c6dc)
+    -   more replace bluebird [commit](https://github.com/electrode-io/fynpo/commit/977991522fea6fb2c666cf802ab6aa2a3fe2f450)
+
+-   `packages/fyn`
+
+    -   reduce log noise for optional platform check failures [commit](https://github.com/electrode-io/fynpo/commit/d3109aa544c65482066c3898e0246b9a664dd672)
+    -   more replace bluebird [commit](https://github.com/electrode-io/fynpo/commit/977991522fea6fb2c666cf802ab6aa2a3fe2f450)
+    -   update some tests [commit](https://github.com/electrode-io/fynpo/commit/e9703eeb3183f9a4ddb088042a7ea440f750ecda)
+    -   fyn: use aveazul to replace bluebird [commit](https://github.com/electrode-io/fynpo/commit/762e97e42bc0ac64fc6d2138fe5d223d5d283405)
+    -   update webpack [commit](https://github.com/electrode-io/fynpo/commit/d126e921ecb1618787f7d26aed92426f98850653)
+    -   chore: update fyn lockfile [commit](https://github.com/electrode-io/fynpo/commit/d784467b50ffbed5a8354734d9515bc175a8bb3d)
+
+-   `packages/fynpo`
+
+    -   use tsx [commit](https://github.com/electrode-io/fynpo/commit/d7982a44758819f33169d5fe774aad9d018aef5a)
+    -   fix: fynpo detect and avoid circular deps [commit](https://github.com/electrode-io/fynpo/commit/67073c98160d82cfb2aeb086a47798e0d9c6bec2)
+    -   chore: use swc to compile ts for development [commit](https://github.com/electrode-io/fynpo/commit/05ded5d9d4d46d3eca2e0a2a73ea3e0941a41dcd)
+
+-   `packages/pkg-preper`
+
+    -   more replace bluebird [commit](https://github.com/electrode-io/fynpo/commit/977991522fea6fb2c666cf802ab6aa2a3fe2f450)
+    -   add pkg pkg-preper [commit](https://github.com/electrode-io/fynpo/commit/6619fa650adeac3955f44ef3db6054fb3e9b609d)
+
+-   `.github`
+
+    -   update CI node versions [commit](https://github.com/electrode-io/fynpo/commit/eeb421fd0b4911f78d76529daaa21fcf2daf82b6)
+    -   chore: update ci script [commit](https://github.com/electrode-io/fynpo/commit/6270b5be973961bf81fc488d972f3e203ff829a5)
+
+-   `MISC`
+
+    -   chore: update fynpo to 1.1.43 [commit](https://github.com/electrode-io/fynpo/commit/22e57cef41c4f0042346628cf61e06cb8e2db2f2)
+
 # 7/18/2022
 
 ## Packages
