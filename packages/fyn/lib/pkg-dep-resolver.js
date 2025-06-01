@@ -641,7 +641,7 @@ class PkgDepResolver {
       const sysCheck = platformCheck();
 
       if (sysCheck !== true) {
-        logger.info(`optional dependencies ${sysCheck}`);
+        logger.verbose(`optional dependencies ${sysCheck}`);
       } else {
         logger.verbose("adding package to opt check:", item.name, item.semver, item.resolved);
 
