@@ -128,7 +128,7 @@ ${output.stderr}
         this._topoRunner.circulars = [];
         if (circulars.length) {
           circulars.forEach((circ) => {
-            logger.warn("detected circular deps", circ.join(" > "));
+            logger.warn(chalk.red("detected circular deps"), circ.join(" > "));
           });
         }
 
