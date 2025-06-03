@@ -20,7 +20,7 @@
 
 const cacache = require("cacache");
 const Path = require("path");
-const Promise = require("bluebird");
+const Promise = require("aveazul");
 const PassThrough = require("stream").PassThrough;
 const mississippi = require("mississippi");
 const pipe = Promise.promisify(mississippi.pipe, { context: mississippi });
@@ -28,12 +28,8 @@ const tar = require("tar");
 const packlist = require("npm-packlist");
 const Fs = require("opfs");
 
-const readPkgJson = dir => {
-  return Fs.readFile(
-    Path.join(dir, "package.json")
-      .toString()
-      .trim()
-  ).then(JSON.parse);
+const readPkgJson = (dir) => {
+  return Fs.readFile(Path.join(dir, "package.json").toString().trim()).then(JSON.parse);
 };
 
 class PkgPreper {
@@ -51,8 +47,8 @@ class PkgPreper {
         // .then(() => {
         //   return readJson(path.join(dir, "package.json"));
         // })
-        .then(pkg => {
-          return cacache.tmp.withTmp(this._tmpDir, { tmpPrefix: "packing" }, tmp => {
+        .then((pkg) => {
+          return cacache.tmp.withTmp(this._tmpDir, { tmpPrefix: "packing" }, (tmp) => {
             const tmpTarget = Path.join(tmp, Path.basename(target));
 
             const tarOpt = {
@@ -63,15 +59,18 @@ class PkgPreper {
               // Provide a specific date in the 1980s for the benefit of zip,
               // which is confounded by files dated at the Unix epoch 0.
               mtime: new Date("1985-10-26T08:15:00.000Z"),
-              gzip: true
+              gzip: true,
             };
 
             return Promise.resolve(packlist({ path: dir }))
-              .then(files => {
+              .then((files) => {
                 // NOTE: node-tar does some Magic Stuff depending on prefixes for files
                 //       specifically with @ signs, so we just neutralize that one
                 //       and any such future "features" by prepending `./`
-                return tar.create(tarOpt, files.map(f => `./${f}`));
+                return tar.create(
+                  tarOpt,
+                  files.map((f) => `./${f}`)
+                );
               })
               .tap(() => Fs.rename(tmpTarget, target));
             // .then(() => getContents(pkg, tmpTarget, filename, logIt))
@@ -91,7 +90,7 @@ class PkgPreper {
     const stream = new PassThrough();
 
     readPkgJson(dir)
-      .then(pkg => {
+      .then((pkg) => {
         if (pkg.scripts && pkg.scripts.prepare) {
           return this._installDependencies(
             dir,
@@ -101,17 +100,14 @@ class PkgPreper {
       })
       .tap(() => stream.emit("prepared"))
       .then(() => {
-        return cacache.tmp.withTmp(this._tmpDir, { tmpPrefix: "pacote-packing" }, tmp => {
+        return cacache.tmp.withTmp(this._tmpDir, { tmpPrefix: "pacote-packing" }, (tmp) => {
           const tmpTar = Path.join(tmp, "package.tgz");
           return this.packDirectory(manifest, dir, tmpTar).then(() => {
-            return pipe(
-              Fs.createReadStream(tmpTar),
-              stream
-            );
+            return pipe(Fs.createReadStream(tmpTar), stream);
           });
         });
       })
-      .catch(err => {
+      .catch((err) => {
         stream.emit("error", err);
       });
 
