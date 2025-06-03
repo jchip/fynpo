@@ -5925,7 +5925,6 @@ pkg-preper:
   _: ../pkg-preper
   dependencies:
    aveazul: ^1.0.2
-   bluebird: ^3.7.2
    cacache: jchip/cacache
    mississippi: ^3.0.0
    npm-packlist: jchip/npm-packlist

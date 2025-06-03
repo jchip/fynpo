@@ -7,7 +7,7 @@ import { logger } from "./logger";
 import * as utils from "./utils";
 import _ from "lodash";
 import ck from "chalker";
-import prettier from "prettier";
+import { optionalRequire } from "optional-require";
 
 export class Init {
   _cwd;
@@ -133,11 +133,24 @@ export class Init {
       const obj = JSON.stringify(finalConfig, jsonReplacer)
         .replace(/"\{fynpo_func_(\d+)\}"/g, funcReplacer)
         .replace(/"\{fynpo_regexp_(\d+)\}"/g, regexReplacer);
-      const output = prettier.format(
-        `"use strict";\n
+
+      let output = `"use strict";\n
+module.exports = ${obj}`;
+
+      const prettier = optionalRequire("prettier");
+      if (prettier && prettier.format) {
+        output = prettier.format(
+          `"use strict";\n
           module.exports = ${obj}`,
-        { semi: true, parser: "flow" }
-      );
+          { semi: true, parser: "flow" }
+        );
+      } else {
+        logger.info((prettier ? "prettier is not installed." :
+          "prettier is installed, but may be wrong version without the format function.") +
+          " Not formatting the fynpo.config.js file."
+        );
+      }
+
       fs.writeFileSync(Path.join(this._cwd, "fynpo.config.js"), output);
       logger.info(`Created fynpo.config.js at ${this._cwd}.`);
       logger.info(`Please delete ${this._configFile}.`);

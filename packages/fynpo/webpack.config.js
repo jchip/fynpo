@@ -89,6 +89,11 @@ const base = {
 
 const node8 = Object.assign({}, base, {
   module: {
+    parser: {
+      javascript: {
+        importMeta: false,
+      },
+    },
     rules: [
       {
         test: /\.[jt]s$/,
