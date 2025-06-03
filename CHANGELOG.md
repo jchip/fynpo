@@ -1,3 +1,25 @@
+# 6/3/2025
+
+## Packages
+
+-   `fyn@1.1.43` `(1.1.42 => 1.1.43)`
+-   `fynpo@1.1.46` `(1.1.45 => 1.1.46)`
+-   `pkg-preper@0.1.2` `(0.1.1 => 0.1.2)`
+
+## Commits
+
+-   `packages/fyn`
+
+    -   make prettier optional [commit](https://github.com/electrode-io/fynpo/commit/13605249962256d97a23a6649de9ad837fce8356)
+
+-   `packages/fynpo`
+
+    -   make prettier optional [commit](https://github.com/electrode-io/fynpo/commit/13605249962256d97a23a6649de9ad837fce8356)
+
+-   `packages/pkg-preper`
+
+    -   pkg-preper: use aveazul [commit](https://github.com/electrode-io/fynpo/commit/22b934ab7e91adab36890675e9c6d6ead7769d24)
+
 # 6/1/2025
 
 ## Packages
