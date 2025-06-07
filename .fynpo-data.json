@@ -1,0 +1,23 @@
+{
+  "indirects": {
+    "packages/pkg-preper": [
+      {
+        "fromPkg": {
+          "name": "pkg-preper",
+          "version": "0.1.2",
+          "path": "packages/pkg-preper"
+        },
+        "onPkg": {
+          "name": "bluebird",
+          "version": "3.7.2",
+          "path": "packages/bluebird"
+        },
+        "depSection": "dep",
+        "indirectSteps": [
+          "pkg-preper@0.1.2(dep)"
+        ]
+      }
+    ]
+  },
+  "__timestamp": 1749261578666
+}

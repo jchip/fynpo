@@ -111,7 +111,7 @@
     "optional-require": "^1.1.8",
     "pacote": "jchip/pacote",
     "pkg-preper": "^0.1.2",
-    "publish-util": "^2.0.0",
+    "publish-util": "^2.1.0",
     "rimraf": "^3.0.2",
     "semver": "^7.3.5",
     "source-map": "^0.7.3",

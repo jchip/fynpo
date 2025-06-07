@@ -4,7 +4,6 @@ $fyn:
 $pkg:
  dep:
   aveazul: ^1.0.2
-  bluebird: ../bluebird
   cacache: jchip/cacache
   mississippi: ^3.0.0
   npm-packlist: jchip/npm-packlist
@@ -74,7 +73,6 @@ bluebird:
  _:
   ../bluebird: 3.7.2-fynlocal_h
  3.7.2-fynlocal_h:
-  top: 1
   $: local
   _: ../bluebird
   dependencies:

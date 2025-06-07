@@ -32,13 +32,7 @@
     "url": "https://github.com/electrode-io/fynpo/issues"
   },
   "devDependencies": {
-    "fynpo": "^1.1.43"
-  },
-  "fyn": {
-    "devDependencies": {
-      "@fynpo/base": "--no-fyn-local",
-      "fyn": "--no-fyn-local",
-      "fynpo": "--no-fyn-local"
-    }
+    "fyn": "^1.1.43",
+    "fynpo": "^1.1.46"
   }
 }

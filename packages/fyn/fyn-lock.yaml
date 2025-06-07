@@ -32,7 +32,7 @@ $pkg:
   optional-require: ^1.1.8
   pacote: jchip/pacote
   pkg-preper: ../pkg-preper
-  publish-util: ^2.0.0
+  publish-util: ^2.1.0
   rimraf: ^3.0.2
   semver: ^7.3.5
   source-map: ^0.7.3
@@ -5916,10 +5916,10 @@ pkg-dir:
   dependencies:
    find-up: ^4.0.0
 pkg-preper:
- _latest: 0.1.1-fynlocal_h
+ _latest: 0.1.2-fynlocal_h
  _:
-  ../pkg-preper: 0.1.1-fynlocal_h
- 0.1.1-fynlocal_h:
+  ../pkg-preper: 0.1.2-fynlocal_h
+ 0.1.2-fynlocal_h:
   top: 1
   $: local
   _: ../pkg-preper
@@ -6017,14 +6017,14 @@ psl:
   $: sha512-RIdOzyoavK+hA18OGGWDqUTsCLhtA7IcZ/6NCs4fFJaHBDab+pDDmDIByWFRQJq2Cd7r1OoQxBGKOaztq+hjIQ==
   _: 'https://registry.npmjs.com/psl/-/psl-1.8.0.tgz'
 publish-util:
- _latest: 2.0.0
+ _latest: 2.1.0
  _:
-  ^2.0.0: 2.0.0
- 2.0.0:
+  ^2.1.0: 2.1.0
+ 2.1.0:
   top: 1
   hasI: 1
-  $: sha512-dfHAh5LtBz1Wak/j2l5jlItl/ecCH7IPB6M+PJTmD/WKXqrW7auCGepBfXe8ZaM+AQ+nyczl+60cKdYKE6EtUQ==
-  _: 'https://registry.npmjs.org/publish-util/-/publish-util-2.0.0.tgz'
+  $: sha512-zNnGPOaKFYcUPOpooOHKaKmCuX+K7bMXPzFVKJpWQtAykgT4XkDbu/QLRSe+AZiR9WkaxK0IEKP7gKYzZaOAPg==
+  _: 'https://registry.npmjs.org/publish-util/-/publish-util-2.1.0.tgz'
   dependencies:
    execa: ^5.1.1
    find-up: ^5.0.0
