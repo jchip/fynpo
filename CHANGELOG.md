@@ -1,3 +1,26 @@
+# 6/6/2025
+
+## Packages
+
+### Directly Updated
+
+-   `fyn@1.1.44` `(1.1.43 => 1.1.44)`
+-   `pkg-preper@0.1.3` `(0.1.2 => 0.1.3)`
+
+### Fynpo Updated
+
+-   `fynpo@1.1.47` `(1.1.46 => 1.1.47)`
+
+## Commits
+
+-   `packages/fyn`
+
+    -   fyn: update publish-util [commit](https://github.com/electrode-io/fynpo/commit/39cb037f0f58ccb0509eedbdbff5ba005c9eadd2)
+
+-   `packages/pkg-preper`
+
+    -   fyn: update publish-util [commit](https://github.com/electrode-io/fynpo/commit/39cb037f0f58ccb0509eedbdbff5ba005c9eadd2)
+
 # 6/3/2025
 
 ## Packages
