@@ -10,7 +10,7 @@
     "ci:check": "fyn testing && fynpo run ci:check --stream",
     "coverage": "fynpo run coverage --stream",
     "lint": "fynpo run lint --stream",
-    "bootstrap": "fynpo",
+    "bootstrap": "fyn --no-fynlocal && fynpo",
     "install": "if [ -z \"$CI\" ]; then fynpo; fi",
     "testing": "cd testing/monorepo-test && npm run clean-test",
     "prepublishOnly": "npm run testing"
