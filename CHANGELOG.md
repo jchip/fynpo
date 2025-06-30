@@ -1,3 +1,22 @@
+# 6/30/2025
+
+## Packages
+
+### Directly Updated
+
+-   `fyn@1.1.45` `(1.1.44 => 1.1.45)`
+
+### Fynpo Updated
+
+-   `fynpo@1.1.48` `(1.1.47 => 1.1.48)`
+
+## Commits
+
+-   `packages/fyn`
+
+    -   fix: use localPkgLinks to detect changes in local packages [commit](https://github.com/electrode-io/fynpo/commit/757545365388d951df1c77ab60aca0f296c02381)
+    -   chore: update deps [commit](https://github.com/electrode-io/fynpo/commit/8b6e538c2eefe1feb3d0bc9450ae8c7d94fbc46a)
+
 # 6/6/2025
 
 ## Packages
