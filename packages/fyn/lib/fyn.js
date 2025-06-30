@@ -381,13 +381,12 @@ class Fyn {
   }
 
   async checkLocalPkgFromInstallConfigNeedInstall() {
-    const localsByDepth = _.get(this._installConfig, "localsByDepth", []);
-    for (const locals of localsByDepth.reverse()) {
-      for (const relPath of locals) {
-        const fullPath = Path.join(this._cwd, relPath);
-        if ((await this.getLocalPkgInstall(fullPath)).changed) {
-          return true;
-        }
+    const localPkgs = _.get(this._installConfig, "localPkgLinks", {});
+    for (const nmDir in localPkgs) {
+      const localPkg = localPkgs[nmDir];
+      const fullPath = Path.join(this._cwd, localPkg.srcDir);
+      if ((await this.getLocalPkgInstall(fullPath)).changed) {
+        return true;
       }
     }
 
