@@ -29,7 +29,7 @@ describe("caching", function () {
     const r = _.uniq(res.files.map((f) => f.split("/")[0])).sort();
     expect(r).toStrictEqual(["package.json", "src"]);
 
-    console.log(res, "\n", e - b);
+    // console.log(res, "\n", e - b);
   });
 
   it("should create output files with result from npm pack list", async () => {
@@ -54,10 +54,10 @@ describe("caching", function () {
       preFiles,
     });
     const e = Date.now();
-    console.log("output", output, "\n", e - b);
+    // console.log("output", output, "\n", e - b);
     const outputFiles = _.groupBy(output.files, (x: string) =>
       input.data.fileHashes[x] ? "both" : "output"
     );
-    console.log("outputFiles", outputFiles);
+    // console.log("outputFiles", outputFiles);
   });
 });

@@ -61,7 +61,7 @@ describe("fynpo dep graph", () => {
     await graph.resolve();
     const topo = graph.getTopoSortPackages();
 
-    console.log(JSON.stringify(topo, null, 2));
+    // console.log(JSON.stringify(topo, null, 2));
   });
 
   it("should read packages of the electrode project", async () => {

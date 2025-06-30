@@ -2,6 +2,7 @@ import assert from "assert";
 import Path from "path";
 import { promises as Fs } from "fs";
 import { filterScanDir } from "filter-scan-dir";
+import type { ExtrasData } from "filter-scan-dir";
 import mm from "minimatch";
 import _ from "lodash";
 import Semver from "semver";
@@ -512,12 +513,14 @@ export class FynpoDepGraph {
         cwd,
         prefix,
         concurrency: 500,
-        filter: (file: string, path: string) => {
+        filter: (file: string, path: string, extras: ExtrasData) => {
           if (path && path !== "." && file === "package.json") {
-            if (foundInAutoSearch(path)) {
+            if (extras.files.includes("fynpo.json") || foundInAutoSearch(path)) {
               //
-              // In auto search, if we've found a package.json in a dir, we don't want to
-              // search any other package.json further under that dir
+              // We ignore dir with package.json if:
+              // 1. It's a fynpo root dir, ie: `fynpo.json` exists
+              // 2. In auto search, if we've found a package.json in a dir, we don't want to
+              //    search any other package.json further under that dir
               //
               return false;
             }
