@@ -8,7 +8,7 @@
 // - npm registry
 //
 
-/* eslint-disable no-magic-numbers, prefer-template, max-statements, no-param-reassign */
+/* eslint-disable no-magic-numbers, prefer-template, max-statements, no-param-reassign, no-sequences */
 
 const Promise = require("aveazul");
 const cacache = require("cacache");

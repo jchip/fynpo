@@ -96,7 +96,7 @@
     "mkdirp": "^1.0.4",
     "nix-clap": "^1.3.13",
     "npm-packlist": "jchip/npm-packlist",
-    "optional-require": "^1.1.8",
+    "optional-require": "^1.1.10",
     "prettier": "2.4.1",
     "regenerator-runtime": "^0.13.9",
     "resolve-from": "^5.0.0",

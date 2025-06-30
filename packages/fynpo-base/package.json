@@ -39,7 +39,7 @@
     "source-map-support": "^0.5.19",
     "ts-jest": "^29.4.0",
     "ts-node": "^9.1.1",
-    "typedoc": "^0.22.1",
+    "typedoc": "^0.28.7",
     "typescript": "^5.8.3"
   },
   "dependencies": {
@@ -47,7 +47,7 @@
     "is-path-inside": "^3.0.3",
     "lodash": "^4.17.21",
     "minimatch": "^3.1.2",
-    "optional-require": "^2.0.1",
+    "optional-require": "^1.1.10",
     "semver": "^7.7.2",
     "tslib": "^2.8.1"
   },
