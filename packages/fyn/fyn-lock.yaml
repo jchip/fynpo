@@ -64,7 +64,6 @@ $pkg:
   mocha: ^8.2.1
   mock-require: ^2.0.2
   node-fetch-npm: ^2.0.4
-  node-gyp: ^8.4.1
   null-loader: ^4.0.1
   nyc: ^15.1.0
   prettier: ^1.19.1
@@ -1270,10 +1269,10 @@ $pkg:
    minimatch: ^3.0.4
    strip-json-comments: ^3.1.1
 '@fynpo/base':
- _latest: 1.1.17-fynlocal_h
+ _latest: 1.1.18-fynlocal_h
  _:
-  ../fynpo-base: 1.1.17-fynlocal_h
- 1.1.17-fynlocal_h:
+  ../fynpo-base: 1.1.18-fynlocal_h
+ 1.1.18-fynlocal_h:
   top: 1
   $: local
   _: ../fynpo-base
@@ -1753,7 +1752,7 @@ $pkg:
   $: sha1-Mj1y3SUQPQxPvc6J2t9XSnh7H5s=
   _: 'https://registry.npmjs.com/@nicolo-ribaudo/chokidar-2/-/chokidar-2-2.1.8-no-fsevents.3.tgz'
 '@npmcli/fs':
- _latest: 1.1.0
+ _latest: 4.0.0
  _:
   ^1.0.0: 1.1.0
  1.1.0:
@@ -1762,6 +1761,7 @@ $pkg:
   dependencies:
    '@gar/promisify': ^1.0.1
    semver: ^7.3.5
+  deprecated: 'this version had an improper engines field added, update to 1.1.1'
 '@npmcli/move-file':
  _latest: 1.1.2
  _:
@@ -2138,12 +2138,12 @@ JSONStream:
    jsonparse: ^1.2.0
    through: '>=2.2.7 <3'
 abbrev:
- _latest: 1.1.1
+ _latest: 3.0.1
  _:
   '1': 1.1.1
  1.1.1:
   $: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==
-  _: 'https://registry.npmjs.com/abbrev/-/abbrev-1.1.1.tgz'
+  _: 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz'
 acorn:
  _latest: 8.10.0
  _:
@@ -2532,7 +2532,7 @@ bluebird:
   dependencies:
    aveazul: ^1.0.1
 brace-expansion:
- _latest: 4.0.0
+ _latest: 4.0.1
  _:
   ^1.1.7: 1.1.11
  1.1.11:
@@ -2592,6 +2592,7 @@ byline:
   $: sha1-dBxSFkaOrcRXsDQQEYrXfejB3bE=
   _: 'https://registry.npmjs.com/byline/-/byline-5.0.0.tgz'
 cacache:
+ _latest: 19.0.1
  _:
   '^11.0.1,^11.3.2,jchip/cacache': 11.3.2
   ^15.2.0: 15.3.0
@@ -2619,8 +2620,8 @@ cacache:
    unique-filename: ^1.1.1
  11.3.2:
   top: 1
-  $: sha512-4fCNutl5jPXbJdzfrWTgmw5woI2/k9cj9Dwmhcr5jJIueAS3IkwCsu6kl36iyq4diPmIid4F5JH2GcIEDNYm8A==
-  _: '~url-spec~{"urlType":"github","semver":"jchip/cacache","_resolved":"github:jchip/cacache#49514896bbe13436c9b4feaf2520b0f178ebb99e"}'
+  $: sha512-E0zP4EPGDOaT2chM08Als91eYnf8Z+eH1awwwVsngUmgppfM5jjJ8l3z5vO5p5w/I3LsiXawb1sW0VY65pQABg==
+  _: 'https://registry.npmjs.org/cacache/-/cacache-11.3.2.tgz'
   dependencies:
    bluebird: ^3.7.2
    chownr: ^1.1.1
@@ -3758,7 +3759,7 @@ fromentries:
   $: sha512-cHEpEQHUg0f8XdtZCc2ZAhrHzKzT0MrFUTcvx+hfxYu7rGMDc5SKoXFh+n4YigxsHXRzc6OrCshdR1bWH6HHyg==
   _: 'https://registry.npmjs.com/fromentries/-/fromentries-1.3.2.tgz'
 fs-minipass:
- _latest: 2.1.0
+ _latest: 3.0.3
  _:
   ^1.2.7: 1.2.7
   ^2.0.0: 2.1.0
@@ -3911,7 +3912,7 @@ getpass:
   dependencies:
    assert-plus: ^1.0.0
 glob:
- _latest: 11.0.1
+ _latest: 11.0.3
  _:
   '7.1.6,^7.0.0,^7.0.5,^7.1.3,^7.1.4,^7.1.6': 7.1.6
  7.1.6:
@@ -4088,18 +4089,18 @@ html-escaper:
   $: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==
   _: 'https://registry.npmjs.com/html-escaper/-/html-escaper-2.0.2.tgz'
 http-cache-semantics:
- _latest: 4.1.0
+ _latest: 4.2.0
  _:
   ^3.8.1: 3.8.1
-  ^4.1.0: 4.1.0
- 4.1.0:
-  $: sha512-carPklcUh7ROWRK7Cv27RPtdhYhUsela/ue5/jKzjegVvXDqM2ILE9Q2BGn9JZJh1g87cp56su/FgQSzcWS8cQ==
-  _: 'https://registry.npmjs.org/http-cache-semantics/-/http-cache-semantics-4.1.0.tgz'
+  ^4.1.0: 4.2.0
+ 4.2.0:
+  $: sha512-dTxcvPXqPvXBQpq5dUr6mEMJX4oIEFv6bwom3FDwKRDsuIjjJGANqhBuoAn9c1RQJIdAKav33ED65E2ys+87QQ==
+  _: 'https://registry.npmjs.org/http-cache-semantics/-/http-cache-semantics-4.2.0.tgz'
  3.8.1:
   $: sha512-5ai2iksyV8ZXmnZhHH4rWPoxxistEexSi5936zIQ1bnNTW5VnA85B6P/VpXiRM017IgRvb2kKo1a//y+0wSp3w==
   _: 'https://registry.npmjs.org/http-cache-semantics/-/http-cache-semantics-3.8.1.tgz'
 http-proxy-agent:
- _latest: 5.0.0
+ _latest: 7.0.2
  _:
   ^2.1.0: 2.1.0
   ^4.0.1: 4.0.1
@@ -4128,7 +4129,7 @@ http-signature:
    jsprim: ^1.2.2
    sshpk: ^1.7.0
 https-proxy-agent:
- _latest: 5.0.0
+ _latest: 7.0.6
  _:
   ^2.2.1: 2.2.4
   ^5.0.0: 5.0.0
@@ -4453,12 +4454,12 @@ isarray:
   $: sha1-ihis/Kmo9Bd+Cav8YDiTmwXR7t8=
   _: 'https://registry.npmjs.com/isarray/-/isarray-0.0.1.tgz'
 isexe:
- _latest: 2.0.0
+ _latest: 3.1.1
  _:
   ^2.0.0: 2.0.0
  2.0.0:
-  $: sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
-  _: 'https://registry.npmjs.com/isexe/-/isexe-2.0.0.tgz'
+  $: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==
+  _: 'https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz'
 isobject:
  _latest: 4.0.0
  _:
@@ -4973,7 +4974,7 @@ make-dir:
    pify: ^4.0.1
    semver: ^5.6.0
 make-fetch-happen:
- _latest: 9.1.0
+ _latest: 14.0.3
  _:
   '^4.0.1,jchip/make-fetch-happen': 4.0.1
   ^9.1.0: 9.1.0
@@ -5083,7 +5084,7 @@ minipass:
    safe-buffer: ^5.1.2
    yallist: ^3.0.0
 minipass-collect:
- _latest: 1.0.2
+ _latest: 2.0.1
  _:
   ^1.0.2: 1.0.2
  1.0.2:
@@ -5092,7 +5093,7 @@ minipass-collect:
   dependencies:
    minipass: ^3.0.0
 minipass-fetch:
- _latest: 1.4.1
+ _latest: 4.0.1
  _:
   ^1.3.2: 1.4.1
  1.4.1:
@@ -5132,7 +5133,7 @@ minipass-sized:
   dependencies:
    minipass: ^3.0.0
 minizlib:
- _latest: 3.0.1
+ _latest: 3.0.2
  _:
   ^1.3.3: 1.3.3
   '^2.0.0,^2.1.1': 2.1.2
@@ -5290,7 +5291,7 @@ natural-compare:
   $: sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
   _: 'https://registry.npmjs.com/natural-compare/-/natural-compare-1.4.0.tgz'
 negotiator:
- _latest: 0.6.2
+ _latest: 1.0.0
  _:
   ^0.6.2: 0.6.2
  0.6.2:
@@ -5339,11 +5340,10 @@ node-fetch-npm:
    json-parse-better-errors: ^1.0.0
    safe-buffer: ^5.1.1
 node-gyp:
- _latest: 8.4.1
+ _latest: 11.2.0
  _:
   ^8.4.1: 8.4.1
  8.4.1:
-  top: 1
   $: sha512-olTJRgUtAb/hOXG0E93wZDs5YiJlgbXxTwQAFHyNlRsXQnYzUaF2aGgujZbw+hR8aF4ZG/rST57bWMWD16jr9w==
   _: 'https://registry.npmjs.org/node-gyp/-/node-gyp-8.4.1.tgz'
   dependencies:
@@ -5374,7 +5374,7 @@ node-releases:
   $: sha1-PR05XyBPHy8ppUNYuftnh2WtL8U=
   _: 'https://registry.npmjs.com/node-releases/-/node-releases-2.0.1.tgz'
 nopt:
- _latest: 5.0.0
+ _latest: 8.1.0
  _:
   ^5.0.0: 5.0.0
  5.0.0:
@@ -5719,7 +5719,7 @@ p-locate:
   dependencies:
    p-limit: ^2.0.0
 p-map:
- _latest: 5.3.0
+ _latest: 7.0.3
  _:
   ^3.0.0: 3.0.0
   ^4.0.0: 4.0.0
@@ -5889,12 +5889,12 @@ picocolors:
   $: sha1-y1vcdP8/UYkiNur3nWi8RFZKuBw=
   _: 'https://registry.npmjs.com/picocolors/-/picocolors-1.0.0.tgz'
 picomatch:
- _latest: 2.2.2
+ _latest: 4.0.2
  _:
   '^2.0.4,^2.2.1': 2.2.2
  2.2.2:
   $: sha512-q0M/9eZHzmr0AulXyPwNfZjtwZ/RBZlbN3K3CErVrk50T2ASYI7Bye0EvekFY3IP1Nt2DHu0re+V2ZHIpMkuWg==
-  _: 'https://registry.npmjs.com/picomatch/-/picomatch-2.2.2.tgz'
+  _: 'https://registry.npmjs.org/picomatch/-/picomatch-2.2.2.tgz'
 pify:
  _latest: 5.0.0
  _:
@@ -6568,7 +6568,7 @@ socks:
    ip: 1.1.5
    smart-buffer: ^4.1.0
 socks-proxy-agent:
- _latest: 6.1.1
+ _latest: 8.0.5
  _:
   ^4.0.0: 4.0.2
   ^6.0.0: 6.1.1
@@ -6688,7 +6688,7 @@ sshpk:
    ecc-jsbn: ~0.1.1
    bcrypt-pbkdf: ^1.0.0
 ssri:
- _latest: 8.0.1
+ _latest: 12.0.0
  _:
   '^6.0.0,^6.0.1': 6.0.1
   '^8.0.0,^8.0.1': 8.0.1
@@ -7134,21 +7134,21 @@ unicode-property-aliases-ecmascript:
   $: sha512-PqSoPh/pWetQ2phoj5RLiaqIk4kCNwoV3CI+LfGmWLKI3rE3kl1h59XpX2BjgDrmbxD9ARtQobPGU1SguCYuQg==
   _: 'https://registry.npmjs.com/unicode-property-aliases-ecmascript/-/unicode-property-aliases-ecmascript-1.1.0.tgz'
 unique-filename:
- _latest: 1.1.1
+ _latest: 4.0.0
  _:
   ^1.1.1: 1.1.1
  1.1.1:
   $: sha512-Vmp0jIp2ln35UTXuryvjzkjGdRyf9b2lTXuSYUiPmzRcl3FDtYqAwOnTJkAngD9SWhnoJzDbTKwaOrZ+STtxNQ==
-  _: 'https://registry.npmjs.com/unique-filename/-/unique-filename-1.1.1.tgz'
+  _: 'https://registry.npmjs.org/unique-filename/-/unique-filename-1.1.1.tgz'
   dependencies:
    unique-slug: ^2.0.0
 unique-slug:
- _latest: 2.0.2
+ _latest: 5.0.0
  _:
   ^2.0.0: 2.0.2
  2.0.2:
   $: sha512-zoWr9ObaxALD3DOPfjPSqxt4fnZiWblxHIgeWqW8x7UqDzEtHEQLzji2cuJYQFCU6KmoJikOYAZlrTHHebjx2w==
-  _: 'https://registry.npmjs.com/unique-slug/-/unique-slug-2.0.2.tgz'
+  _: 'https://registry.npmjs.org/unique-slug/-/unique-slug-2.0.2.tgz'
   dependencies:
    imurmurhash: ^0.1.4
 unwrap-npm-cmd:
@@ -7358,19 +7358,19 @@ webpack-sources:
   $: sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==
   _: 'https://registry.npmjs.org/webpack-sources/-/webpack-sources-3.2.3.tgz'
 which:
- _latest: 2.0.2
+ _latest: 5.0.0
  _:
   '2.0.2,^2.0.1,^2.0.2': 2.0.2
   ^1.3.1: 1.3.1
  2.0.2:
   top: 1
   $: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
-  _: 'https://registry.npmjs.com/which/-/which-2.0.2.tgz'
+  _: 'https://registry.npmjs.org/which/-/which-2.0.2.tgz'
   dependencies:
    isexe: ^2.0.0
  1.3.1:
   $: sha512-HxJdYWq1MTIQbJ3nw0cqssHoTNU267KlrDuGZ1WYlxDStUtKUhOaJmh112/TZmHxxUfuJqPXSOm7tDyas0OSIQ==
-  _: 'https://registry.npmjs.com/which/-/which-1.3.1.tgz'
+  _: 'https://registry.npmjs.org/which/-/which-1.3.1.tgz'
   dependencies:
    isexe: ^2.0.0
 which-module:

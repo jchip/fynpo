@@ -6,7 +6,6 @@ const requireAt = require("require-at");
 const logger = require("../logger");
 const { getGlobalNodeModules } = require("./fyntil");
 const xsh = require("xsh");
-const fyntil = require("./fyntil");
 
 let nodeGypBinPath;
 
@@ -66,21 +65,19 @@ function setupNodeGypFromNpm(env) {
     const npmPkg = xrequire("./package.json");
     const version = parseInt(npmPkg.version.split(".")[0]);
 
-    if (version <= 8) {
-      const { envFile, envPath } =
-        version <= 6
-          ? _getNpm6NodeGyp({ version: npmPkg.version, npmDir, xrequire })
-          : _getNpm7NodeGyp({ version: npmPkg.version, npmDir, xrequire });
+    const { envFile, envPath } =
+      version <= 6
+        ? _getNpm6NodeGyp({ version: npmPkg.version, npmDir, xrequire })
+        : _getNpm7NodeGyp({ version: npmPkg.version, npmDir, xrequire });
 
-      if (envFile && envPath) {
-        env.npm_config_node_gyp = envFile; // eslint-disable-line
-        xsh.envPath.addToFront(envPath, env);
+    if (envFile && envPath) {
+      env.npm_config_node_gyp = envFile; // eslint-disable-line
+      xsh.envPath.addToFront(envPath, env);
 
-        logger.debug(
-          `using node-gyp from npm ${version}: env npm_config_node_gyp set to ${env.npm_config_node_gyp}, path ${envPath} added`
-        );
-        return true;
-      }
+      logger.debug(
+        `using node-gyp from npm ${version}: env npm_config_node_gyp set to ${env.npm_config_node_gyp}, path ${envPath} added`
+      );
+      return true;
     }
   } catch (err) {
     //
@@ -95,16 +92,7 @@ function setupNodeGypFromNpm(env) {
  * @returns
  */
 function setupNodeGypEnv(env) {
-  if (process.env.FYN_NPM_NODE_GYP !== "false" && setupNodeGypFromNpm(env)) {
-    return;
-  }
-
-  env.npm_config_node_gyp = Path.join(fyntil.fynDir, "bin/node-gyp.js"); // eslint-disable-line
-  const envPath = Path.join(fyntil.fynDir, "node-gyp-bin");
-  xsh.envPath.addToFront(envPath, env);
-  logger.debug(
-    `using fyn's node-gyp: env npm_config_node_gyp set to ${env.npm_config_node_gyp}, path ${envPath} added`
-  );
+  return setupNodeGypFromNpm(env);
 }
 
 module.exports = {

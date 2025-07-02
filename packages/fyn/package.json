@@ -10,7 +10,7 @@
     "debug-test": "node --inspect-brk node_modules/.bin/mocha --extension ts,js,tsx,jsx,cjs,mjs -c test/spec",
     "lint": "xrun xarc/lint",
     "compile-yarn": "babel yarn/src --out-dir yarn/lib",
-    "build": "xrun --serial .setup-gyp fyn/create-tgz compile-yarn bundle",
+    "build": "xrun --serial fyn/create-tgz compile-yarn bundle",
     "analyze": "ANALYZE_BUNDLE=1 xrun compile-yarn bundle",
     "coverage": "xrun xarc/check",
     "ci:check": "xrun xarc/check",
@@ -33,10 +33,7 @@
   "files": [
     "bin",
     "dist",
-    "gyp",
-    "src",
-    "node-gyp-bin",
-    "addon.gypi"
+    "src"
   ],
   "keywords": [
     "node",
@@ -144,7 +141,6 @@
     "mocha": "^8.2.1",
     "mock-require": "^2.0.2",
     "node-fetch-npm": "^2.0.4",
-    "node-gyp": "^8.4.1",
     "null-loader": "^4.0.1",
     "nyc": "^15.1.0",
     "prettier": "^1.19.1",
