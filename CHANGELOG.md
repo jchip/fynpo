@@ -1,3 +1,26 @@
+# 7/2/2025
+
+## Packages
+
+-   `@fynpo/base@1.1.18` `(1.1.17 => 1.1.18)`
+-   `fyn@1.1.46` `(1.1.45 => 1.1.46)`
+-   `fynpo@1.1.49` `(1.1.48 => 1.1.49)`
+
+## Commits
+
+-   `packages/fynpo-base`
+
+    -   update deps [commit](https://github.com/electrode-io/fynpo/commit/ae32ffafef7231fac4ac0a2dbf3eb2a42889ca58)
+    -   fix: ignore a fynpo root dir when searching for local packages [commit](https://github.com/electrode-io/fynpo/commit/ef676ae09fc51677aaaffffdd6d85a34d9769cdf)
+
+-   `packages/fyn`
+
+    -   update deps [commit](https://github.com/electrode-io/fynpo/commit/ae32ffafef7231fac4ac0a2dbf3eb2a42889ca58)
+
+-   `packages/fynpo`
+
+    -   update deps [commit](https://github.com/electrode-io/fynpo/commit/ae32ffafef7231fac4ac0a2dbf3eb2a42889ca58)
+
 # 6/30/2025
 
 ## Packages
