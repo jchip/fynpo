@@ -70,6 +70,7 @@ $pkg:
   sinon: ^9.2.2
   sinon-chai: ^3.5.0
   tsx: ^4.20.3
+  typescript: ^5.8.3
   v8-compile-cache: ^2.3.0
   webpack: ^5.89.0
   webpack-bundle-analyzer: ^4.9.1
@@ -2105,7 +2106,7 @@ $pkg:
    tslib: ^2.1.0
    xsh: ^0.4.5
 '@xarc/run':
- _latest: 1.1.1
+ _latest: 2.1.3
  _:
   ^1.0.4: 1.1.1
  1.1.1:
@@ -5690,7 +5691,7 @@ opfs:
   $: sha512-1gVNS4XUqb6RikfaHrhiS7WPR7ht3WH1nn2//65AOeSmTkzo3qosxXJX+oRlurPrnabx+uKLoi4wWr3mfgSKbg==
   _: 'https://registry.npmjs.com/opfs/-/opfs-1.1.1.tgz'
 optional-require:
- _latest: 2.0.4
+ _latest: 2.1.0
  _:
   '^1.0.2,^1.1.10': 1.1.10
  1.1.10:
@@ -7163,6 +7164,14 @@ typedarray-to-buffer:
   _: 'https://registry.npmjs.com/typedarray-to-buffer/-/typedarray-to-buffer-3.1.5.tgz'
   dependencies:
    is-typedarray: ^1.0.0
+typescript:
+ _latest: 5.8.3
+ _:
+  ^5.8.3: 5.8.3
+ 5.8.3:
+  top: 1
+  $: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==
+  _: 'https://registry.npmjs.org/typescript/-/typescript-5.8.3.tgz'
 uid-number:
  _latest: 0.0.6
  _:
@@ -7227,12 +7236,12 @@ unique-slug:
   dependencies:
    imurmurhash: ^0.1.4
 unwrap-npm-cmd:
- _latest: 1.1.1
+ _latest: 1.1.2
  _:
-  ^1.1.1: 1.1.1
- 1.1.1:
-  $: sha512-Y0PFhW+X6oahjV/e4yBxThgq0k9Ymh3RwUh6P/rMiGp55X5qa2mQghZAHKyJ9tDPinZntD0Z+5DHFzlx9/UNbg==
-  _: 'https://registry.npmjs.com/unwrap-npm-cmd/-/unwrap-npm-cmd-1.1.1.tgz'
+  ^1.1.1: 1.1.2
+ 1.1.2:
+  $: sha512-tF85hmJ9080rr2abAxqDs/svbfSW/TPmiUSBwH6MjsXUnT7fS6vK3bNVki/6ayQqHdJdgsZ7p2cZBipXiNM+Eg==
+  _: 'https://registry.npmjs.org/unwrap-npm-cmd/-/unwrap-npm-cmd-1.1.2.tgz'
   dependencies:
    which: ^1.3.1
 uri-js:

@@ -1,6 +1,6 @@
 "use strict";
 
-const FsAsync = require("./lib/util/file-ops");
+const FsAsync = require("fs/promises");
 const Path = require("path");
 const which = require("which");
 

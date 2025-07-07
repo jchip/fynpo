@@ -9,13 +9,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Key Commands
 
 ### Development Commands
-- `npm run bootstrap` - Bootstrap all packages (installs dependencies and builds)
-- `npm run test` - Run tests across all packages using `fynpo run test --stream`
-- `npm run lint` - Run linting across all packages using `fynpo run lint --stream`
-- `npm run coverage` - Generate coverage reports across all packages
-- `npm run ci:check` - Run CI checks after fyn testing
+
+- `xrun bootstrap` - Bootstrap all packages (installs dependencies and builds)
+- `xrun test` - Run tests across all packages using `fynpo run test --stream`
+- `xrun lint` - Run linting across all packages using `fynpo run lint --stream`
+- `xrun coverage` - Generate coverage reports across all packages
+- `xrun ci:check` - Run CI checks after fyn testing
+- `fyn add <package>` - Add a npm package to depedencies
+- `fyn add --dev` - Add a npm package to devDependencies
 
 ### Core fynpo Commands
+
+- Note: need to run `fynpo` with `npx`, like `npx fynpo`
 - `fynpo bootstrap` - Install dependencies and build all packages in topological order
 - `fynpo run <script>` - Run npm script across packages (with streaming output)
 - `fynpo updated` - List packages that have changed since last release
@@ -25,6 +30,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `fynpo init` - Initialize a new fynpo repository
 
 ### Testing Commands
+
 - Use `fynpo run test` to run tests across all packages
 - Individual package tests can be run with `fynpo run test --scope <package-name>`
 - Coverage reports are generated with `fynpo run coverage`
@@ -32,6 +38,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Architecture
 
 ### Package Structure
+
 The monorepo consists of several core packages in `/packages/`:
 
 - **fynpo** - Main CLI tool and orchestrator
@@ -43,31 +50,37 @@ The monorepo consists of several core packages in `/packages/`:
 ### Key Components
 
 #### FynpoDepGraph (packages/fynpo-base/src/fynpo-dep-graph.ts)
+
 - Manages dependency relationships between packages
 - Performs topological sorting for build order
 - Handles circular dependency detection
 
 #### Bootstrap (packages/fynpo/src/bootstrap.ts)
+
 - Installs dependencies across all packages
 - Builds packages in dependency order
 - Handles caching and incremental builds
 
 #### TopoRunner (packages/fynpo/src/topo-runner.ts)
+
 - Executes tasks across packages in topological order
 - Manages concurrency and error handling
 - Provides streaming output with package prefixes
 
 #### Caching System (packages/fynpo/src/caching.ts)
+
 - Implements build caching to avoid redundant work
 - Supports remote caching servers
 - Handles cache invalidation based on file changes
 
 ### Configuration Files
+
 - `fynpo.json` - Main configuration file defining packages, caching, and build settings
 - `package.json` - Standard npm package configuration
 - `fyn-lock.yaml` - Lock file for fyn package manager (similar to package-lock.json)
 
 ### Build System
+
 - Uses TypeScript with compilation to `dist/` directories
 - Webpack for bundling CLI tools
 - SWC for fast TypeScript compilation
