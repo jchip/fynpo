@@ -233,6 +233,11 @@ const options = {
     desc: "Max network concurrency",
     default: 15
   },
+  "auto-run": {
+    type: "boolean",
+    default: true,
+    desc: "auto run npm scripts after install"
+  },
   "build-local": {
     type: "boolean",
     default: true,

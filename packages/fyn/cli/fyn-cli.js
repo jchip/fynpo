@@ -383,8 +383,7 @@ class FynCli {
     let failure;
     let installLocked;
     const start = Date.now();
-    return Promise
-      .try(() => this.fyn._initializePkg())
+    return Promise.try(() => this.fyn._initializePkg())
       .then(async () => {
         checkNewVersion(this.fyn._options);
 
@@ -473,7 +472,7 @@ class FynCli {
           _.without(_runNpm, ...npmInstallScripts),
           pkgScripts
         );
-        if (fynpoNpmScripts.length > 0) {
+        if (this.fyn._options.autoRun && fynpoNpmScripts.length > 0) {
           await runNpmScript({
             appDir: this.fyn.cwd,
             scripts: fynpoNpmScripts,
