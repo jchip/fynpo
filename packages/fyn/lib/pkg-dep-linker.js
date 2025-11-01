@@ -129,9 +129,8 @@ class PkgDepLinker {
           // depends on a package that's not promoted to flatten top level.
           // need to create a node_modules dir within and add a symlink
           // there to the depPkg.
+          if (!pkgs[depName] || !pkgs[depName][depPkg.resolved]) return;
           const pkgInfo = pkgs[depName][depPkg.resolved];
-          // TODO: outdated lock data could cause pkgInfo to be undefined
-          if (!pkgInfo) return;
           if (!pkgInfo.promoted) {
             fvDeps.push(pkgInfo);
           }
