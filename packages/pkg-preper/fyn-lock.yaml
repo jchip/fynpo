@@ -48,7 +48,6 @@ aproba:
 aveazul:
  _latest: 1.0.2
  _:
-  ^0.1.2: 0.1.3
   '^1.0.1,^1.0.2': 1.0.2
  1.0.2:
   top: 1
@@ -57,11 +56,6 @@ aveazul:
   dependencies:
    '@jchip/error': ^1.0.3
    xaa: ^1.8.0
- 0.1.3:
-  $: sha512-LtlhWPIaYy9eUNHRO3r4lO9ANciCFfquskZG9fF4YhK4N5d38UGM3GUCgVryiijZEmrc75P//fZk3I4j4HpXHg==
-  _: 'https://registry.npmjs.org/aveazul/-/aveazul-0.1.3.tgz'
-  dependencies:
-   xaa: ^1.7.3
 balanced-match:
  _:
   ^1.0.0: 1.0.0
@@ -101,7 +95,7 @@ cacache:
   $: sha512-PVUQJqMNWGNfLIkyiYRWV8eRkeiC8xS2owNh2E9ZSFztKZNqofaB5akdAVS3aNXxC+8+6VzfMJhcsZx5VIDuVw==
   _: '~url-spec~{"urlType":"github","semver":"jchip/cacache","_resolved":"github:jchip/cacache#2ec788a75e0cfa8e67db5d95c4af1dfc722cd76d"}'
   dependencies:
-   aveazul: ^0.1.2
+   bluebird: ^3.7.2
    chownr: ^1.1.1
    figgy-pudding: ^3.5.1
    glob: ^7.1.3
@@ -800,7 +794,7 @@ wrappy:
 xaa:
  _latest: 1.8.0
  _:
-  '^1.7.3,^1.8.0': 1.8.0
+  ^1.8.0: 1.8.0
  1.8.0:
   $: sha512-XPNHZLhbO/KyboMyJaJnqma/KUSRAkMUHZpNRVbilvsloJErKsTaOcxxte79u3Hj4UixCHR+y+p+DFp7rZ7MWQ==
   _: 'https://registry.npmjs.org/xaa/-/xaa-1.8.0.tgz'

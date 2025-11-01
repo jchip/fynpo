@@ -1,0 +1,9 @@
+{
+  "name": "pacote-jchip",
+  "version": "1.0.0",
+  "description": "Wrapper for jchip/pacote fork for comparison testing",
+  "main": "index.js",
+  "dependencies": {
+    "pacote": "jchip/pacote"
+  }
+}

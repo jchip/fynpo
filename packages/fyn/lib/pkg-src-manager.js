@@ -12,10 +12,12 @@
 
 const Promise = require("aveazul");
 const cacache = require("cacache");
+const { refreshCacheEntry, getCacheInfoWithRefreshTime } = require("./cacache-util");
 const os = require("os");
 const pacote = require("pacote");
 const _ = require("lodash");
 const chalk = require("chalk");
+const { PassThrough } = require("stream");
 const Fs = require("./util/file-ops");
 const logger = require("./logger");
 const mkdirp = require("mkdirp");
@@ -315,21 +317,24 @@ class PkgSrcManager {
     //
     const pacoteRequest = () => {
       logger.debug(`pacote.packument ${qItem.packumentUrl}`);
-      return pacote
-        .packument(
-          pkgName,
-          this.getPacoteOpts({
-            "full-metadata": true,
-            "fetch-retries": 3,
-            "cache-policy": "ignore",
-            "cache-key": qItem.cacheKey,
-            memoize: false
-          })
-        )
-        .tap(x => {
+      const promise = pacote.packument(
+        pkgName,
+        this.getPacoteOpts({
+          "full-metadata": true,
+          "fetch-retries": 3,
+          "cache-policy": "ignore",
+          "cache-key": qItem.cacheKey,
+          memoize: false
+        })
+      );
+      return promise
+        .then(x => {
           this._metaStat.inTx--;
+          // Handle different response formats from different pacote versions
           if (x.readme) delete x.readme; // don't need this
+          if (x._contentLength) delete x._contentLength; // newer pacote adds this
           updateItem(x._cached ? "cached" : "200");
+          return x;
         })
         .catch(err => {
           const msg = `pacote failed fetching packument of ${pkgName}`;
@@ -355,7 +360,8 @@ class PkgSrcManager {
             `took ${logFormat.time(time)}!!!`
           );
         }
-        cacache.refresh(this._cacheDir, qItem.cacheKey);
+        // Refresh cache timestamp after successful fetch
+        refreshCacheEntry(this._fyn._fynCacheDir, qItem.cacheKey).catch(() => {});
         qItem.defer.resolve(x);
       })
       .catch(err => {
@@ -601,6 +607,16 @@ class PkgSrcManager {
         // we can't use the cache for registry
         Promise.resolve()
       : cacache.get(this._cacheDir, cacheKey, { memoize: true })
+          .then(async cached => {
+            // Add refreshTime from bucket mtime
+            if (cached) {
+              const info = await getCacheInfoWithRefreshTime(this._cacheDir, cacheKey);
+              if (info) {
+                cached.refreshTime = info.refreshTime;
+              }
+            }
+            return cached;
+          })
     )
       .then(cached => {
         const packument = cached && cached.data && JSON.parse(cached.data);
@@ -668,12 +684,23 @@ class PkgSrcManager {
     const stream = this.pacoteTarballStream(pkgId, pkgInfo, integrity);
 
     const defer = Promise.defer();
-    stream.once("end", () => {
-      if (stream.destroy) stream.destroy();
-      defer.resolve();
-    });
-    stream.once("error", defer.reject);
-    stream.on("data", _.noop);
+    // Handle different stream types from different pacote versions
+    // Newer pacote returns a Promise, not a stream
+    if (typeof stream.then === "function") {
+      // It's a Promise, resolve it directly
+      stream.then(() => defer.resolve()).catch(defer.reject);
+    } else if (typeof stream.once === "function") {
+      // Legacy stream with .once()
+      stream.once("end", () => {
+        if (stream.destroy) stream.destroy();
+        defer.resolve();
+      });
+      stream.once("error", defer.reject);
+      stream.on("data", _.noop);
+    } else {
+      // Fallback - assume it's a stream-like object
+      defer.reject(new Error("Unsupported stream type from pacote"));
+    }
 
     return defer.promise;
   }
@@ -683,16 +710,64 @@ class PkgSrcManager {
   }
 
   pacoteTarballStream(pkgId, pkgInfo, integrity) {
+    const tarballUrl = _.get(pkgInfo, "dist.tarball");
+
+    // pacote >= 21 changed the API - use RemoteFetcher with tarball URL to avoid manifest lookup
+    if (tarballUrl) {
+      const opts = this.getPacoteOpts({
+        integrity
+      });
+      // Create a fetcher for the tarball URL
+      const fetcher = new pacote.RemoteFetcher(tarballUrl, opts);
+      // Create a passthrough stream that we can return
+      const passthrough = new PassThrough();
+
+      // Start the tarballStream operation and pipe to passthrough
+      // We need to start this immediately so that when pacotePrefetch consumes
+      // the passthrough stream, data will flow through
+      const streamPromise = fetcher.tarballStream(stream => {
+        // Pipe the source stream to our passthrough stream
+        stream.pipe(passthrough);
+        // Return a promise that resolves when piping is complete
+        return new Promise((resolve, reject) => {
+          stream.on("end", resolve);
+          stream.on("error", reject);
+          passthrough.on("error", reject);
+        });
+      });
+
+      // If there's an error starting the stream, propagate it to the passthrough
+      streamPromise.catch(err => passthrough.destroy(err));
+
+      // Return the passthrough stream
+      return passthrough;
+    }
+
+    // Fallback for packages without tarball URL
     const opts = this.getPacoteOpts({
-      // pacote please reuse manifest
       fullMeta: true,
       integrity,
-      // pacote please don't try to get manifest
-      // https://github.com/zkat/pacote/blob/3d0354ab990ce7adb6f5b4899e7ed9ffef4fca61/lib/fetchers/registry/tarball.js#L23
-      resolved: _.get(pkgInfo, "dist.tarball")
+      resolved: tarballUrl
     });
 
-    return pacote.tarball.stream(pkgId, opts);
+    const passthrough = new PassThrough();
+    const streamPromise = pacote.tarball.stream(
+      pkgId,
+      stream => {
+        stream.pipe(passthrough);
+        return new Promise((resolve, reject) => {
+          stream.on("end", resolve);
+          stream.on("error", reject);
+          passthrough.on("error", reject);
+        });
+      },
+      opts
+    );
+
+    // If there's an error starting the stream, propagate it to the passthrough
+    streamPromise.catch(err => passthrough.destroy(err));
+
+    return passthrough;
   }
 
   getIntegrity(item) {

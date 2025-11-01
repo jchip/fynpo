@@ -2,6 +2,19 @@
 
 /* eslint-disable complexity */
 
+/**
+ * Scenario testing framework for fyn
+ *
+ * Filter behavior:
+ * - When debug = true: Only scenarios in filter are run (with describe.only)
+ * - When debug = false: Filter serves as configuration for scenarios
+ *   - Use `skip: true` to skip a scenario
+ *   - Use `stopStep`, `debugStep`, etc. for other options
+ *
+ * Ways to skip individual steps:
+ * - Add `skip: true` to the step's index.js module exports
+ */
+
 const Fs = require("fs");
 const Path = require("path");
 const _ = require("lodash");
@@ -277,8 +290,11 @@ const debug = false;
   const cleanUp = !debug;
   const filter = debug
     ? {
+        // When debug=false: Use this filter to configure scenarios (e.g., skip: true)
+        // When debug=true: Only scenarios listed here will run (with describe.only)
+        // Examples:
         // "add-remove-pkg": { stopStep: "step-02", debugStep: "step-02" }
-        "auto-deep-resolve": {}
+        // "auto-deep-resolve": {}
         // "bin-linker": {}
         // "build-local": {}
         // "fyn-central": {},
@@ -287,7 +303,7 @@ const debug = false;
         // "local-hard-linking": {}
         // "local-sym-linking": {}
         // "locked-change-major": {}
-        // "locked-change-dedupe": { debugStep: "step-02" }
+        // "locked-change-dedupe": {}
         // "locked-change-dedupe-2": { debugStep: "step-02" }
         // "locked-npm-dedupe": {}
         // "locked-change-indirect": {}
@@ -298,19 +314,37 @@ const debug = false;
         // "package-fyn": {}
         // "platform-check": {}
         // "platform-check-good": {}
-        // "remote-url-semver": {}
+        // "remote-url-semver": { skip: true }  // Skip this scenario
         // "stat-pkg": {}
       }
-    : {};
+    : {
+        "remote-url-semver": { skip: true } // Skip this scenario
+      };
 
   const saveCwd = process.cwd();
   const scenarioDir = Path.join(__dirname, "../scenarios");
   const scenarios = Fs.readdirSync(scenarioDir).filter(x => !x.startsWith("."));
   scenarios.sort().forEach(s => {
-    if (_.isEmpty(filter) || filter[s]) {
+    // In debug mode: only run scenarios in filter (with .only)
+    // In normal mode: run all scenarios, but use filter for configuration (skip, etc.)
+    const inFilter = filter.hasOwnProperty(s);
+    const shouldRun = debug ? inFilter : true;
+
+    if (shouldRun) {
       const f = filter[s] || {};
-      describe(s, function() {
-        const cwd = Path.join(scenarioDir, s);
+      const cwd = Path.join(scenarioDir, s);
+      const shouldSkip = !debug && f.skip;
+
+      // In debug mode, use describe.only for scenarios in filter
+      // In normal mode, use describe.skip for scenarios marked skip
+      let describeFn = describe;
+      if (debug && inFilter) {
+        describeFn = describe.only;
+      } else if (shouldSkip) {
+        describeFn = describe.skip;
+      }
+
+      describeFn(s, function() {
         const clean = () => {
           rimraf.sync(Path.join(cwd, "package.json"));
           rimraf.sync(Path.join(cwd, "fyn-lock.yaml"));

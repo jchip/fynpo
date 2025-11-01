@@ -1,7 +1,8 @@
 "use strict";
 
 const logger = require("../../../../lib/logger");
-const stripAnsi = require("strip-ansi");
+const stripAnsiModule = require("strip-ansi");
+const stripAnsi = stripAnsiModule.default || stripAnsiModule;
 
 module.exports = {
   title: "should warn peer dep missing",

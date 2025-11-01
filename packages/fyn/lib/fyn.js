@@ -104,7 +104,7 @@ class Fyn {
 
     this._npmLockData = null;
 
-    this._depLocker = new PkgDepLocker(this.lockOnly, this._options.lockfile);
+    this._depLocker = new PkgDepLocker(this.lockOnly, this._options.lockfile, this);
 
     const foundLock = await this._depLocker.read(Path.join(this._cwd, FYN_LOCK_FILE));
     this.updateConfigInLockfile("layout", this._options.layout);

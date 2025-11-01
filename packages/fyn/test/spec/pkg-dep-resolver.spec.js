@@ -77,6 +77,12 @@ describe("pkg-dep-resolver", function() {
   };
 
   const testPkgAFixture = deepResolve => {
+    /*
+     * This test ensures that:
+     * - mod-e@2.1.1 (with a successful preinstall script) is correctly resolved and installed
+     * - mod-err@4.5.1 (with a failing preinstall script) is correctly marked as failed
+     * - All dependencies, including optional and deep dependencies, are correctly resolved
+     */
     const fyn = new Fyn({
       opts: {
         registry: `http://localhost:${server.info.port}`,

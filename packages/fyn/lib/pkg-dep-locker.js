@@ -1,6 +1,6 @@
 "use strict";
 
-/* eslint-disable no-magic-numbers, no-param-reassign */
+/* eslint-disable no-magic-numbers, no-param-reassign, max-depth */
 
 const Path = require("path");
 const crypto = require("crypto");
@@ -25,12 +25,13 @@ const logger = require("./logger");
 const fyntil = require("./util/fyntil");
 
 class PkgDepLocker {
-  constructor(lockOnly, enableLockfile) {
+  constructor(lockOnly, enableLockfile, fyn) {
     this._enable = enableLockfile;
     this._lockOnly = lockOnly;
     this._lockData = {};
     this._isFynFormat = true;
     this._config = {};
+    this._fyn = fyn;
   }
 
   get data() {
@@ -221,9 +222,26 @@ class PkgDepLocker {
               fullPath: vpkg._
             };
           } else {
+            // When loading from lockfile, the tarball URL may have an old registry host/port
+            // We need to update it to use the current registry to avoid connection errors
+            let tarballUrl = vpkg._;
+            if (tarballUrl && this._fyn && this._fyn._pkgSrcMgr) {
+              const currentRegistry = this._fyn._pkgSrcMgr.getRegistryUrl(item.name);
+              // Check if the tarball URL starts with a different registry
+              // Format: http://host:port/package/-/package-version.tgz
+              const urlMatch = tarballUrl.match(/^(https?:\/\/[^\/]+)(\/.*)/);
+              if (urlMatch && currentRegistry) {
+                const lockRegistry = urlMatch[1] + "/";
+                const tarballPath = urlMatch[2];
+                // If registries don't match, use current registry
+                if (lockRegistry !== currentRegistry) {
+                  tarballUrl = currentRegistry.replace(/\/$/, "") + tarballPath;
+                }
+              }
+            }
             vpkg.dist = {
               integrity: fyntil.shaToIntegrity(vpkg.$),
-              tarball: vpkg._
+              tarball: tarballUrl
             };
           }
           vpkg.$ = vpkg._ = null;
