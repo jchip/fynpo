@@ -110,7 +110,6 @@
     "pacote": "^21.0.3",
     "pkg-preper": "^0.1.3",
     "publish-util": "^2.1.0",
-    "rimraf": "^3.0.2",
     "semver": "^7.3.5",
     "source-map": "^0.7.3",
     "strip-bom": "^4.0.0",
@@ -195,11 +194,9 @@
     "cache": true
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=14.14"
   },
   "opfs": {
-    "mkdirp": true,
-    "rimraf": true,
     "bluebird": true
   },
   "prettier": {
