@@ -2,7 +2,7 @@
 
 const Fs = require("opfs");
 const Path = require("path");
-const rimraf = require("rimraf");
+const nodeFs = require("fs");
 
 module.exports = {
   title: "should install and run build when a local dep changed",
@@ -14,6 +14,6 @@ module.exports = {
     const pkg = JSON.parse(await Fs.readFile(fileName));
     pkg.scripts.install = "node index.js hello.js";
     await Fs.writeFile(fileName, JSON.stringify(pkg, null, 2));
-    rimraf.sync(Path.join(e1Dir, "dist"));
+    nodeFs.rmSync(Path.join(e1Dir, "dist"), { recursive: true, force: true });
   }
 };

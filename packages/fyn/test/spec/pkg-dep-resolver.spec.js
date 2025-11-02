@@ -7,7 +7,6 @@ const Fyn = require("../../lib/fyn");
 const mockNpm = require("../fixtures/mock-npm");
 const expect = require("chai").expect;
 const _ = require("lodash");
-const rimraf = require("rimraf");
 const logger = require("../../lib/logger");
 const chalk = require("chalk");
 
@@ -31,7 +30,7 @@ describe("pkg-dep-resolver", function() {
   });
 
   afterEach(() => {
-    rimraf.sync(fynDir);
+    Fs.rmSync(fynDir, { recursive: true, force: true });
   });
 
   const sortSrc = src => {
@@ -112,11 +111,11 @@ describe("pkg-dep-resolver", function() {
     return testPkgAFixture(true)
       .then(() => testPkgAFixture(true))
       .then(() => {
-        rimraf.sync(Path.join(fynDir, "xout"));
+        Fs.rmSync(Path.join(fynDir, "xout"), { recursive: true, force: true });
         return testPkgAFixture(true);
       })
       .then(() => {
-        rimraf.sync(Path.join(fynDir, "cache"));
+        Fs.rmSync(Path.join(fynDir, "cache"), { recursive: true, force: true });
         return testPkgAFixture(true);
       });
   }).timeout(10000);
@@ -129,11 +128,11 @@ describe("pkg-dep-resolver", function() {
     return testPkgAFixture(false)
       .then(() => testPkgAFixture(false))
       .then(() => {
-        rimraf.sync(Path.join(fynDir, "xout"));
+        Fs.rmSync(Path.join(fynDir, "xout"), { recursive: true, force: true });
         return testPkgAFixture(false);
       })
       .then(() => {
-        rimraf.sync(Path.join(fynDir, "cache"));
+        Fs.rmSync(Path.join(fynDir, "cache"), { recursive: true, force: true });
         return testPkgAFixture(false);
       });
   }).timeout(10000);

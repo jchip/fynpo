@@ -17,4 +17,10 @@ opfs.$.rimraf = async (path) => {
   return fs.promises.rm(path, { recursive: true, force: true });
 };
 
+// Add mkdirp implementation using fs.mkdirSync (Node.js 10.12+)
+// Replace the opfs mkdirp wrapper with native fs.mkdirSync
+opfs.$.mkdirp = (path) => {
+  return fs.mkdirSync(path, { recursive: true });
+};
+
 module.exports = win32Opfs(opfs);

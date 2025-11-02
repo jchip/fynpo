@@ -20,13 +20,13 @@
   TODO: F's A --> A@1.0, should've gotten A@2.0 from D's dep
 */
 
-const rimraf = require("rimraf");
+const Fs = require("fs");
 const Path = require("path");
 
 module.exports = {
   title: "should resolve non-top parent's version for nested dep",
   timeout: 20000,
   before: cwd => {
-    rimraf.sync(Path.join(cwd, "fyn-lock.yaml"));
+    Fs.rmSync(Path.join(cwd, "fyn-lock.yaml"), { recursive: true, force: true });
   }
 };

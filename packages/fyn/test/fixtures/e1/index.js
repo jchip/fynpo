@@ -1,5 +1,4 @@
 "use strict";
-const rimraf = require("rimraf");
 const Path = require("path");
 // test
 const Fs = require("fs");
@@ -7,7 +6,7 @@ const Fs = require("fs");
 const distDir = Path.join(__dirname, "dist");
 if (!Fs.existsSync(distDir)) {
   try {
-    rimraf.sync(distDir);
+    Fs.rmSync(distDir, { recursive: true, force: true });
     Fs.mkdirSync(distDir);
   } catch (err) {
     //

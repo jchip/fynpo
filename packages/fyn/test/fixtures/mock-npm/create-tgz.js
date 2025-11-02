@@ -5,11 +5,9 @@ const Crypto = require("crypto");
 const Path = require("path");
 const Yml = require("js-yaml");
 const _ = require("lodash");
-const mkdirp = require("mkdirp");
 const Promise = require("aveazul");
 const Tar = require("tar");
 const xsh = require("xsh");
-const rimraf = Promise.promisify(require("rimraf"));
 const writeFile = Promise.promisify(Fs.writeFile);
 const optionalRequire = require("optional-require")(require);
 const metas = Fs.readdirSync(Path.join(__dirname, "metas"));
@@ -55,7 +53,7 @@ const createTgz = () => {
   const modSum = optionalRequire(`./${TGZ_DIR_NAME}/pkg-sum.json`, { default: {} });
   let changed = 0;
   const tmpDir = Path.join(__dirname, "package");
-  mkdirp.sync(Path.join(__dirname, TGZ_DIR_NAME));
+  Fs.mkdirSync(Path.join(__dirname, TGZ_DIR_NAME), { recursive: true });
 
   return Promise.resolve(metas)
     .each(m => {
@@ -64,8 +62,8 @@ const createTgz = () => {
       const meta = Yml.safeLoad(ymlStr);
 
       return Promise.resolve(Object.keys(meta.versions)).each(v => {
-        rimraf.sync(tmpDir);
-        mkdirp.sync(tmpDir);
+        Fs.rmSync(tmpDir, { recursive: true, force: true });
+        Fs.mkdirSync(tmpDir, { recursive: true });
 
         const metaPkg = meta.versions[v];
         const pkg = makePackage(metaPkg);
@@ -120,7 +118,7 @@ const createTgz = () => {
           `${JSON.stringify(modSum, null, 2)}\n`
         );
       }
-      rimraf.sync(tmpDir);
+      Fs.rmSync(tmpDir, { recursive: true, force: true });
     });
 };
 

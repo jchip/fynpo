@@ -20,7 +20,6 @@ const Path = require("path");
 const _ = require("lodash");
 const Yaml = require("js-yaml");
 const Promise = require("aveazul");
-const rimraf = require("rimraf");
 const dirTree = require("../dir-tree");
 const fynRun = require("../../cli/fyn");
 const fyntil = require("../../lib/util/fyntil");
@@ -133,7 +132,7 @@ const debug = false;
       // remove existing debug log file for step
       //
       const debugLogFile = `fyn-debug-${step}.log`;
-      rimraf.sync(Path.join(cwd, debugLogFile));
+      Fs.rmSync(Path.join(cwd, debugLogFile), { recursive: true, force: true });
 
       const testCase = (stepAction.skip ? it.skip : it)(`${step}${stepTitle}`, () => {
         if (debug && step === options.debugStep) {
@@ -346,10 +345,10 @@ const debug = false;
 
       describeFn(s, function() {
         const clean = () => {
-          rimraf.sync(Path.join(cwd, "package.json"));
-          rimraf.sync(Path.join(cwd, "fyn-lock.yaml"));
-          rimraf.sync(Path.join(cwd, ".fyn"));
-          rimraf.sync(Path.join(cwd, "node_modules"));
+          Fs.rmSync(Path.join(cwd, "package.json"), { recursive: true, force: true });
+          Fs.rmSync(Path.join(cwd, "fyn-lock.yaml"), { recursive: true, force: true });
+          Fs.rmSync(Path.join(cwd, ".fyn"), { recursive: true, force: true });
+          Fs.rmSync(Path.join(cwd, "node_modules"), { recursive: true, force: true });
         };
 
         before(clean);
