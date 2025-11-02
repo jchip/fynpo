@@ -18,7 +18,9 @@
     "prepublishOnly": "xrun build",
     "prepack": "publish-util-prepack",
     "postpack": "publish-util-postpack",
-    "blah": "exit 5"
+    "blah": "exit 5",
+    "test-npm-a": "npm run test-npm-b",
+    "test-npm-b": "env"
   },
   "bin": {
     "0-npx-please-run-this-for-fyn": "./bin/fyn.js",
@@ -100,7 +102,7 @@
     "mississippi": "^4.0.0",
     "mkdirp": "^0.5.5",
     "nix-clap": "^1.3.13",
-    "npm-lifecycle": "jchip/npm-lifecycle",
+    "@npmcli/run-script": "^10.0.2",
     "npm-packlist": "jchip/npm-packlist",
     "npm-registry-fetch": "^19.1.0",
     "npmlog": "^4.1.2",

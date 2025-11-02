@@ -88,7 +88,7 @@ Other than benefiting from the massive package ecosystem and all the documents f
 - [pacote] - for retrieving `npm` package data.
 - [ini] - for handling `ini` config files.
 - [npm-packlist] - for filtering files according to npm ignore rules.
-- [npm-lifecycle] - for npm_config env and offering `run` as a convenience.
+- [@npmcli/run-script] - for running package scripts.
 - [npmlog] - for offering the `run` command as a convenience.
 - And all the other packages they depend on.
 
@@ -127,7 +127,7 @@ Licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses
 [lerna]: https://www.npmjs.com/package/lerna
 [fynpo]: https://www.npmjs.com/package/fynpo
 [npm link]: https://docs.npmjs.com/cli/link.html
-[npm-lifecycle]: https://www.npmjs.com/package/npm-lifecycle
+[@npmcli/run-script]: https://www.npmjs.com/package/@npmcli/run-script
 [npmlog]: https://www.npmjs.com/package/npmlog
 [build-image]: https://github.com/jchip/fynpo/actions/workflows/ci.yml/badge.svg
 [build-url]: https://github.com/jchip/fynpo/actions/workflows/ci.yml

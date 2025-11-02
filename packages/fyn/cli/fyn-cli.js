@@ -19,7 +19,8 @@ const showStat = require("./show-stat");
 // const showSetupInfo = require("./show-setup-info");
 // const logFormat = require("../lib/util/log-format");
 const { runNpmScript, addNpmLifecycle } = require("../lib/util/run-npm-script");
-const npmLifecycle = require("npm-lifecycle");
+const { initEnv } = require("../lib/util/make-npm-env");
+const runScript = require("@npmcli/run-script");
 const npmlog = require("npmlog");
 const xaa = require("../lib/util/xaa");
 const { scanFileStats } = require("../lib/util/stat-dir");
@@ -530,24 +531,19 @@ class FynCli {
     const config = x => this.fyn.allrc[x];
 
     const options = {
-      config: this.fyn.allrc,
-      dir: Path.join(this.fyn.cwd, this.fyn.targetDir),
-      failOk: false,
-      force: config("force"),
-      group: config("group"),
-      log: npmlog,
-      ignorePrepublish: config("ignore-prepublish"),
-      ignoreScripts: config("ignore-scripts"),
-      nodeOptions: config("node-options"),
-      production: this.fyn.production,
-      scriptShell: config("script-shell"),
-      scriptsPrependNodePath: config("scripts-prepend-node-path"),
-      unsafePerm: config("unsafe-perm"),
-      user: config("user"),
-      env
+      event: script,
+      path: this.fyn.cwd,
+      pkg,
+      env,
+      stdio: "inherit"
     };
 
-    return npmLifecycle(pkg, script, this.fyn.cwd, options);
+    const scriptShell = config("script-shell");
+    if (scriptShell) {
+      options.scriptShell = scriptShell;
+    }
+
+    return runScript(options);
   }
 
   async runScripts(scripts, { single } = {}) {
@@ -568,7 +564,7 @@ class FynCli {
       })
     );
 
-    const env = npmLifecycle.initEnv(process.env, this.fyn.production);
+    const env = initEnv(process.env, this.fyn.production);
 
     // add fynpo top dir node_modules/.bin to PATH
     if (this._config._fynpo.config) {

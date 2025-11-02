@@ -9,7 +9,6 @@ const _ = require("lodash");
 const logger = require("../lib/logger");
 const assert = require("assert");
 const defaultRc = require("./default-rc");
-const npmConfig = require("./config/npm-config");
 const fynTil = require("../lib/util/fyntil");
 
 // replace any ${ENV} values with the appropriate environ.
@@ -97,8 +96,8 @@ function loadRc(cwd, fynpoDir) {
     return x;
   });
 
-  const all = _.merge.apply(_, [{}, npmConfig.defaults, defaultRc].concat(data));
-  const npmrc = _.merge.apply(_, [{}, npmConfig.defaults].concat(npmrcData));
+  const all = _.merge.apply(_, [{}, defaultRc].concat(data));
+  const npmrc = _.merge.apply(_, [{}].concat(npmrcData));
 
   replaceRcEnv(all, process.env);
   replaceRcEnv(npmrc, process.env);
