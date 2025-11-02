@@ -20,7 +20,7 @@ const chalk = require("chalk");
 const { PassThrough } = require("stream");
 const Fs = require("./util/file-ops");
 const logger = require("./logger");
-const mkdirp = require("mkdirp");
+const fs = require("fs");
 const Path = require("path");
 const PromiseQueue = require("./util/promise-queue");
 const Inflight = require("./util/inflight");
@@ -51,7 +51,7 @@ class PkgSrcManager {
     });
     this._meta = {};
     this._cacheDir = this._options.fynCacheDir;
-    mkdirp.sync(this._cacheDir);
+    fs.mkdirSync(this._cacheDir, { recursive: true });
     this._inflights = {
       meta: new Inflight()
     };
@@ -141,7 +141,7 @@ class PkgSrcManager {
 
   makePkgCacheDir(pkgName) {
     const pkgCacheDir = Path.join(this._cacheDir, pkgName);
-    mkdirp.sync(pkgCacheDir);
+    fs.mkdirSync(pkgCacheDir, { recursive: true });
     return pkgCacheDir;
   }
 
