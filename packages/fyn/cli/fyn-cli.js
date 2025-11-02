@@ -576,6 +576,11 @@ class FynCli {
 
     setupNodeGypEnv(env);
 
+    // Set additional npm environment variables to match lifecycle-scripts.js
+    env.npm_node_execpath = env.NODE = env.NODE || process.execPath;
+    env.npm_execpath = require.resolve("../bin/fyn.js");
+    env.INIT_CWD = this.fyn.cwd;
+
     return Promise.each(
       _scripts,
       s => _.get(pkg, ["scripts", s]) && this.runScript(pkg, s, Object.assign({}, env))
