@@ -4,7 +4,7 @@
       {
         "fromPkg": {
           "name": "pkg-preper",
-          "version": "0.1.2",
+          "version": "0.1.3",
           "path": "packages/pkg-preper"
         },
         "onPkg": {
@@ -14,10 +14,28 @@
         },
         "depSection": "dep",
         "indirectSteps": [
-          "pkg-preper@0.1.2(dep)"
+          "pkg-preper@0.1.3(dep)"
+        ]
+      }
+    ],
+    "packages/pacote-jchip": [
+      {
+        "fromPkg": {
+          "name": "pacote-jchip",
+          "version": "1.0.0",
+          "path": "packages/pacote-jchip"
+        },
+        "onPkg": {
+          "name": "bluebird",
+          "version": "3.7.2",
+          "path": "packages/bluebird"
+        },
+        "depSection": "dep",
+        "indirectSteps": [
+          "pacote-jchip@1.0.0(dep)"
         ]
       }
     ]
   },
-  "__timestamp": 1749261578666
+  "__timestamp": 1762056036330
 }

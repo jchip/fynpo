@@ -6,6 +6,7 @@
     }
   },
   "packages": ["packages/*"],
+  "ignore": ["packages/pacote-jchip"],
   "caching": {
     "enable": true,
     "server": "http://localhost:8080/upload",
