@@ -5,6 +5,13 @@
 //
 // execute npm scripts
 //
+// NOTE: This is fyn's custom lifecycle script executor used during package installation.
+// It differs from @npmcli/run-script (used in cli/fyn-cli.js for `fyn run` commands) because:
+// - Sets custom npm_config_* environment variables from .npmrc files
+// - Provides VisualExec for custom progress display during installation
+// - Handles fynpo-specific PATH setup for monorepo support
+// - Custom error handling with AggregateError for better debugging
+//
 
 const Path = require("path");
 const optionalRequire = require("optional-require")(eval("require"));

@@ -19,7 +19,7 @@ const showStat = require("./show-stat");
 // const showSetupInfo = require("./show-setup-info");
 // const logFormat = require("../lib/util/log-format");
 const { runNpmScript, addNpmLifecycle } = require("../lib/util/run-npm-script");
-const { initEnv } = require("../lib/util/make-npm-env");
+const { initEnv, makeNpmEnv } = require("../lib/util/make-npm-env");
 const runScript = require("@npmcli/run-script");
 const npmlog = require("npmlog");
 const xaa = require("../lib/util/xaa");
@@ -564,7 +564,10 @@ class FynCli {
       })
     );
 
-    const env = initEnv(process.env, this.fyn.production);
+    const env = makeNpmEnv(pkg, {
+      config: this.fyn.allrc,
+      production: this.fyn.production
+    });
 
     // add fynpo top dir node_modules/.bin to PATH
     if (this._config._fynpo.config) {
