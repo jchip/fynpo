@@ -1,6 +1,6 @@
 {
-  "name": "fynpo",
-  "version": "1.0.0",
+  "name": "fynpo-monorepo",
+  "version": "0.0.1",
   "description": "A node.js JavaScript monorepo manager",
   "main": "index.js",
   "homepage": "https://www.electrode.io/fynpo/",

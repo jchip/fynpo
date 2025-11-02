@@ -119,10 +119,12 @@ class FynCli {
       if (_.isEmpty(packages)) return [];
 
       const items = await xaa.map(packages, async pkgSemver => {
-        const xfp = Path.resolve(pkgSemver);
+        // Resolve relative to fyn's cwd, not process.cwd()
+        const baseDir = this.fyn.cwd || process.cwd();
+        const xfp = Path.resolve(baseDir, pkgSemver);
         const stat = await xaa.try(() => Fs.stat(xfp));
         if (stat && stat.isDirectory()) {
-          pkgSemver = Path.relative(process.cwd(), xfp);
+          pkgSemver = Path.relative(baseDir, xfp);
           if (!pkgSemver.startsWith(`..${Path.sep}`)) {
             pkgSemver = `.${Path.sep}${pkgSemver}`;
           }
@@ -526,7 +528,7 @@ class FynCli {
     });
   }
 
-  async runScript(pkg, script, env) {
+  async runScript(pkg, script, env, scriptArgs = []) {
     const config = x => this.fyn.allrc[x];
 
     const options = {
@@ -542,10 +544,14 @@ class FynCli {
       options.scriptShell = scriptShell;
     }
 
+    if (scriptArgs.length > 0) {
+      options.args = scriptArgs;
+    }
+
     return runScript(options);
   }
 
-  async runScripts(scripts, { single } = {}) {
+  async runScripts(scripts, { single, scriptArgs } = {}) {
     if (!this.fyn._pkg) {
       await this.fyn.loadPkg();
     }
@@ -580,9 +586,17 @@ class FynCli {
     env.npm_execpath = require.resolve("../bin/fyn.js");
     env.INIT_CWD = this.fyn.cwd;
 
+    // Only pass args to the main script, not pre/post scripts
+    const mainScript = scripts[scripts.length - 1];
     return Promise.each(
       _scripts,
-      s => _.get(pkg, ["scripts", s]) && this.runScript(pkg, s, Object.assign({}, env))
+      s => {
+        if (_.get(pkg, ["scripts", s])) {
+          // Only pass args to the main script
+          const args = s === mainScript ? scriptArgs : [];
+          return this.runScript(pkg, s, Object.assign({}, env), args);
+        }
+      }
     );
   }
 
@@ -613,7 +627,55 @@ class FynCli {
       fyntil.exit(1);
     }
 
-    return this.runScripts([script]);
+    // Extract arguments after -- from the original command line
+    const scriptArgs = this._extractScriptArgs(argv);
+
+    return this.runScripts([script], { scriptArgs });
+  }
+
+  _extractScriptArgs(argv) {
+    // Extract arguments after -- from process.argv
+    // This handles both explicit "run" command and auto-injected "run"
+    let rawArgs = [];
+    
+    // Find where the script name appears in process.argv
+    const scriptName = argv.args && argv.args.script;
+    if (scriptName) {
+      // Find the script name in process.argv
+      const scriptIndex = process.argv.indexOf(scriptName);
+      if (scriptIndex >= 0) {
+        // Get everything from the script name onwards
+        rawArgs = process.argv.slice(scriptIndex);
+      }
+    }
+    
+    // Fallback: if script name not found, try to find "run" command
+    if (rawArgs.length === 0) {
+      const runIndex = process.argv.indexOf("run");
+      if (runIndex >= 0) {
+        rawArgs = process.argv.slice(runIndex);
+      }
+    }
+    
+    // If still not found, check if command was auto-injected
+    // In that case, the script name should be the first unknown argument
+    if (rawArgs.length === 0 && scriptName) {
+      // Look for script name anywhere in argv (might be before "run" was injected)
+      for (let i = 0; i < process.argv.length; i++) {
+        if (process.argv[i] === scriptName) {
+          rawArgs = process.argv.slice(i);
+          break;
+        }
+      }
+    }
+
+    // Find -- separator and extract everything after it
+    const dashDashIndex = rawArgs.indexOf("--");
+    if (dashDashIndex >= 0 && dashDashIndex < rawArgs.length - 1) {
+      return rawArgs.slice(dashDashIndex + 1);
+    }
+
+    return [];
   }
 }
 

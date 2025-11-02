@@ -211,7 +211,9 @@ class PkgSrcManager {
       if (parent.localType) {
         fullPath = Path.join(parent.fullPath, localPath);
       } else {
-        fullPath = Path.resolve(this._fyn.cwd, localPath);
+        const baseDir = this._fyn.cwd || process.cwd();
+        logger.debug("fetchLocalItem resolving", localPath, "relative to", baseDir);
+        fullPath = Path.resolve(baseDir, localPath);
       }
     } else {
       fullPath = localPath;
@@ -219,7 +221,7 @@ class PkgSrcManager {
 
     item.fullPath = fullPath;
 
-    logger.debug("fetchLocalItem localPath", localPath, "fullPath", fullPath);
+    logger.debug("fetchLocalItem localPath", localPath, "fullPath", fullPath, "cwd", this._fyn.cwd);
 
     const existLocalMeta = _.get(this._localMeta, [item.name, "byPath", fullPath]);
 
@@ -330,6 +332,12 @@ class PkgSrcManager {
       return promise
         .then(x => {
           this._metaStat.inTx--;
+          // Handle case where pacote returns null/undefined for missing packages
+          if (!x) {
+            const msg = `pacote returned null/undefined for packument of ${pkgName}`;
+            logger.error(chalk.yellow(msg));
+            throw new AggregateError([new Error(msg)], msg);
+          }
           // Handle different response formats from different pacote versions
           if (x.readme) delete x.readme; // don't need this
           if (x._contentLength) delete x._contentLength; // newer pacote adds this
@@ -359,6 +367,13 @@ class PkgSrcManager {
             logFormat.pkgId(qItem.item),
             `took ${logFormat.time(time)}!!!`
           );
+        }
+        // Handle case where pacote returns null/undefined for missing packages
+        if (!x) {
+          const msg = `packument fetch returned null/undefined for ${pkgName}`;
+          logger.error(chalk.yellow(msg));
+          qItem.defer.reject(new AggregateError([new Error(msg)], msg));
+          return;
         }
         // Refresh cache timestamp after successful fetch
         refreshCacheEntry(this._fyn._fynCacheDir, qItem.cacheKey).catch(() => {});
@@ -621,21 +636,24 @@ class PkgSrcManager {
       .then(cached => {
         const packument = cached && cached.data && JSON.parse(cached.data);
         foundCache = cached;
-        const stale = Date.now() - cached.refreshTime;
-        const since = (stale / 1000).toFixed(2);
-        logger.debug(
-          `found packument cache for '${pkgName}' - refreshed ${since}secs ago at ${cached.refreshTime}`
-        );
-        if (
-          this._fyn._options.refreshMeta !== true &&
-          cached &&
-          cached.refreshTime &&
-          stale < META_CACHE_STALE_TIME
-        ) {
-          cacheMemoized = true;
-          this._metaStat.wait--;
-          return packument;
-        } else if (cached && metaMemoizeUrl) {
+        
+        if (cached && cached.refreshTime) {
+          const stale = Date.now() - cached.refreshTime;
+          const since = (stale / 1000).toFixed(2);
+          logger.debug(
+            `found packument cache for '${pkgName}' - refreshed ${since}secs ago at ${cached.refreshTime}`
+          );
+          if (
+            this._fyn._options.refreshMeta !== true &&
+            stale < META_CACHE_STALE_TIME
+          ) {
+            cacheMemoized = true;
+            this._metaStat.wait--;
+            return packument;
+          }
+        }
+        
+        if (cached && metaMemoizeUrl) {
           const encKey = encodeURIComponent(cacheKey);
           return nodeFetch(`${metaMemoizeUrl}?key=${encKey}`).then(
             res => {

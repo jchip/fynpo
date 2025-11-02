@@ -237,7 +237,13 @@ class Fyn {
     if (!this._fynpo) {
       this._fynpo = await fynTil.loadFynpo(this._cwd);
       // TODO: options from CLI should not be override by fynpo config options
+      // Preserve cwd from CLI/config, don't let fynpo config override it
+      const savedCwd = this._options.cwd;
       _.merge(this._options, _.get(this, "_fynpo.fyn.options"));
+      if (savedCwd) {
+        this._options.cwd = savedCwd;
+        this._cwd = savedCwd;
+      }
     }
 
     this.checkLayoutOption();

@@ -264,7 +264,7 @@ ansi-align:
   dependencies:
    string-width: ^4.1.0
 ansi-escapes:
- _latest: 7.1.1
+ _latest: 7.2.0
  _:
   ^4.3.0: 4.3.2
  4.3.2:
@@ -389,7 +389,7 @@ callsites:
   $: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==
   _: 'https://registry.npmjs.org/callsites/-/callsites-3.1.0.tgz'
 camelcase:
- _latest: 8.0.0
+ _latest: 9.0.0
  _:
   ^5.3.1: 5.3.1
   ^6.2.0: 6.3.0
@@ -400,7 +400,7 @@ camelcase:
   $: sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==
   _: 'https://registry.npmjs.org/camelcase/-/camelcase-5.3.1.tgz'
 camelcase-keys:
- _latest: 10.0.0
+ _latest: 10.0.1
  _:
   ^6.2.2: 6.2.2
  6.2.2:
@@ -462,7 +462,7 @@ color-convert:
   dependencies:
    color-name: ~1.1.4
 color-name:
- _latest: 2.0.2
+ _latest: 2.1.0
  _:
   ~1.1.4: 1.1.4
  1.1.4:
@@ -1402,7 +1402,7 @@ path-parse:
   $: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==
   _: 'https://registry.npmjs.org/path-parse/-/path-parse-1.0.7.tgz'
 path-scurry:
- _latest: 2.0.0
+ _latest: 2.0.1
  _:
   ^1.11.1: 1.11.1
  1.11.1:
@@ -1440,7 +1440,7 @@ quick-lru:
   $: sha512-ARhCpm70fzdcvNQfPoy49IaanKkTlRWF2JMzqhcJbhSFRZv7nPTvZJdcY7301IPmvW+/p0RgIWnQDLJxifsQ7g==
   _: 'https://registry.npmjs.org/quick-lru/-/quick-lru-4.0.1.tgz'
 read-pkg:
- _latest: 9.0.1
+ _latest: 10.0.0
  _:
   ^5.2.0: 5.2.0
  5.2.0:
@@ -1818,7 +1818,7 @@ tslib:
   $: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==
   _: 'https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz'
 type-fest:
- _latest: 5.1.0
+ _latest: 5.2.0
  _:
   ^0.18.0: 0.18.1
   ^0.20.2: 0.20.2
@@ -1896,7 +1896,7 @@ visual-logger:
    chalk: ^4.0.0
    log-update: ^4.0.0
 which:
- _latest: 5.0.0
+ _latest: 6.0.0
  _:
   ^2.0.1: 2.0.2
  2.0.2:
@@ -1990,7 +1990,7 @@ yargs-parser:
   $: sha512-y11nGElTIV+CT3Zv9t7VKl+Q3hTQoT9a1Qzezhhl6Rp21gJ/IVTW7Z3y9EWXhuUBC2Shnf+DX0antecpAwSP8w==
   _: 'https://registry.npmjs.org/yargs-parser/-/yargs-parser-20.2.9.tgz'
 yocto-queue:
- _latest: 1.2.1
+ _latest: 1.2.2
  _:
   ^0.1.0: 0.1.0
  0.1.0:

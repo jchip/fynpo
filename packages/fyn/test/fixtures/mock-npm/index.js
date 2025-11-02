@@ -76,17 +76,23 @@ function mockNpm({ port = DEFAULT_PORT, logLevel = "info" }) {
           "retrieving meta",
           pkgName
         );
-        const meta = readMeta(pkgName);
-        const pkgMeta = _.omit(meta, "etag");
-        let etag = request.headers["if-none-match"];
-        etag = etag && etag.split(`"`)[1];
-        if (etag && pkgName !== "always-change") {
-          return h
-            .response()
-            .code(304)
-            .header("ETag", etag);
+        try {
+          const meta = readMeta(pkgName);
+          const pkgMeta = _.omit(meta, "etag");
+          let etag = request.headers["if-none-match"];
+          etag = etag && etag.split(`"`)[1];
+          if (etag && pkgName !== "always-change") {
+            return h
+              .response()
+              .code(304)
+              .header("ETag", etag);
+          }
+          return h.response(pkgMeta).header("ETag", `"${meta.etag}_${Date.now()}"`);
+        } catch (err) {
+          // Package not found in mock registry - return 404
+          logger.debug(`mock npm: package ${pkgName} not found`);
+          return h.response({ error: "not_found", reason: `Package '${pkgName}' not found` }).code(404);
         }
-        return h.response(pkgMeta).header("ETag", `"${meta.etag}_${Date.now()}"`);
       }
     });
 

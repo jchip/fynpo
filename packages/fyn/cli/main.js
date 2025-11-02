@@ -7,12 +7,22 @@ const FynCli = require("./fyn-cli");
 const _ = require("lodash");
 const CliLogger = require("../lib/cli-logger");
 const logger = require("../lib/logger");
-const NixClap = require("nix-clap");
+const { NixClap } = require("nix-clap");
 const myPkg = require("./mypkg");
 const loadRc = require("./load-rc");
 const defaultRc = require("./default-rc");
 const fynTil = require("../lib/util/fyntil");
-const { runInitPackage } = require("init-package");
+const optionalRequire = require("optional-require")(require);
+// Lazy load init-package to avoid resolution issues during tests
+const getRunInitPackage = () => {
+  try {
+    const initPkg = optionalRequire("init-package");
+    return initPkg ? initPkg.runInitPackage : null;
+  } catch (err) {
+    // init-package might not be available in all environments
+    return null;
+  }
+};
 
 function setLogLevel(ll) {
   if (ll) {
@@ -43,12 +53,18 @@ const pickEnvOptions = () => {
   }, {});
 };
 
-const pickOptions = async (argv, nixClap, checkFynpo = true) => {
-  setLogLevel(argv.opts.logLevel);
+const pickOptions = async (cmd, checkFynpo = true) => {
+  const meta = cmd.jsonMeta;
+  // Global options (like --cwd) are stored in cmd.rootCmd.opts
+  // Merge root command options with command-specific options
+  const rootOpts = cmd.rootCmd?.opts || {};
+  const cmdOpts = cmd.opts || {};
+  const allOpts = Object.assign({}, rootOpts, cmdOpts, meta.opts);
+  setLogLevel(allOpts.logLevel);
 
-  chalk.enabled = argv.opts.colors;
+  chalk.enabled = allOpts.colors;
 
-  let cwd = argv.opts.cwd || process.cwd();
+  let cwd = allOpts.cwd || process.cwd();
 
   if (!Path.isAbsolute(cwd)) {
     cwd = Path.join(process.cwd(), cwd);
@@ -65,201 +81,204 @@ const pickOptions = async (argv, nixClap, checkFynpo = true) => {
     }
   }
 
-  const rcData = loadRc(argv.opts.rcfile && cwd, fynpo.dir);
+  const rcData = loadRc(allOpts.rcfile === false ? false : cwd, fynpo.dir);
 
   const rc = rcData.all || defaultRc;
 
-  _.defaults(argv.opts, rc);
-  nixClap.applyConfig(pickEnvOptions(), argv);
+  _.defaults(allOpts, rc);
+  cmd.applyConfig(pickEnvOptions());
 
-  argv.opts.cwd = cwd;
+  allOpts.cwd = cwd;
+  meta.opts.cwd = cwd;
 
-  chalk.enabled = argv.opts.colors;
+  chalk.enabled = allOpts.colors;
 
-  if (!argv.source.saveLogs.startsWith("cli")) {
-    argv.opts.saveLogs = undefined;
+  if (meta.source.saveLogs && !meta.source.saveLogs.startsWith("cli")) {
+    allOpts.saveLogs = undefined;
+    meta.opts.saveLogs = undefined;
   }
 
-  nixClap.applyConfig(_.get(fynpo, "config.fyn.options", {}), argv);
+  // Preserve cwd from CLI/config, don't let fynpo config override it
+  const savedCwd = allOpts.cwd;
+  cmd.applyConfig(_.get(fynpo, "config.fyn.options", {}));
+  if (savedCwd) {
+    allOpts.cwd = savedCwd;
+    meta.opts.cwd = savedCwd;
+  }
 
-  logger.debug("Final RC", JSON.stringify(fynTil.removeAuthInfo(argv.opts)));
+  logger.debug("Final RC", JSON.stringify(fynTil.removeAuthInfo(allOpts)));
 
-  setLogLevel(argv.opts.logLevel);
-  if (argv.opts.progress) logger.setItemType(argv.opts.progress);
+  setLogLevel(allOpts.logLevel);
+  if (allOpts.progress) logger.setItemType(allOpts.progress);
 
-  return { opts: argv.opts, rcData, _cliSource: argv.source, _fynpo: fynpo };
+  return { opts: allOpts, rcData, _cliSource: meta.source, _fynpo: fynpo };
 };
 
 const options = {
   fynlocal: {
-    type: "boolean",
+    args: "<flag boolean>",
     desc: "enable/disable fynlocal mode",
-    default: true
+    argDefault: "true"
   },
   "always-fetch-dist": {
-    type: "boolean",
+    args: "<flag boolean>",
     desc: "fetch package dist tarball during dep resolving",
-    default: false
+    argDefault: "false"
   },
   "central-store": {
-    type: "boolean",
+    args: "<flag boolean>",
     alias: ["central", "cs"],
     desc: "keep single copy of packages in central store",
-    default: false
+    argDefault: "false"
   },
   copy: {
-    type: "string array",
+    args: "[packages string..]",
     alias: "cp",
     desc: "copy package even in central store mode"
   },
   "log-level": {
     alias: "q",
-    type: "string",
+    args: "<level string>",
     desc: "One of: debug,verbose,info,warn,error,fyi,none",
-    default: "info"
+    argDefault: "info"
   },
   "save-logs": {
-    type: "string",
+    args: "<file string>",
     alias: "sl",
-    default: "fyn-debug.log",
+    argDefault: "fyn-debug.log",
     desc: "Save all logs to the specified file"
   },
   colors: {
-    type: "boolean",
-    default: true,
+    args: "<flag boolean>",
+    argDefault: "true",
     desc: "Log with colors (--no-colors turn off)"
   },
   progress: {
-    type: "enum",
+    args: "<type string>",
     alias: "pg",
-    requireArg: true,
-    default: "normal",
-    enum: /^(normal|simple|none)$/,
+    argDefault: "normal",
     desc: "Log progress type: normal,simple,none"
   },
   cwd: {
-    type: "string",
-    requireArg: true,
+    args: "<dir string>",
     desc: "Change current working dir"
   },
   "fyn-dir": {
-    type: "string",
+    args: "<dir string>",
     desc: "Dir for cache etc, default {HOME}/.fyn"
   },
   "force-cache": {
     alias: "f",
-    type: "boolean",
+    args: "<flag boolean>",
     desc: "Don't check registry if cache exists."
   },
   offline: {
-    type: "boolean",
+    args: "<flag boolean>",
     desc: "Only lockfile or local cache. Fail if miss."
   },
   "lock-only": {
     alias: "k",
-    type: "boolean",
+    args: "<flag boolean>",
     desc: "Only resolve with lockfile. Fail if needs changes."
   },
   "prefer-lock": {
-    type: "boolean",
+    args: "<flag boolean>",
     desc: "Prefer resolving with lockfile."
   },
   lockfile: {
-    type: "boolean",
+    args: "<flag boolean>",
     alias: "lf",
-    default: true,
+    argDefault: "true",
     desc: "Support lockfile"
   },
   "lock-time": {
-    type: "string",
+    args: "<time string>",
     desc: "Lock dependencies by time"
   },
   "npm-lock": {
-    type: "boolean",
+    args: "<flag boolean>",
     desc: "force on/off loading npm lock"
   },
   "refresh-optionals": {
-    type: "boolean",
-    default: false,
+    args: "<flag boolean>",
+    argDefault: "false",
     desc: "refresh all optionalDependencies"
   },
   "refresh-meta": {
-    type: "boolean",
-    default: false,
+    args: "<flag boolean>",
+    argDefault: "false",
     desc: "force refresh package meta from registry"
   },
   "ignore-dist": {
     alias: "i",
-    type: "boolean",
+    args: "<flag boolean>",
     desc: "Ignore host in tarball URL from meta dist."
   },
   "show-deprecated": {
     alias: "s",
-    type: "boolean",
+    args: "<flag boolean>",
     desc: "Force show deprecated messages"
   },
   "deep-resolve": {
     alias: "dr",
-    type: "boolean",
+    args: "<flag boolean>",
     desc: "Resolve dependency tree as deep as possible"
   },
   "source-maps": {
     alias: "sm",
-    type: "boolean",
-    default: false,
+    args: "<flag boolean>",
+    argDefault: "false",
     desc: "Generate pseudo source maps for local linked packages"
   },
   production: {
-    type: "boolean",
+    args: "<flag boolean>",
     alias: "prod",
-    default: false,
+    argDefault: "false",
     desc: "Ignore devDependencies"
     // allowCmd: ["add", "remove", "install"]
   },
   rcfile: {
-    type: "boolean",
-    default: true,
+    args: "<flag boolean>",
+    argDefault: "true",
     desc: "Load .fynrc and .npmrc files"
   },
   registry: {
-    type: "string",
+    args: "<url string>",
     alias: "reg",
-    requireArg: true,
     desc: "Override registry url"
   },
   concurrency: {
-    type: "number",
+    args: "<num number>",
     alias: "cc",
     desc: "Max network concurrency",
-    default: 15
+    argDefault: "15"
   },
   "auto-run": {
-    type: "boolean",
-    default: true,
+    args: "<flag boolean>",
+    argDefault: "true",
     desc: "auto run npm scripts after install"
   },
   "build-local": {
-    type: "boolean",
-    default: true,
+    args: "<flag boolean>",
+    argDefault: "true",
     desc: "auto run fyn to install and build local dependency packages"
   },
   "flatten-top": {
-    type: "boolean",
-    default: true,
+    args: "<flag boolean>",
+    argDefault: "true",
     desc: "flattening hoists pkg to top level node_modules"
   },
   layout: {
-    type: "enum",
-    default: "normal",
+    args: "<type string>",
+    argDefault: "normal",
     // node_modules package directory layouts
     // normal - top level and hoist deps are all copied node_modules
     // detail - every packages in their own path with version detail and symlink to node_modules
     // TODO: simple - where top level deps are copied, but promoted packages are hoisted with symlinks
-    enum: /^(normal|detail)$/,
     desc: "set node_modules packages layout - normal or detail"
   },
   "meta-memoize": {
-    type: "string",
+    args: "<url string>",
     alias: "meta-mem",
     desc: "a url to a server that helps multiple fyn to share meta cache"
   }
@@ -269,36 +288,41 @@ const commands = {
   install: {
     alias: "i",
     desc: "Install modules",
-    async exec(argv, parsed) {
-      const cli = new FynCli(await pickOptions(argv, parsed.nixClap));
+    async exec(cmd) {
+      const cli = new FynCli(await pickOptions(cmd));
       return cli.install();
     },
-    default: true,
     options: {
       "run-npm": {
         desc: "additional npm scripts to run after install",
-        type: "string array"
+        args: "[scripts string..]"
       },
       "force-install": {
         alias: "fi",
         desc: "force install even if no files changed since last install",
-        type: "boolean"
+        args: "<flag boolean>"
       }
     }
   },
   add: {
     alias: "a",
-    args: "[packages..]",
+    args: "[packages string..]",
     usage: "$0 $1 [packages..] [--dev <dev packages>]",
     desc: "add packages to package.json",
-    exec: async (argv, parsed) => {
-      const config = await pickOptions(argv, parsed.nixClap);
+    exec: async cmd => {
+      const meta = cmd.jsonMeta;
+      // Global options (like --cwd) are stored in cmd.rootCmd.opts
+      // Merge root command options into meta.opts so pickOptions can access them
+      if (cmd.rootCmd && cmd.rootCmd.opts) {
+        Object.assign(meta.opts, cmd.rootCmd.opts);
+      }
+      const config = await pickOptions(cmd);
       const lockFile = config.lockfile;
       config.lockfile = false;
       const cli = new FynCli(config);
-      const opts = Object.assign({}, argv.opts, argv.args);
+      const opts = Object.assign({}, meta.opts, meta.args);
       return cli.add(opts).then(added => {
-        if (!added || !argv.opts.install) return;
+        if (!added || !meta.opts.install) return;
         config.lockfile = lockFile;
         config.noStartupInfo = true;
         logger.info("installing...");
@@ -309,43 +333,49 @@ const commands = {
     options: {
       dev: {
         alias: ["d"],
-        type: "array",
+        args: "[packages string..]",
         desc: "List of packages to add to devDependencies"
       },
       opt: {
-        type: "array",
+        args: "[packages string..]",
         desc: "List of packages to add to optionalDependencies"
       },
       peer: {
         alias: ["p"],
-        type: "array",
+        args: "[packages string..]",
         desc: "List of packages to add to peerDependencies"
       },
       install: {
-        type: "boolean",
-        default: true,
+        args: "<flag boolean>",
+        argDefault: "true",
         desc: "Run install after added"
       },
       "pkg-fyn": {
-        type: "boolean",
+        args: "<flag boolean>",
         desc: "save fyn section to package-fyn.json",
-        default: false
+        argDefault: "false"
       }
     }
   },
   remove: {
     alias: "rm",
-    args: "<packages..>",
+    args: "<packages string..>",
     desc: "Remove packages from package.json and install",
-    exec: async (argv, parsed) => {
-      const options = await pickOptions(argv, parsed.nixClap);
+    exec: async cmd => {
+      const meta = cmd.jsonMeta;
+      // Global options (like --cwd) are stored in cmd.rootCmd.opts
+      // Merge root command options into meta.opts for consistent access
+      if (cmd.rootCmd && cmd.rootCmd.opts) {
+        Object.assign(meta.opts, cmd.rootCmd.opts);
+      }
+      const options = await pickOptions(cmd);
       const lockFile = options.lockfile;
       options.lockfile = false;
       const cli = new FynCli(options);
-      const opts = Object.assign({}, argv.opts, argv.args);
+      const opts = Object.assign({}, meta.opts, meta.args);
       const removed = await cli.remove(opts);
       if (removed) {
-        if (!argv.opts.install) return;
+        if (!meta.opts.install) return;
         options.lockfile = lockFile;
         options.noStartupInfo = true;
         fynTil.resetFynpo();
@@ -355,8 +385,8 @@ const commands = {
     },
     options: {
       install: {
-        type: "boolean",
-        default: true,
+        args: "<flag boolean>",
+        argDefault: "true",
         desc: "Run install after removed"
       }
     }
@@ -364,20 +394,23 @@ const commands = {
   stat: {
     desc: "Show stats of installed packages",
     usage: "$0 $1 <package-name>[@semver] [...]",
-    args: "<string packages..>",
-    exec: async (argv, parsed) => {
-      return new FynCli(await pickOptions(argv, parsed.nixClap)).stat(argv);
+    args: "<packages string..>",
+    exec: async cmd => {
+      return new FynCli(await pickOptions(cmd)).stat(cmd.jsonMeta);
     }
   },
   run: {
     desc: "Run a npm script",
-    args: "[script]",
+    args: "[script string]",
     alias: ["rum", "r"],
     usage: "$0 $1 <command> [-- <args>...]",
-    exec: async (argv, parsed) => {
+    exec: async cmd => {
       try {
-        const options = await pickOptions(argv, parsed.nixClap, !argv.opts.list);
-        return await new FynCli(options).run(argv);
+        const meta = cmd.jsonMeta;
+        const options = await pickOptions(cmd, !meta.opts.list);
+        // Pass the command object so we can extract arguments after --
+        meta._command = cmd;
+        return await new FynCli(options).run(meta);
       } catch (err) {
         if (err.errno !== undefined) {
           process.exit(err.errno);
@@ -391,16 +424,22 @@ const commands = {
       list: {
         desc: "list scripts",
         alias: "l",
-        type: "boolean"
+        args: "<flag boolean>"
       }
     }
   },
   init: {
     desc: "initialize a package.json file",
     usage: "$0 $1 <command> [--yes]",
-    exec: async argv => {
+    exec: async cmd => {
       try {
-        await runInitPackage(argv.opts.yes);
+        const runInitPackage = getRunInitPackage();
+        if (!runInitPackage) {
+          logger.error("init-package is not available. Please install it first.");
+          process.exit(1);
+          return;
+        }
+        await runInitPackage(cmd.jsonMeta.opts.yes);
       } catch (err) {
         process.exit(1);
       }
@@ -409,7 +448,7 @@ const commands = {
       yes: {
         alias: ["y"],
         desc: "skip prompt and use default values",
-        type: "boolean"
+        args: "<flag boolean>"
       }
     }
   },
@@ -417,9 +456,9 @@ const commands = {
   "sync-local": {
     desc: "Refresh locally linked package files",
     alias: "sl",
-    async exec(argv, parsed) {
+    async exec(cmd) {
       try {
-        const opts = await pickOptions(argv, parsed.nixClap, true);
+        const opts = await pickOptions(cmd, true);
         const cli = new FynCli(opts);
         return cli.syncLocalLinks();
       } catch (err) {
@@ -429,52 +468,125 @@ const commands = {
   }
 };
 
-const createNixClap = handlers => {
-  return new NixClap({
-    Promise,
+const createNixClap = (handlers = {}) => {
+  // Merge our handlers with a flag to disable default no-action handler
+  const allHandlers = {
+    ...handlers,
+    "no-action": handlers["no-action"] || false // Disable default if we provide our own
+  };
+  const nc = new NixClap({
     name: myPkg.name,
-    version: myPkg.version,
     usage: "$0 [options] <command>",
-    handlers
+    handlers: allHandlers
   });
+  nc.version(myPkg.version);
+  return nc;
 };
 
 const run = async (args, start, tryRun = true) => {
   fynTil.resetFynpo();
 
-  const handlers = {
-    "parse-fail": parsed => {
-      if (parsed.commands.length < 1 && parsed.error.message.includes("Unknown command")) {
-        parsed.nixClap.skipExec();
-      } else {
-        parsed.nixClap.showHelp(parsed.error);
-      }
-    },
-    "unknown-option": () => {}
-  };
-
   if (start === undefined && args !== undefined) {
     start = 0;
   }
 
-  const parsed = await createNixClap(handlers)
-    .init(options, commands)
-    .parseAsync(args, start);
+  // Store args and start for use in no-action handler
+  const storedArgs = args;
+  const storedStart = start;
 
-  if (!tryRun || !parsed.error) {
+  const handlers = {
+    "parse-fail": parsed => {
+      // In v2, check errorNodes instead of commands
+      const hasCommands =
+        parsed.command &&
+        parsed.command.jsonMeta &&
+        Object.keys(parsed.command.jsonMeta.subCommands || {}).length > 0;
+      if (
+        !hasCommands &&
+        parsed.errorNodes &&
+        parsed.errorNodes.length > 0 &&
+        parsed.errorNodes[0].error.message.includes("Unknown command")
+      ) {
+        // Skip exec for unknown commands
+        return;
+      } else {
+        // Get the NixClap instance from the parsed result
+        const nc = parsed.command?._nixClap || this;
+        if (nc && nc.showHelp) {
+          nc.showHelp(parsed.errorNodes?.[0]?.error);
+        }
+      }
+    },
+    "unknown-option": () => {},
+    "no-action": async () => {
+      // When no command is given, check if this is due to --version or --help
+      // These should be handled by nix-clap's built-in handlers, not trigger install
+      const checkArgs = (args || process.argv).slice(start || 2);
+
+      // Check if --version, -V, -v, --help, -h, or -? is present
+      if (
+        checkArgs.some(
+          arg =>
+            arg === "--version" ||
+            arg === "-V" ||
+            arg === "-v" ||
+            arg === "--help" ||
+            arg === "-h" ||
+            arg === "-?"
+        )
+      ) {
+        // These flags should have been handled by nix-clap's default handlers
+        // Don't run install command
+        return;
+      }
+
+      // When no command is given and no special flags, run install as the default
+      // This replaces the defaultCommand config
+      // Re-parse to get the command with options
+      const nc2 = createNixClap();
+      nc2.init2({
+        options,
+        subCommands: commands
+      });
+      const parsed2 = await nc2.parseAsync(storedArgs, storedStart);
+      const installCmd = commands.install;
+      if (installCmd && installCmd.exec && parsed2.command) {
+        // Use the root command from parsed result which has all the options
+        await installCmd.exec(parsed2.command);
+      }
+    }
+  };
+
+  const nc = createNixClap(handlers);
+  nc.init2({
+    options,
+    subCommands: commands
+  });
+
+  const parsed = await nc.parseAsync(args, start);
+
+  if (!tryRun || !parsed.errorNodes || parsed.errorNodes.length === 0) {
     return;
   }
 
-  if (parsed.error && parsed.commands.length < 1) {
+  // Check if we should try to inject "run" command
+  const hasCommands =
+    parsed.command &&
+    parsed.command.jsonMeta &&
+    Object.keys(parsed.command.jsonMeta.subCommands || {}).length > 0;
+  if (parsed.errorNodes && !hasCommands) {
     const x = start === undefined ? 2 : start;
     const args2 = (args || process.argv).slice();
     args2.splice(x, 0, "run");
 
-    await createNixClap()
-      .init(options, commands)
-      .parseAsync(args2, x);
+    const nc2 = createNixClap();
+    nc2.init2({
+      options,
+      subCommands: commands
+    });
+    await nc2.parseAsync(args2, x);
   } else {
-    parsed.nixClap.showHelp(parsed.error);
+    nc.showHelp(parsed.errorNodes?.[0]?.error);
   }
 };
 

@@ -65,7 +65,7 @@ function readRc(fname) {
 function loadRc(cwd, fynpoDir) {
   const npmrcData = [];
 
-  if (cwd === false) {
+  if (cwd === false || cwd === undefined) {
     return {
       npmrc: {}
     };
