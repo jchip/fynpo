@@ -21,7 +21,6 @@ const showStat = require("./show-stat");
 const { runNpmScript, addNpmLifecycle } = require("../lib/util/run-npm-script");
 const { initEnv, makeNpmEnv } = require("../lib/util/make-npm-env");
 const runScript = require("@npmcli/run-script");
-const npmlog = require("npmlog");
 const xaa = require("../lib/util/xaa");
 const { scanFileStats } = require("../lib/util/stat-dir");
 const { checkPkgNewVersionEngine } = require("check-pkg-new-version-engine");

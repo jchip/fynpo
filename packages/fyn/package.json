@@ -103,7 +103,6 @@
     "@npmcli/run-script": "^10.0.2",
     "npm-packlist": "jchip/npm-packlist",
     "npm-registry-fetch": "^19.1.0",
-    "npmlog": "^4.1.2",
     "opfs": "^1.1.1",
     "optional-require": "^1.1.10",
     "pacote": "^21.0.3",
