@@ -143,7 +143,7 @@ const options = {
     argDefault: "info"
   },
   "save-logs": {
-    args: "<file string>",
+    args: "[file string]",
     alias: "sl",
     argDefault: "fyn-debug.log",
     desc: "Save all logs to the specified file"
