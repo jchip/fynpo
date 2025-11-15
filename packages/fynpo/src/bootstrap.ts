@@ -172,7 +172,9 @@ ${output.stderr}
         await installDeps.runVisualInstall(pkgInfo, displayTitle);
         if (cached?.enable) {
           logger.debug(`Copying output to cache for ${colorId}`);
-          await xaa.try(() => cached.copyToCache());
+          await xaa.try(() => cached.copyToCache(), (err: any) => {
+            console.log(`\n***ERROR*** - Copy to cache failed for ${pkgInfo.name}\n\n`, err);
+          });
         }
       },
       stopOnError: true,

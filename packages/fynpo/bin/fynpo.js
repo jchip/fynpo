@@ -4,9 +4,9 @@ function load() {
   let dist;
 
   try {
-    dist = require("../lib/index");
+    dist = require("../src/index.ts");
     console.log(`
-    fynpo loaded from transpiled source instead of webpack bundled source
+fynpo loaded from typescript source instead of webpack bundled source
 `);
   } catch (err) {
     dist = require("../dist/bundle");
@@ -15,4 +15,12 @@ function load() {
   return dist;
 }
 
-load().fynpoMain();
+async function main() {
+  try {
+    await load().fynpoMain();
+  } catch (err) {
+    process.exit(1);
+  }
+}
+
+main();

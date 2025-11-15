@@ -5,7 +5,7 @@
       "layout": "detail"
     }
   },
-  "packages": ["packages/*"],
+  "packages": ["packages/*", "_w/*"],
   "ignore": ["packages/pacote-jchip"],
   "caching": {
     "enable": true,
