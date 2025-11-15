@@ -410,7 +410,7 @@ export class PkgBuildCache {
       cwd: Path.join(this.topDir, this.pkgInfo.path),
       output: this.cacheRules.output,
       preFiles,
-      inputHash: this.input.hash,
+      inputHash: this.input?.hash,
       calcHash,
     });
     return output;
@@ -639,6 +639,31 @@ export class PkgBuildCache {
    *
    */
   async copyToCache() {
+    // Ensure pkgInfo is set (should be set by checkCache, but guard against it not being set)
+    if (!this.pkgInfo) {
+      throw new Error(`copyToCache called but pkgInfo is not set. Ensure checkCache() is called first.`);
+    }
+
+    // Ensure input and cache directories are initialized
+    if (!this.input) {
+      const inputRules = _.get(this.cacheRules, "input", {});
+      const resolutions =
+        inputRules.includeResolutions !== false ? _.pick(this.fynpoOpts, "resolutions") : {};
+
+      this.input = await caching.processInput({
+        cwd: Path.join(this.topDir, this.pkgInfo.path),
+        input: inputRules,
+        packageJson: this.pkgInfo.pkgJson,
+        extra: { ...resolutions, label: this.label, localDepHashes: {} },
+      });
+    }
+
+    if (!this.cacheDir) {
+      this.cacheDir = Path.join(this.opts.dir, this.label, this.pkgInfo.name);
+      this.filesCacheDir = Path.join(this.cacheDir, "files");
+      this.metaFile = Path.join(this.cacheDir, `${this.input.hash}.json`);
+    }
+
     this.output = await this.gatherOutput();
 
     const outputFiles = _.groupBy(this.output.files, (x) => {
