@@ -983,7 +983,11 @@ class PkgDepResolver {
     };
 
     const getUrlVersion = () => {
-      return Boolean(meta.urlVersions && item.urlType) && meta.urlVersions[item.semver].version;
+      if (!meta.urlVersions || !item.urlType) {
+        return false;
+      }
+      const urlVersion = meta.urlVersions[item.semver];
+      return urlVersion && urlVersion.version;
     };
 
     let resolved =
