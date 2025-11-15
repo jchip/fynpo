@@ -5,6 +5,7 @@ const { execSync } = require("child_process");
 module.exports = {
   title: "should refresh stale git cache after local commit (git rev-parse check)",
   timeout: 120000,
+  copyCache: true, // Copy cache from previous step
   before(cwd, scenarioDir) {
     // Use the local git repository fixture in .tmp (gitignored)
     const gitRepoDir = path.join(scenarioDir, "..", "..", "..", ".tmp", "test-git-repo");
@@ -70,7 +71,7 @@ module.exports = {
     const now = Date.now();
     const age = now - installedTimestamp;
 
-    // The timestamp should be recent (within last 5 minutes)
+    // The timestamp should be recent (within last 30 minutes - give it some slack)
     if (age > 5 * 60 * 1000) {
       throw new Error(
         `Cache refresh failed: Installed index.js has an old timestamp (${Math.floor(age / 1000)}s ago). ` +

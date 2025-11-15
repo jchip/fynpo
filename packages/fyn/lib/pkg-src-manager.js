@@ -538,7 +538,9 @@ class PkgSrcManager {
     // The full git url with commit hash should be available in manifest._resolved
     // use that as cache key to lookup cached manifest
     //
-    const tgzCacheKey = `fyn-tarball-for-${manifest._resolved}`;
+    // Use semver (URL) for cache key instead of resolved commit hash
+    // This allows cache sharing between different commits of the same git ref
+    const tgzCacheKey = `fyn-tarball-for-${item.semver}`;
     const tgzCacheInfo = await getCacheInfoWithRefreshTime(this._cacheDir, tgzCacheKey);
 
     let pkg;
@@ -547,11 +549,11 @@ class PkgSrcManager {
 
     if (tgzCacheInfo) {
       // Extract cached commit hash from the cached resolved URL
-      const cachedResolved = tgzCacheInfo.metadata?._resolved || 
-                            (tgzCacheInfo.metadata?.dist?.tarball?.match(/MARK_URL_SPEC(.+)/)?.[1] ? 
+      const cachedResolved = tgzCacheInfo.metadata?._resolved ||
+                            (tgzCacheInfo.metadata?.dist?.tarball?.match(/MARK_URL_SPEC(.+)/)?.[1] ?
                               JSON.parse(tgzCacheInfo.metadata.dist.tarball.match(/MARK_URL_SPEC(.+)/)[1])._resolved : null);
       const cachedCommitHash = cachedResolved?.match(/#([a-f0-9]{40})$/)?.[1];
-      
+
       // Primary check: Use git ls-remote to check for new commits (fast, no clone needed)
       // This works for branch/tag refs, but not for explicit commit hashes
       if (!shouldRefresh && cachedCommitHash && item.semver && !item.semver.match(/^[a-f0-9]{40}$/)) {
@@ -574,8 +576,9 @@ class PkgSrcManager {
         } else if (!gitUrl.includes("://")) {
           gitUrl = `https://github.com/${gitUrl}.git`;
         }
+        // file:// URLs should work directly with git ls-remote
         
-        const hasNewCommits = await checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash);
+const hasNewCommits = await checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash);
         if (hasNewCommits === true) {
           shouldRefresh = true;
           logger.debug(
@@ -634,7 +637,7 @@ class PkgSrcManager {
       //
       // cache tgz (use manifest._resolved as cache key)
       //
-      const cacheStream = cacache.put.stream(this._cacheDir, tgzCacheKey, { metadata: pkg });
+      const cacheStream = cacache.put.stream(this._cacheDir, tgzCacheKey, { metadata: manifest });
       cacheStream.on("integrity", i => (integrity = i.sha512[0].source));
       await missPipe(packStream, cacheStream);
       logger.debug("gitdep package", pkg.name, "cached with integrity", integrity);

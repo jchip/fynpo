@@ -356,11 +356,32 @@ const debug = false;
         const clean = () => {
           Fs.rmSync(Path.join(cwd, "package.json"), { recursive: true, force: true });
           Fs.rmSync(Path.join(cwd, "fyn-lock.yaml"), { recursive: true, force: true });
-          Fs.rmSync(Path.join(cwd, ".fyn"), { recursive: true, force: true });
+          // Don't clean .fyn here - let copyCache handle it
           Fs.rmSync(Path.join(cwd, "node_modules"), { recursive: true, force: true });
         };
 
+        const copyCacheIfNeeded = () => {
+          // Handle cache copying for steps that need it
+          const stepAction = optionalRequire(Path.join(cwd, "index.js"), { default: {} });
+          if (stepAction.copyCache) {
+            const prevStepNum = parseInt(Path.basename(cwd).replace('step-', '')) - 1;
+            const prevStep = `step-${prevStepNum.toString().padStart(2, '0')}`;
+            const prevStepDir = Path.join(Path.dirname(cwd), prevStep);
+            const prevFynDir = Path.join(prevStepDir, ".fyn");
+
+            if (Fs.existsSync(prevFynDir)) {
+              const currentFynDir = Path.join(cwd, ".fyn");
+              Fs.mkdirSync(currentFynDir, { recursive: true });
+
+              // Copy the entire .fyn directory
+              const { execSync } = require("child_process");
+              execSync(`cp -r "${prevFynDir}"/* "${currentFynDir}/" 2>/dev/null || true`, { stdio: "pipe" });
+            }
+          }
+        };
+
         before(clean);
+        before(copyCacheIfNeeded);
 
         if (cleanUp) {
           after(clean);
