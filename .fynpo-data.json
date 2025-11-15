@@ -35,7 +35,62 @@
           "pacote-jchip@1.0.0(dep)"
         ]
       }
+    ],
+    "packages/fynpo": [
+      {
+        "fromPkg": {
+          "name": "fynpo",
+          "version": "1.1.49",
+          "path": "packages/fynpo"
+        },
+        "onPkg": {
+          "name": "ignore-walk",
+          "version": "8.0.0",
+          "path": "_w/ignore-walk"
+        },
+        "depSection": "dep",
+        "indirectSteps": [
+          "fynpo@1.1.49(dep)"
+        ]
+      }
+    ],
+    "_w/npm-packlist": [
+      {
+        "fromPkg": {
+          "name": "npm-packlist",
+          "version": "10.0.3",
+          "path": "_w/npm-packlist"
+        },
+        "onPkg": {
+          "name": "npm-packlist",
+          "version": "10.0.3",
+          "path": "_w/npm-packlist"
+        },
+        "depSection": "dep",
+        "indirectSteps": [
+          "npm-packlist@10.0.3(dep)"
+        ]
+      }
+    ],
+    "packages/fyn": [
+      {
+        "fromPkg": {
+          "name": "fyn",
+          "version": "1.1.46",
+          "path": "packages/fyn"
+        },
+        "onPkg": {
+          "name": "ignore-walk",
+          "version": "8.0.0",
+          "path": "_w/ignore-walk"
+        },
+        "depSection": "dep",
+        "indirectSteps": [
+          "fyn@1.1.46(pkg)",
+          "npm-packlist(dep)"
+        ]
+      }
     ]
   },
-  "__timestamp": 1762056036330
+  "__timestamp": 1763242395213
 }
