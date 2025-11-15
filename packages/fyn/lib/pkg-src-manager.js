@@ -37,6 +37,7 @@ const nodeFetch = require("node-fetch-npm");
 const { AggregateError } = require("@jchip/error");
 const { prePackObj } = require("publish-util");
 const { PackageRef } = require("@fynpo/base");
+const Arborist = require("@npmcli/arborist");
 
 const WATCH_TIME = 5000;
 
@@ -95,6 +96,9 @@ class PkgSrcManager {
       authTokens,
       registryData
     );
+
+    // Add Arborist to pacote options for git dependencies (required by pacote v21+)
+    this._pacoteOpts.Arborist = Arborist;
 
     this._regData = registryData;
     this.normalizeRegUrlSlash();

@@ -13,6 +13,7 @@ const Path = require("path");
 const Fs = require("./file-ops");
 const xaa = require("./xaa");
 const npmPacklist = require("npm-packlist");
+const Arborist = require("@npmcli/arborist");
 const fynTil = require("./fyntil");
 const logger = require("../logger");
 const { SourceMapGenerator } = require("source-map");
@@ -106,10 +107,32 @@ const SYM_FILES = Symbol("files");
  * @returns
  */
 async function generatePackTree(path, _logger = logger) {
-  const files = await npmPacklist({
+  let files;
+  // Detect which API version is available
+  // v10+ requires (tree, options) - tree is Arborist tree
+  // v1.x uses (options) - options contains path
+  const options = {
     path,
     includeSymlinks: fynTil.strToBool(process.env.FYN_LOCAL_PACK_SYMLINKS)
-  });
+  };
+  
+  // Check if npm-packlist expects a tree (v10+) by checking function signature
+  // If it's v10+, the first arg must be a tree object, not options
+  try {
+    // Try v10+ API first (requires Arborist tree)
+    const arborist = new Arborist({ path });
+    const tree = await arborist.loadActual();
+    // v10+ API: npmPacklist(tree, options)
+    files = await npmPacklist(tree, { includeSymlinks: options.includeSymlinks });
+  } catch (err) {
+    // Fall back to v1.x API if v10+ fails
+    if (err.message && err.message.includes('callback is not a function')) {
+      // v1.x API: npmPacklist(options)
+      files = await npmPacklist(options);
+    } else {
+      throw err;
+    }
+  }
 
   _logger.debug(
     `local package linking - pack tree returned ${files.length} files to link`,

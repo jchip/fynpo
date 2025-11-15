@@ -292,7 +292,7 @@ const debug = false;
         // When debug=false: Use this filter to configure scenarios (e.g., skip: true)
         // When debug=true: Only scenarios listed here will run (with describe.only)
         // Examples:
-        // "add-remove-pkg": { stopStep: "step-02", debugStep: "step-02" }
+        "add-remove-pkg": { stopStep: "step-02", debugStep: "step-02" }
         // "auto-deep-resolve": {}
         // "bin-linker": {}
         // "build-local": {}
@@ -317,7 +317,7 @@ const debug = false;
         // "stat-pkg": {}
       }
     : {
-        "remote-url-semver": { skip: true } // Skip this scenario
+        "remote-url-semver": { skip: false } // Skip this scenario
       };
 
   const saveCwd = process.cwd();

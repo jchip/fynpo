@@ -85,6 +85,7 @@
   "dependencies": {
     "@fynpo/base": "^1.1.18",
     "@jchip/error": "^1.0.3",
+    "@npmcli/arborist": "^9.1.6",
     "@npmcli/run-script": "^10.0.2",
     "aveazul": "^1.0.2",
     "bluebird": "^3.7.2",
