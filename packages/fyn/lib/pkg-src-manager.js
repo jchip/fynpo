@@ -45,7 +45,7 @@ const WATCH_TIME = 5000;
 // This is a fallback - git ls-remote checks for new commits more frequently
 const META_CACHE_STALE_TIME = 24 * 60 * 60 * 1000;
 
-// Helper to check if git repo has new commits using fast git ls-remote
+// Helper to check if git repo has new commits using fast git ls-remote or git rev-parse
 async function checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash) {
   if (!cachedCommitHash) return true; // No cache, assume new commits
   
@@ -54,34 +54,71 @@ async function checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash) {
     const Path = require("path");
     const fs = require("fs");
     
-    // Handle file:// URLs for local git repos - use git ls-remote with file:// URL
+    // Handle file:// URLs for local git repos - use git rev-parse instead of ls-remote
     let actualGitUrl = gitUrl;
+    let isLocalRepo = false;
+    let localRepoPath = null;
+    
     if (gitUrl.startsWith("file://")) {
-      // git ls-remote works with file:// URLs for local repos
-      actualGitUrl = gitUrl;
+      // Extract the local path from file:// URL
+      isLocalRepo = true;
+      localRepoPath = gitUrl.replace(/^file:\/\//, "").replace(/^\/+/, "/");
+      if (process.platform === "win32" && localRepoPath.startsWith("/")) {
+        // Windows: file:///C:/path -> C:/path
+        localRepoPath = localRepoPath.substring(1);
+      }
     } else if (!gitUrl.includes("://")) {
-      // For local paths without file:// prefix, convert to file:// URL
-      const absolutePath = Path.resolve(gitUrl);
-      actualGitUrl = process.platform === "win32"
-        ? `file:///${absolutePath.replace(/\\/g, "/")}`
-        : `file://${absolutePath}`;
+      // For local paths without file:// prefix, treat as local
+      isLocalRepo = true;
+      localRepoPath = Path.resolve(gitUrl);
     }
     
-    // Use git ls-remote to get the latest commit for the ref without cloning
-    const output = execSync(`git ls-remote ${actualGitUrl} ${ref}`, {
-      stdio: "pipe",
-      encoding: "utf8",
-      timeout: 10000 // 10 second timeout
-    });
-    
-    const match = output.match(/^([a-f0-9]{40})\s+/m);
-    if (!match) return true; // Can't determine, assume new commits
-    
-    const latestCommit = match[1];
-    return latestCommit !== cachedCommitHash;
+    if (isLocalRepo && localRepoPath) {
+      // For local repos, use git rev-parse to get the current HEAD commit
+      // This is more reliable than ls-remote for local repos
+      const output = execSync(`git rev-parse ${ref || "HEAD"}`, {
+        cwd: localRepoPath,
+        stdio: "pipe",
+        encoding: "utf8",
+        timeout: 10000 // 10 second timeout
+      });
+      
+      const latestCommit = output.trim();
+      if (!latestCommit.match(/^[a-f0-9]{40}$/)) {
+        logger.debug(`git rev-parse returned invalid commit hash: ${latestCommit}`);
+        return null; // Can't determine
+      }
+      
+      return latestCommit !== cachedCommitHash;
+    } else {
+      // For remote repos, use git ls-remote
+      // Normalize git URL format
+      if (gitUrl.startsWith("github:")) {
+        actualGitUrl = `https://github.com/${gitUrl.replace("github:", "")}.git`;
+      } else if (gitUrl.startsWith("git+")) {
+        actualGitUrl = gitUrl.replace(/^git\+/, "");
+      } else if (!gitUrl.includes("://")) {
+        actualGitUrl = `https://github.com/${gitUrl}.git`;
+      } else {
+        actualGitUrl = gitUrl;
+      }
+      
+      // Use git ls-remote to get the latest commit for the ref without cloning
+      const output = execSync(`git ls-remote ${actualGitUrl} ${ref || "HEAD"}`, {
+        stdio: "pipe",
+        encoding: "utf8",
+        timeout: 10000 // 10 second timeout
+      });
+      
+      const match = output.match(/^([a-f0-9]{40})\s+/m);
+      if (!match) return true; // Can't determine, assume new commits
+      
+      const latestCommit = match[1];
+      return latestCommit !== cachedCommitHash;
+    }
   } catch (err) {
-    // If ls-remote fails, fall back to time-based staleness check
-    logger.debug(`git ls-remote failed for ${gitUrl}#${ref}: ${err.message}`);
+    // If check fails, fall back to time-based staleness check
+    logger.debug(`git commit check failed for ${gitUrl}#${ref}: ${err.message}`);
     return null; // Indicates we couldn't check
   }
 }
@@ -554,11 +591,11 @@ class PkgSrcManager {
                               JSON.parse(tgzCacheInfo.metadata.dist.tarball.match(/MARK_URL_SPEC(.+)/)[1])._resolved : null);
       const cachedCommitHash = cachedResolved?.match(/#([a-f0-9]{40})$/)?.[1];
 
-      // Primary check: Use git ls-remote to check for new commits (fast, no clone needed)
+      // Primary check: Use git ls-remote or git rev-parse to check for new commits (fast, no clone needed)
       // This works for branch/tag refs, but not for explicit commit hashes
       if (!shouldRefresh && cachedCommitHash && item.semver && !item.semver.match(/^[a-f0-9]{40}$/)) {
         // Extract git URL and ref from semver
-        // semver format: "github:user/repo#branch" or "git+https://github.com/user/repo.git#branch"
+        // semver format: "github:user/repo#branch" or "git+https://github.com/user/repo.git#branch" or "git+file:///path#branch"
         let gitUrl = item.semver;
         let ref = "HEAD";
         
@@ -568,17 +605,21 @@ class PkgSrcManager {
           ref = parts[1];
         }
         
-        // Normalize git URL format
-        if (gitUrl.startsWith("github:")) {
-          gitUrl = `https://github.com/${gitUrl.replace("github:", "")}.git`;
-        } else if (gitUrl.startsWith("git+")) {
+        // Strip git+ prefix if present (checkGitRepoHasNewCommits will handle file:// URLs)
+        if (gitUrl.startsWith("git+")) {
           gitUrl = gitUrl.replace(/^git\+/, "");
+        }
+        
+        // Normalize git URL format for remote repos (but keep file:// URLs as-is)
+        if (gitUrl.startsWith("file://")) {
+          // Keep file:// URLs as-is - checkGitRepoHasNewCommits will handle them
+        } else if (gitUrl.startsWith("github:")) {
+          gitUrl = `https://github.com/${gitUrl.replace("github:", "")}.git`;
         } else if (!gitUrl.includes("://")) {
           gitUrl = `https://github.com/${gitUrl}.git`;
         }
-        // file:// URLs should work directly with git ls-remote
         
-const hasNewCommits = await checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash);
+        const hasNewCommits = await checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash);
         if (hasNewCommits === true) {
           shouldRefresh = true;
           logger.debug(
