@@ -10,7 +10,8 @@
     "ci:check": "fyn testing && fynpo run ci:check --stream",
     "coverage": "fynpo run coverage --stream",
     "lint": "fynpo run lint --stream",
-    "bootstrap": "fyn --no-fynlocal && fynpo",
+    "git-clone": "if [ ! -d _w/npm-packlist ]; then mkdir -p _w; cd _w; git clone https://github.com/jchip/npm-packlist.git; cd ..; fi",
+    "bootstrap": "fyn git-clone && fyn --no-fynlocal && fynpo",
     "install": "if [ -z \"$CI\" ]; then fynpo; fi",
     "testing": "cd testing/monorepo-test && npm run clean-test",
     "prepublishOnly": "npm run testing"

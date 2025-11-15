@@ -329,7 +329,7 @@ async function linkPackTree({ tree, src, dest, sym1, sourceMaps }) {
   const destFiles = await prepDestDir(dest);
 
   //
-  // create hardlinks to files
+  // create hardlinks to files (or symlinks if source is a symlink)
   //
   for (const file of files) {
     // In non-CI mode, skip linking source map file by matching for extensions like .js.map
@@ -341,7 +341,16 @@ async function linkPackTree({ tree, src, dest, sym1, sourceMaps }) {
     destFiles[file] = true;
     const srcFp = Path.join(src, file);
     const destFp = Path.join(dest, file);
-    if (fynTil.strToBool(process.env.FYN_LOCAL_COPY_MODE)) {
+    
+    // Check if source is a symlink - if so, preserve it as a symlink
+    const srcLstat = await xaa.try(() => Fs.lstat(srcFp));
+    if (srcLstat && srcLstat.isSymbolicLink()) {
+      // Preserve symlinks by creating a new symlink pointing to the same target
+      const target = await Fs.readlink(srcFp);
+      // Remove destination if it exists (could be a file or broken symlink)
+      await xaa.try(() => Fs.unlink(destFp));
+      await Fs.symlink(target, destFp);
+    } else if (fynTil.strToBool(process.env.FYN_LOCAL_COPY_MODE)) {
       await copyFile(srcFp, destFp);
     } else {
       await linkFile(srcFp, destFp);

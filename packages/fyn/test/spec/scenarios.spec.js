@@ -43,7 +43,7 @@ function readJson(path) {
 
 const debug = false;
 
-(debug ? describe.only : describe)("scenario", function() {
+(debug ? describe.only : describe)("scenario", function () {
   let server;
   const saveExit = fyntil.exit;
   let registry;
@@ -289,40 +289,49 @@ const debug = false;
   const cleanUp = !debug;
   const filter = debug
     ? {
-        // When debug=false: Use this filter to configure scenarios (e.g., skip: true)
-        // When debug=true: Only scenarios listed here will run (with describe.only)
-        // Examples:
-        "add-remove-pkg": { stopStep: "step-02", debugStep: "step-02" }
-        // "auto-deep-resolve": {}
-        // "bin-linker": {}
-        // "build-local": {}
-        // "fyn-central": {},
-        // "fynpo-sample": { stopStep: "step-01" }
-        // "fyn-shrinkwrap": {}
-        // "local-hard-linking": {}
-        // "local-sym-linking": {}
-        // "locked-change-major": {}
-        // "locked-change-dedupe": {}
-        // "locked-change-dedupe-2": { debugStep: "step-02" }
-        // "locked-npm-dedupe": {}
-        // "locked-change-indirect": {}
-        // "missing-peer-dep": {}
-        // "nested-dep": {}
-        // "npm-shrinkwrap": {}
-        // "optional-check": {}
-        // "package-fyn": {}
-        // "platform-check": {}
-        // "platform-check-good": {}
-        // "remote-url-semver": { skip: true }  // Skip this scenario
-        // "stat-pkg": {}
-      }
+      // When debug=false: Use this filter to configure scenarios (e.g., skip: true)
+      // When debug=true: Only scenarios listed here will run (with describe.only)
+      // Examples:
+      // "add-remove-pkg":
+      //  { stopStep: "step-02", debugStep: "step-02" }
+      // "auto-deep-resolve": {}
+      // "bin-linker": {}
+      // "build-local": {}
+      // "fyn-central": {},
+      // "fynpo-sample": { stopStep: "step-01" }
+      // "fyn-shrinkwrap": {}
+      // "local-hard-linking": {}
+      "github-refresh": { skip: true }, // Skipped by default - pushes to real GitHub
+      "git-refresh-local": {}
+      // "local-sym-linking": {}
+      // "locked-change-major": {}
+      // "locked-change-dedupe": {}
+      // "locked-change-dedupe-2": { debugStep: "step-02" }
+      // "locked-npm-dedupe": {}
+      // "locked-change-indirect": {}
+      // "missing-peer-dep": {}
+      // "nested-dep": {}
+      // "npm-shrinkwrap": {}
+      // "optional-check": {}
+      // "package-fyn": {}
+      // "platform-check": {}
+      // "platform-check-good": {}
+      // "remote-url-semver": { skip: true }  // Skip this scenario
+      // "stat-pkg": {}
+    }
     : {
-        "remote-url-semver": { skip: false } // Skip this scenario
-      };
+      "github-refresh": { skip: true }, // Skipped by default - pushes to real GitHub
+      "remote-url-semver": { skip: false } // Skip this scenario
+    };
 
   const saveCwd = process.cwd();
   const scenarioDir = Path.join(__dirname, "../scenarios");
-  const scenarios = Fs.readdirSync(scenarioDir).filter(x => !x.startsWith("."));
+  const scenarios = Fs.readdirSync(scenarioDir)
+    .filter(x => !x.startsWith("."))
+    .filter(x => {
+      const fullPath = Path.join(scenarioDir, x);
+      return Fs.statSync(fullPath).isDirectory();
+    });
   scenarios.sort().forEach(s => {
     // In debug mode: only run scenarios in filter (with .only)
     // In normal mode: run all scenarios, but use filter for configuration (skip, etc.)
@@ -343,7 +352,7 @@ const debug = false;
         describeFn = describe.skip;
       }
 
-      describeFn(s, function() {
+      describeFn(s, function () {
         const clean = () => {
           Fs.rmSync(Path.join(cwd, "package.json"), { recursive: true, force: true });
           Fs.rmSync(Path.join(cwd, "fyn-lock.yaml"), { recursive: true, force: true });

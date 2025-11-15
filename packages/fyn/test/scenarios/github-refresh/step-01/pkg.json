@@ -1,0 +1,9 @@
+{
+  "name": "git-refresh-test",
+  "version": "1.0.0",
+  "dependencies": {
+    "test-from-gh": "jchip/test-from-gh"
+  }
+}
+
+

@@ -1,0 +1,37 @@
+node_modules:
+  .bin:
+    bin1: "-> ../.f/_/mod-h/1.0.0/mod-h/bin/bin1.js"
+    bin2: "-> ../.f/_/mod-h/1.0.0/mod-h/bin/bin2.js"
+  .f:
+    .fyn.json: file
+    _:
+      e1:
+        1.0.0-fynlocal_h:
+          e1:
+            index.js: file
+            index.js.fyn.map: file
+            node_modules:
+              mod-h: "-> ../../../../mod-h/3.0.11/mod-h"
+            package.json:
+              id: e1@1.0.0-fynlocal_h
+      mod-h:
+        1.0.0:
+          mod-h:
+            package.json:
+              id: mod-h@1.0.0
+        3.0.11:
+          mod-h:
+            package.json:
+              id: mod-h@3.0.11
+      mod-symlink:
+        1.0.0-fynlocal_h:
+          mod-symlink:
+            index.js: file
+            index.js.fyn.map: file
+            package.json:
+              id: mod-symlink@1.0.0-fynlocal_h
+            regular-file.txt: file
+  e1: "-> .f/_/e1/1.0.0-fynlocal_h/e1"
+  mod-h: "-> .f/_/mod-h/1.0.0/mod-h"
+  mod-symlink: "-> .f/_/mod-symlink/1.0.0-fynlocal_h/mod-symlink"
+

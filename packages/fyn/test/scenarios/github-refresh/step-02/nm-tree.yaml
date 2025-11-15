@@ -1,0 +1,16 @@
+node_modules:
+  .f:
+    .fyn.json: file
+    _:
+      test-from-gh:
+        # Version stays the same (1.0.11), but content changes (index.js updated)
+        # This will be verified in the verify hook
+        1.0.11:
+          test-from-gh:
+            README.md: file
+            hello: file
+            package.json:
+              id: test-from-gh@1.0.11
+            src:
+              index.js: file
+  test-from-gh: '-> .f/_/test-from-gh/1.0.11/test-from-gh'
