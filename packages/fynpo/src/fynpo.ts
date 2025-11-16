@@ -1,2 +1,2 @@
-import { fynpoMain } from ".";
+import { fynpoMain } from "./index.js";
 fynpoMain();

@@ -94,7 +94,7 @@
     "lodash": "^4.17.21",
     "minimatch": "^3.0.4",
     "mkdirp": "^1.0.4",
-    "nix-clap": "^1.3.13",
+    "nix-clap": "^2.4.1",
     "npm-packlist": "jchip/npm-packlist#v1",
     "optional-require": "^1.1.10",
     "prettier": "2.4.1",

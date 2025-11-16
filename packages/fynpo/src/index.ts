@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import Path from "path";
-import NixClap from "nix-clap";
+import { NixClap } from "nix-clap";
 import { Bootstrap } from "./bootstrap";
 import { Prepare } from "./prepare";
 import Changelog from "./update-changelog";
@@ -51,15 +51,20 @@ const readFynpoData = async (cwd) => {
   }
 };
 
-const makeOpts = async (parsed) => {
+const makeOpts = async (cmd, parsed) => {
+  // In nix-clap v2, options are accessed via cmd.opts and cmd.rootCmd.opts
+  const rootOpts = cmd.rootCmd?.opts || {};
+  const cmdOpts = cmd.opts || {};
+  const allOpts = Object.assign({}, rootOpts, cmdOpts, parsed.opts || {});
+  
   let cwd = process.cwd();
-  if (parsed.opts.cwd) {
-    logger.info(`Setting CWD to ${parsed.opts.cwd}`);
-    cwd = parsed.opts.cwd;
+  if (allOpts.cwd) {
+    logger.info(`Setting CWD to ${allOpts.cwd}`);
+    cwd = allOpts.cwd;
     process.chdir(cwd);
   }
   const fynpo: any = utils.loadConfig(cwd);
-  const optConfig = Object.assign({}, fynpo.fynpoRc, parsed.opts, {
+  const optConfig = Object.assign({}, fynpo.fynpoRc, allOpts, {
     cwd: fynpo.dir,
     patterns: fynpo.fynpoRc.packages,
   });
@@ -81,28 +86,37 @@ const makeDepGraph = async (opts) => {
   return graph;
 };
 
-const makeBootstrap = async (parsed) => {
-  const opts = await makeOpts(parsed);
+const makeBootstrap = async (cmd, parsed) => {
+  const opts = await makeOpts(cmd, parsed);
   const graph = await makeDepGraph(opts);
   return new Bootstrap(graph, opts);
 };
 
-const execBootstrap = async (parsed, cli, firstRunTime = 0) => {
-  const bootstrap = await makeBootstrap(parsed);
+const execBootstrap = async (cmd, parsed, firstRunTime = 0) => {
+  const bootstrap = await makeBootstrap(cmd, parsed);
   const fynpoDataStart = await readFynpoData(bootstrap.cwd);
   let statusCode = 0;
 
   if (!firstRunTime) {
-    logger.debug("CLI options", JSON.stringify(parsed));
+    // Avoid circular reference when logging - only log opts and args
+    const rootOpts = cmd.rootCmd?.opts || {};
+    const cmdOpts = cmd.opts || {};
+    const allOpts = Object.assign({}, rootOpts, cmdOpts, parsed.opts || {});
+    logger.debug("CLI options", JSON.stringify({ opts: allOpts, args: parsed.args || cmd.jsonMeta?.args || [] }));
   }
 
   let secondRun = false;
   try {
+    // In nix-clap v2, options are accessed via cmd.opts and cmd.rootCmd.opts
+    const rootOpts = cmd.rootCmd?.opts || {};
+    const cmdOpts = cmd.opts || {};
+    const allOpts = Object.assign({}, rootOpts, cmdOpts, parsed.opts || {});
+    
     await bootstrap.exec({
-      build: parsed.opts.build,
-      fynOpts: parsed.opts.fynOpts,
-      concurrency: parsed.opts.concurrency,
-      skip: parsed.opts.skip,
+      build: allOpts.build,
+      fynOpts: allOpts.fynOpts,
+      concurrency: allOpts.concurrency,
+      skip: allOpts.skip,
     });
 
     if (!firstRunTime) {
@@ -112,7 +126,7 @@ const execBootstrap = async (parsed, cli, firstRunTime = 0) => {
           "=== fynpo data changed - running bootstrap again - fynpo recommands that you commit the .fynpo-data.json file ==="
         );
         secondRun = true;
-        return await execBootstrap(parsed, cli, bootstrap.elapsedTime);
+        return await execBootstrap(cmd, parsed, bootstrap.elapsedTime);
       }
     }
 
@@ -127,7 +141,10 @@ const execBootstrap = async (parsed, cli, firstRunTime = 0) => {
     if (!secondRun) {
       const sec = ((bootstrap.elapsedTime + firstRunTime) / 1000).toFixed(2);
       logger.info(`bootstrap completed in ${sec}secs`);
-      if (statusCode !== 0 || parsed.opts.saveLog) {
+      const rootOpts = cmd.rootCmd?.opts || {};
+      const cmdOpts = cmd.opts || {};
+      const allOpts = Object.assign({}, rootOpts, cmdOpts, parsed.opts || {});
+      if (statusCode !== 0 || allOpts.saveLog) {
         Fs.writeFileSync("fynpo-debug.log", logger.logData.join("\n") + "\n");
         logger.error("Please check the file fynpo-debug.log for more info.");
       }
@@ -138,12 +155,15 @@ const execBootstrap = async (parsed, cli, firstRunTime = 0) => {
   return undefined;
 };
 
-const execLocal = async (parsed) => {
-  return await makeBootstrap(parsed);
+const execLocal = async (cmd, parsed) => {
+  return await makeBootstrap(cmd, parsed);
 };
 
-const execPrepare = async (parsed) => {
-  const opts = Object.assign({ cwd: process.cwd() }, parsed.opts);
+const execPrepare = async (cmd, parsed) => {
+  const rootOpts = cmd.rootCmd?.opts || {};
+  const cmdOpts = cmd.opts || {};
+  const allOpts = Object.assign({}, rootOpts, cmdOpts, parsed.opts || {});
+  const opts = Object.assign({ cwd: process.cwd() }, allOpts);
 
   // prepare only applies at top level, so switch CWD there
   process.chdir(opts.cwd);
@@ -151,9 +171,9 @@ const execPrepare = async (parsed) => {
   return new Prepare(opts, await readPackages(opts)).exec();
 };
 
-const execChangelog = async (parsed) => {
+const execChangelog = async (cmd, parsed) => {
   logger.info("updating changelog");
-  const opts = await makeOpts(parsed);
+  const opts = await makeOpts(cmd, parsed);
   const graph = await makeDepGraph(opts);
 
   // changelog only applies at top level, so switch CWD there
@@ -162,33 +182,35 @@ const execChangelog = async (parsed) => {
   return new Changelog(opts, graph).exec();
 };
 
-const execUpdated = async (parsed) => {
-  const opts = await makeOpts(parsed);
+const execUpdated = async (cmd, parsed) => {
+  const opts = await makeOpts(cmd, parsed);
   const graph = await makeDepGraph(opts);
 
   return new Updated(opts, graph).exec();
 };
 
-const execPublish = async (parsed) => {
-  const opts = await makeOpts(parsed);
+const execPublish = async (cmd, parsed) => {
+  const opts = await makeOpts(cmd, parsed);
   const graph = await makeDepGraph(opts);
 
   return new Publish(opts, graph).exec();
 };
 
-const execVersion = async (parsed) => {
-  const opts = await makeOpts(parsed);
+const execVersion = async (cmd, parsed) => {
+  const opts = await makeOpts(cmd, parsed);
   const graph = await makeDepGraph(opts);
 
   return new Version(opts, graph).exec();
 };
 
-const execRunScript = async (parsed) => {
-  const opts = await makeOpts(parsed);
+const execRunScript = async (cmd, parsed) => {
+  const opts = await makeOpts(cmd, parsed);
   const graph = await makeDepGraph(opts);
   let exitCode = 0;
   try {
-    return await new Run(opts, parsed.args, graph).exec();
+    // In nix-clap v2, args are accessed via parsed.args or cmd.jsonMeta.args
+    const scriptArgs = parsed.args || cmd.jsonMeta?.args || [];
+    return await new Run(opts, scriptArgs, graph).exec();
   } catch (err) {
     exitCode = 1;
   } finally {
@@ -198,259 +220,302 @@ const execRunScript = async (parsed) => {
   return undefined;
 };
 
-const execInit = (parsed) => {
-  const opts = Object.assign({ cwd: process.cwd() }, parsed.opts);
+const execInit = (cmd, parsed) => {
+  const rootOpts = cmd.rootCmd?.opts || {};
+  const cmdOpts = cmd.opts || {};
+  const allOpts = Object.assign({}, rootOpts, cmdOpts, parsed.opts || {});
+  const opts = Object.assign({ cwd: process.cwd() }, allOpts);
 
   return new Init(opts).exec();
 };
 
-const execLinting = (parsed) => {
-  const opts = Object.assign({ cwd: process.cwd() }, parsed.opts);
+const execLinting = (cmd, parsed) => {
+  const rootOpts = cmd.rootCmd?.opts || {};
+  const cmdOpts = cmd.opts || {};
+  const allOpts = Object.assign({}, rootOpts, cmdOpts, parsed.opts || {});
+  const opts = Object.assign({ cwd: process.cwd() }, allOpts);
 
   return new Commitlint(opts).exec();
 };
 
+const myPkg = xrequire(Path.join(__dirname, "../package.json"));
+
 export const fynpoMain = () => {
+  const handlers = {
+    "parse-fail": (parsed) => {
+      // In v2, check errorNodes instead of commands
+      const hasCommands =
+        parsed.command &&
+        parsed.command.jsonMeta &&
+        Object.keys(parsed.command.jsonMeta.subCommands || {}).length > 0;
+      if (
+        !hasCommands &&
+        parsed.errorNodes &&
+        parsed.errorNodes.length > 0 &&
+        parsed.errorNodes[0].error.message.includes("Unknown command")
+      ) {
+        // Skip exec for unknown commands
+        return;
+      } else {
+        // Get the NixClap instance from the parsed result
+        const nc = parsed.command?._nixClap || this;
+        if (nc && nc.showHelp) {
+          nc.showHelp(parsed.errorNodes?.[0]?.error);
+        }
+      }
+    },
+    "unknown-option": () => {}
+  };
+
   const nixClap = new NixClap({
+    name: myPkg.name,
     usage: "$0 [command] [options]",
-  }).init(
-    {
-      cwd: {
-        type: "string",
-        desc: "set fynpo's working directory",
-      },
-      ignore: {
-        alias: "i",
-        type: "string array",
-        desc: "list of packages to ignore",
-        allowCmd: ["bootstrap", "local", "run"],
-      },
-      only: {
-        alias: "o",
-        type: "string array",
-        desc: "list of packages to handle only",
-        allowCmd: ["bootstrap", "local", "run"],
-      },
-      scope: {
-        alias: "s",
-        type: "string array",
-        desc: "include only packages with names matching the given scopes",
-        allowCmd: ["bootstrap", "local", "run"],
-      },
-      deps: {
-        alias: "d",
-        type: "number",
-        default: 10,
-        desc: "level of deps to include even if they were ignored",
-        allowCmd: ["bootstrap", "local", "run"],
-      },
-      commit: {
-        type: "boolean",
-        default: true,
-        desc: "no-commit to disable committing the changes to changelog and package.json",
-        allowCmd: ["changelog", "version", "prepare"],
-      },
-      "force-publish": {
-        alias: "fp",
-        type: "string array",
-        desc: "force publish packages",
-        allowCmd: ["updated", "changelog", "version"],
-      },
-      "ignore-changes": {
-        alias: "ic",
-        type: "string array",
-        desc: "ignore patterns",
-        allowCmd: ["updated", "changelog", "version"],
-      },
-      "save-log": {
-        alias: "sl",
-        type: "boolean",
-        default: false,
-        desc: "save logs to fynpo-debug.log",
+    handlers: handlers,
+    defaultCommand: "bootstrap" // Run bootstrap when no command is given
+  });
+  nixClap.version(myPkg.version);
+
+  const options = {
+    cwd: {
+      type: "string",
+      desc: "set fynpo's working directory",
+    },
+    ignore: {
+      alias: "i",
+      type: "string array",
+      desc: "list of packages to ignore",
+      allowCmd: ["bootstrap", "local", "run"],
+    },
+    only: {
+      alias: "o",
+      type: "string array",
+      desc: "list of packages to handle only",
+      allowCmd: ["bootstrap", "local", "run"],
+    },
+    scope: {
+      alias: "s",
+      type: "string array",
+      desc: "include only packages with names matching the given scopes",
+      allowCmd: ["bootstrap", "local", "run"],
+    },
+    deps: {
+      alias: "d",
+      type: "number",
+      default: 10,
+      desc: "level of deps to include even if they were ignored",
+      allowCmd: ["bootstrap", "local", "run"],
+    },
+    commit: {
+      type: "boolean",
+      default: true,
+      desc: "no-commit to disable committing the changes to changelog and package.json",
+      allowCmd: ["changelog", "version", "prepare"],
+    },
+    "force-publish": {
+      alias: "fp",
+      type: "string array",
+      desc: "force publish packages",
+      allowCmd: ["updated", "changelog", "version"],
+    },
+    "ignore-changes": {
+      alias: "ic",
+      type: "string array",
+      desc: "ignore patterns",
+      allowCmd: ["updated", "changelog", "version"],
+    },
+    "save-log": {
+      alias: "sl",
+      type: "boolean",
+      default: false,
+      desc: "save logs to fynpo-debug.log",
+    },
+  };
+
+  const subCommands = {
+    bootstrap: {
+      alias: "b",
+      desc: "bootstrap packages",
+      exec: execBootstrap,
+      options: {
+        build: {
+          type: "boolean",
+          default: true,
+          desc: "run npm script build if no prepare",
+        },
+        concurrency: {
+          alias: "cc",
+          type: "number",
+          default: 6,
+          desc: "number of packages to bootstrap concurrently",
+        },
+        skip: {
+          type: "string array",
+          desc: "list of packages to skip running fyn install on, but won't ignore",
+        },
       },
     },
-    {
-      bootstrap: {
-        alias: "b",
-        desc: "bootstrap packages",
-        default: true,
-        exec: execBootstrap,
-        options: {
-          build: {
-            type: "boolean",
-            default: true,
-            desc: "run npm script build if no prepare",
-          },
-          concurrency: {
-            alias: "cc",
-            type: "number",
-            default: 6,
-            desc: "number of packages to bootstrap concurrently",
-          },
-          skip: {
-            type: "string array",
-            desc: "list of packages to skip running fyn install on, but won't ignore",
-          },
+    local: {
+      alias: "l",
+      desc: "update packages dependencies to point to local",
+      exec: execLocal,
+    },
+    prepare: {
+      alias: "p",
+      desc: "Prepare packages versions for publish",
+      exec: execPrepare,
+      options: {
+        tag: {
+          type: "boolean",
+          default: false,
+          desc: "create tags for individual packages",
         },
       },
-      local: {
-        alias: "l",
-        desc: "update packages dependencies to point to local",
-        exec: execLocal,
-      },
-      prepare: {
-        alias: "p",
-        desc: "Prepare packages versions for publish",
-        exec: execPrepare,
-        options: {
-          tag: {
-            type: "boolean",
-            default: false,
-            desc: "create tags for individual packages",
-          },
+    },
+    updated: {
+      alias: "u",
+      desc: "list changed packages",
+      exec: execUpdated,
+    },
+    changelog: {
+      alias: "c",
+      desc: "Update changelog",
+      exec: execChangelog,
+      options: {
+        publish: {
+          type: "boolean",
+          default: false,
+          desc: "enable to trigger publish with changelog commit",
+        },
+        tag: {
+          type: "boolean",
+          default: false,
+          desc: "create tags for individual packages",
         },
       },
-      updated: {
-        alias: "u",
-        desc: "list changed packages",
-        exec: execUpdated,
-      },
-      changelog: {
-        alias: "c",
-        desc: "Update changelog",
-        exec: execChangelog,
-        options: {
-          publish: {
-            type: "boolean",
-            default: false,
-            desc: "enable to trigger publish with changelog commit",
-          },
-          tag: {
-            type: "boolean",
-            default: false,
-            desc: "create tags for individual packages",
-          },
+    },
+    run: {
+      alias: "r",
+      desc: "Run passed npm script in each package",
+      args: "<script>",
+      exec: execRunScript,
+      options: {
+        stream: {
+          type: "boolean",
+          default: false,
+          desc: "stream output from child processes, prefixed with the originating package name",
+        },
+        parallel: {
+          type: "boolean",
+          default: false,
+          desc: "run script immediately in up to concurrency number of matching packages",
+        },
+        prefix: {
+          type: "boolean",
+          default: true,
+          desc: "add package name prefixing for stream output, --no-prefix to disable",
+        },
+        bail: {
+          type: "boolean",
+          default: true,
+          desc: "immediately stop if any package's script fail, --no-bail to disable",
+        },
+        concurrency: {
+          alias: "cc",
+          type: "number",
+          default: 6,
+          desc: "number of packages to run script concurrently when parallel is not set",
+        },
+        sort: {
+          type: "boolean",
+          default: true,
+          desc: "run the script through packages in topological sort order, --no-sort to disable",
+        },
+        cache: {
+          type: "boolean",
+          default: false,
+          desc: "cache the run results",
         },
       },
-      run: {
-        alias: "r",
-        desc: "Run passed npm script in each package",
-        args: "<script>",
-        exec: execRunScript,
-        options: {
-          stream: {
-            type: "boolean",
-            default: false,
-            desc: "stream output from child processes, prefixed with the originating package name",
-          },
-          parallel: {
-            type: "boolean",
-            default: false,
-            desc: "run script immediately in up to concurrency number of matching packages",
-          },
-          prefix: {
-            type: "boolean",
-            default: true,
-            desc: "add package name prefixing for stream output, --no-prefix to disable",
-          },
-          bail: {
-            type: "boolean",
-            default: true,
-            desc: "immediately stop if any package's script fail, --no-bail to disable",
-          },
-          concurrency: {
-            alias: "cc",
-            type: "number",
-            default: 6,
-            desc: "number of packages to run script concurrently when parallel is not set",
-          },
-          sort: {
-            type: "boolean",
-            default: true,
-            desc: "run the script through packages in topological sort order, --no-sort to disable",
-          },
-          cache: {
-            type: "boolean",
-            default: false,
-            desc: "cache the run results",
-          },
+    },
+    version: {
+      alias: "v",
+      desc: "Update changelog and bump version",
+      exec: execVersion,
+      options: {
+        tag: {
+          type: "boolean",
+          default: false,
+          desc: "create tags for individual packages",
         },
       },
-      version: {
-        alias: "v",
-        desc: "Update changelog and bump version",
-        exec: execVersion,
-        options: {
-          tag: {
-            type: "boolean",
-            default: false,
-            desc: "create tags for individual packages",
-          },
+    },
+    publish: {
+      alias: "pb",
+      desc: "Publish Packages",
+      exec: execPublish,
+      options: {
+        "dist-tag": {
+          type: "string",
+          desc: "set publish tag for all packages",
+        },
+        "dry-run": {
+          type: "boolean",
+          default: false,
+          desc: "publish dry run",
+        },
+        push: {
+          type: "boolean",
+          default: true,
+          desc: "no-push to skip pushing release tag to remote",
         },
       },
-      publish: {
-        alias: "pb",
-        desc: "Publish Packages",
-        exec: execPublish,
-        options: {
-          "dist-tag": {
-            type: "string",
-            desc: "set publish tag for all packages",
-          },
-          "dry-run": {
-            type: "boolean",
-            default: false,
-            desc: "publish dry run",
-          },
-          push: {
-            type: "boolean",
-            default: true,
-            desc: "no-push to skip pushing release tag to remote",
-          },
+    },
+    init: {
+      alias: "i",
+      desc: "Initialize a new fynpo repo",
+      exec: execInit,
+      options: {
+        commitlint: {
+          type: "boolean",
+          default: false,
+          desc: "To add commitlint configuration",
         },
       },
-      init: {
-        alias: "i",
-        desc: "Initialize a new fynpo repo",
-        exec: execInit,
-        options: {
-          commitlint: {
-            type: "boolean",
-            default: false,
-            desc: "To add commitlint configuration",
-          },
+    },
+    commitlint: {
+      alias: "cl",
+      desc: "Commit lint",
+      exec: execLinting,
+      options: {
+        config: {
+          type: "string",
+          description: "path to the config file",
+        },
+        color: {
+          alias: "c",
+          default: true,
+          description: "toggle colored output",
+          type: "boolean",
+        },
+        edit: {
+          alias: "e",
+          description:
+            "read last commit message from the specified file or fallbacks to ./.git/COMMIT_EDITMSG",
+          type: "string",
+        },
+        verbose: {
+          alias: "V",
+          type: "boolean",
+          description: "enable verbose output for reports without problems",
         },
       },
-      commitlint: {
-        alias: "cl",
-        desc: "Commit lint",
-        exec: execLinting,
-        options: {
-          config: {
-            type: "string",
-            description: "path to the config file",
-          },
-          color: {
-            alias: "c",
-            default: true,
-            description: "toggle colored output",
-            type: "boolean",
-          },
-          edit: {
-            alias: "e",
-            description:
-              "read last commit message from the specified file or fallbacks to ./.git/COMMIT_EDITMSG",
-            type: "string",
-          },
-          verbose: {
-            alias: "V",
-            type: "boolean",
-            description: "enable verbose output for reports without problems",
-          },
-        },
-      },
-    }
-  );
+    },
+  };
+
+  nixClap.init2({
+    options,
+    subCommands
+  });
 
   return nixClap.parseAsync();
 };
