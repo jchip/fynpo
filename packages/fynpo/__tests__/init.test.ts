@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 import shcmd from "shcmd";
 
-describe.skip("fynpo Init", () => {
+describe("fynpo Init", () => {
   const dir = path.join(__dirname, "../test/sample");
   const packageJsonPath = path.join(dir, "package.json");
 

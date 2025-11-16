@@ -1,10 +1,22 @@
 import { describe, it, expect, afterAll, beforeEach, vi } from "vitest";
+
+// Mock logger before importing utils
+vi.mock("../src/logger", () => ({
+  logger: {
+    error: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  },
+}));
+
 import * as utils from "../src/utils";
+import { logger } from "../src/logger";
 import path from "path";
 import fs from "fs";
 import shcmd from "shcmd";
 
-describe.skip("fynpo utils", () => {
+describe("fynpo utils", () => {
   const dir = path.join(__dirname, "../test/sample");
 
   afterAll(() => {
@@ -28,6 +40,15 @@ describe.skip("fynpo utils", () => {
       const config: any = utils.loadConfig(dir);
       expect(config.fynpoRc).toHaveProperty("fynpo");
       expect(config.fynpoRc.fynpo).toEqual(true);
+    });
+
+    it("should load lerna config without fynpo", () => {
+      makeConfigFile("lerna.json", { version: "1.0.0" });
+
+      const config: any = utils.loadConfig(dir);
+      expect(config.fynpoRc).toHaveProperty("fynpo");
+      expect(config.fynpoRc.fynpo).toEqual(true);
+      expect(config.fynpoRc.version).toEqual("1.0.0");
     });
 
     it("should load fynpo config", () => {
@@ -231,11 +252,11 @@ describe.skip("fynpo utils", () => {
     });
 
     it("should handle empty commit message", () => {
-      const loggerSpy = vi.spyOn(require("../src/logger").logger, "error").mockImplementation(() => {});
+      const loggerErrorSpy = vi.spyOn(logger, "error");
 
       const parsed = utils.lintParser("", {});
       expect(parsed).toEqual({});
-      expect(loggerSpy).toHaveBeenCalledWith("Commit message empty");
+      expect(loggerErrorSpy).toHaveBeenCalledWith("Commit message empty");
 
       vi.restoreAllMocks();
     });

@@ -1,6 +1,6 @@
 {
   "name": "@fynpo/base",
-  "version": "1.1.18",
+  "version": "1.1.19",
   "description": "zero setup monorepo manager for node.js",
   "main": "dist/index.js",
   "homepage": "https://jchip.github.io/fynpo/",
@@ -33,6 +33,7 @@
     "@types/node": "^14.14.16",
     "@xarc/module-dev": "^4.0.0",
     "jest": "^30.0.3",
+    "npm-packlist": "jchip/npm-packlist#v1",
     "prettier": "^2.2.1",
     "publish-util": "^2.0.0",
     "source-map-support": "^0.5.19",

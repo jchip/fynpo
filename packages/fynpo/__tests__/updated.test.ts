@@ -3,7 +3,25 @@ import { Updated } from "../src/updated";
 import path from "path";
 import { FynpoDepGraph } from "@fynpo/base";
 
-describe.skip("fynpo Updated", () => {
+// Mock get-updated-packages
+vi.mock("../src/utils/get-updated-packages", () => ({
+  getUpdatedPackages: vi.fn(),
+}));
+
+// Mock logger
+vi.mock("../src/logger", () => ({
+  logger: {
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    debug: vi.fn(),
+  },
+}));
+
+import { getUpdatedPackages } from "../src/utils/get-updated-packages";
+import { logger } from "../src/logger";
+
+describe("fynpo Updated", () => {
   const dir = path.join(__dirname, "../test/sample");
   let graph: FynpoDepGraph;
 
@@ -62,18 +80,15 @@ describe.skip("fynpo Updated", () => {
     const updated = new Updated(opts, graph);
 
     // Mock getUpdatedPackages to return empty array
-    const originalGetUpdatedPackages = require("../src/utils/get-updated-packages").getUpdatedPackages;
-    jest.spyOn(require("../src/utils/get-updated-packages"), "getUpdatedPackages").mockReturnValue({
+    getUpdatedPackages.mockReturnValue({
       pkgs: [],
     });
 
-    const loggerSpy = jest.spyOn(require("../src/logger").logger, "info").mockImplementation();
-
     updated.exec();
 
-    expect(loggerSpy).toHaveBeenCalledWith("No changed packages!");
+    expect(logger.info).toHaveBeenCalledWith("No changed packages!");
 
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 });
 

@@ -19,7 +19,7 @@ export class Init {
   constructor(opts) {
     this.name = "init";
 
-    const { fynpoRc, dir, fileName } = utils.loadConfig(this._cwd, opts.commitlint);
+    const { fynpoRc, dir, fileName } = utils.loadConfig(opts.cwd, opts.commitlint);
     this._cwd = dir || opts.cwd;
     this._config = fynpoRc || {};
     this._configFile = fileName;

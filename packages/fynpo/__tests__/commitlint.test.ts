@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { Commitlint } from "../src/commitlint";
 import path from "path";
 
-describe.skip("fynpo Commitlint", () => {
+describe("fynpo Commitlint", () => {
   const dir = path.join(__dirname, "../test/sample");
 
   it("should initialize Commitlint class", () => {

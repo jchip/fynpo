@@ -1,0 +1,41 @@
+{
+  "indirects": {
+    "_w/npm-packlist": [
+      {
+        "fromPkg": {
+          "name": "npm-packlist",
+          "version": "10.0.3",
+          "path": "_w/npm-packlist"
+        },
+        "onPkg": {
+          "name": "npm-packlist",
+          "version": "10.0.3",
+          "path": "_w/npm-packlist"
+        },
+        "depSection": "dep",
+        "indirectSteps": [
+          "npm-packlist@10.0.3(dep)"
+        ]
+      }
+    ],
+    "packages/pkg-preper": [
+      {
+        "fromPkg": {
+          "name": "pkg-preper",
+          "version": "0.1.3",
+          "path": "packages/pkg-preper"
+        },
+        "onPkg": {
+          "name": "bluebird",
+          "version": "3.7.2",
+          "path": "packages/bluebird"
+        },
+        "depSection": "dep",
+        "indirectSteps": [
+          "pkg-preper@0.1.3(dep)"
+        ]
+      }
+    ]
+  },
+  "__timestamp": 1763269320903
+}
