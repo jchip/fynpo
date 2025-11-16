@@ -6,6 +6,19 @@
     }
   },
   "packages": ["packages/*", "_w/*"],
+  "command": {
+    "publish": {
+      "tags": {
+        "v2": {
+          "enabled": true,
+          "packages": {
+            "fynpo": true,
+            "fyn": true
+          }
+        }
+      }
+    }
+  },
   "ignore": ["packages/pacote-jchip"],
   "caching": {
     "enable": true,
