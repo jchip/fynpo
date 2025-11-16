@@ -6,7 +6,7 @@ $pkg:
   aveazul: ^1.0.2
   cacache: ^20.0.1
   mississippi: ^3.0.0
-  npm-packlist: jchip/npm-packlist
+  npm-packlist: ../../_w/npm-packlist
   opfs: ^1.0.6
   tar: ^4.4.6
   visual-exec: ^0.1.0
@@ -372,12 +372,12 @@ has-flag:
   $: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==
   _: 'https://registry.npmjs.com/has-flag/-/has-flag-3.0.0.tgz'
 ignore-walk:
- _latest: 8.0.0
+ _latest: 8.0.0-fynlocal_h
  _:
-  ^8.0.0: 8.0.0
- 8.0.0:
-  $: sha512-FCeMZT4NiRQGh+YkeKMtWrOmBgWjHjMJ26WQWrRQyoyzqevdaGSakUaJW5xQYmjLlUVk2qUnCjYVBax9EKKg8A==
-  _: 'https://registry.npmjs.com/ignore-walk/-/ignore-walk-8.0.0.tgz'
+  ../ignore-walk: 8.0.0-fynlocal_h
+ 8.0.0-fynlocal_h:
+  $: local
+  _: ../../_w/ignore-walk
   dependencies:
    minimatch: ^10.0.3
 imurmurhash:
@@ -568,12 +568,13 @@ mkdirp:
   dependencies:
    minimist: ^1.2.6
 npm-packlist:
+ _latest: 10.0.3-fynlocal_h
  _:
-  jchip/npm-packlist: 10.0.3
- 10.0.3:
+  ../../_w/npm-packlist: 10.0.3-fynlocal_h
+ 10.0.3-fynlocal_h:
   top: 1
-  $: 0
-  _: null
+  $: local
+  _: ../../_w/npm-packlist
   dependencies:
    ignore-walk: ^8.0.0
    proc-log: ^6.0.0

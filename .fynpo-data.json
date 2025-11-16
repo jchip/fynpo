@@ -86,11 +86,10 @@
         },
         "depSection": "dep",
         "indirectSteps": [
-          "fyn@1.1.46(pkg)",
-          "npm-packlist(dep)"
+          "fyn@1.1.46(dep)"
         ]
       }
     ]
   },
-  "__timestamp": 1763242395213
+  "__timestamp": 1763243523112
 }

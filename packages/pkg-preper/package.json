@@ -18,7 +18,7 @@
     "aveazul": "^1.0.2",
     "cacache": "^20.0.1",
     "mississippi": "^3.0.0",
-    "npm-packlist": "jchip/npm-packlist",
+    "npm-packlist": "^10.0.3",
     "opfs": "^1.0.6",
     "tar": "^4.4.6",
     "visual-exec": "^0.1.0"
