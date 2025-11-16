@@ -600,16 +600,16 @@ class FynCli {
     );
   }
 
-  async run(argv, script = "") {
+  async run(argv, script = "", cmd = null, parsed = null) {
     if (!this._config._fynpo) {
       this._config._fynpo = {};
     }
 
-    script = script || argv.args.script;
-    if (argv.opts.list || !script) {
+    script = script || argv.args?.script;
+    if (argv.opts?.list || !script) {
       try {
         await this.fyn.loadPkg();
-        if (!argv.opts.list) {
+        if (!argv.opts?.list) {
           console.log(`Lifecycle scripts included in ${this.fyn._pkg.name}:\n`);
         }
         console.log(Object.keys(_.get(this.fyn._pkg, "scripts", {})).join("\n"));
@@ -627,55 +627,16 @@ class FynCli {
       fyntil.exit(1);
     }
 
-    // Extract arguments after -- from the original command line
-    const scriptArgs = this._extractScriptArgs(argv);
+    // Get script arguments from nix-clap - nix-clap v2 handles -- separator automatically
+    // Arguments after -- are stored in parsed._ (the parsed result's _ property)
+    // nix-clap now passes parsed as the second parameter to exec handlers
+    // npm run behavior: ALL arguments (both before and after --) are passed to the script
+    // So we combine argv.args.args (args before --) with parsed._ (args after --)
+    const argsBeforeDashDash = argv.args?.args || argv.args?._ || argv._ || [];
+    const argsAfterDashDash = parsed?._ || [];
+    const scriptArgs = [...argsBeforeDashDash, ...argsAfterDashDash];
 
     return this.runScripts([script], { scriptArgs });
-  }
-
-  _extractScriptArgs(argv) {
-    // Extract arguments after -- from process.argv
-    // This handles both explicit "run" command and auto-injected "run"
-    let rawArgs = [];
-    
-    // Find where the script name appears in process.argv
-    const scriptName = argv.args && argv.args.script;
-    if (scriptName) {
-      // Find the script name in process.argv
-      const scriptIndex = process.argv.indexOf(scriptName);
-      if (scriptIndex >= 0) {
-        // Get everything from the script name onwards
-        rawArgs = process.argv.slice(scriptIndex);
-      }
-    }
-    
-    // Fallback: if script name not found, try to find "run" command
-    if (rawArgs.length === 0) {
-      const runIndex = process.argv.indexOf("run");
-      if (runIndex >= 0) {
-        rawArgs = process.argv.slice(runIndex);
-      }
-    }
-    
-    // If still not found, check if command was auto-injected
-    // In that case, the script name should be the first unknown argument
-    if (rawArgs.length === 0 && scriptName) {
-      // Look for script name anywhere in argv (might be before "run" was injected)
-      for (let i = 0; i < process.argv.length; i++) {
-        if (process.argv[i] === scriptName) {
-          rawArgs = process.argv.slice(i);
-          break;
-        }
-      }
-    }
-
-    // Find -- separator and extract everything after it
-    const dashDashIndex = rawArgs.indexOf("--");
-    if (dashDashIndex >= 0 && dashDashIndex < rawArgs.length - 1) {
-      return rawArgs.slice(dashDashIndex + 1);
-    }
-
-    return [];
   }
 }
 

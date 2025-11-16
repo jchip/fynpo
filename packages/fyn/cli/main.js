@@ -401,16 +401,16 @@ const commands = {
   },
   run: {
     desc: "Run a npm script",
-    args: "[script string]",
+    args: "[script string] [args...]",
     alias: ["rum", "r"],
-    usage: "$0 $1 <command> [-- <args>...]",
-    exec: async cmd => {
+    usage: "$0 $1 <command> [args...] [-- <args>...]",
+    exec: async (cmd, parsed) => {
       try {
         const meta = cmd.jsonMeta;
         const options = await pickOptions(cmd, !meta.opts.list);
-        // Pass the command object so we can extract arguments after --
-        meta._command = cmd;
-        return await new FynCli(options).run(meta);
+        await new FynCli(options).run(meta, undefined, cmd, parsed);
+        // Exit successfully after running the script to prevent processing error nodes
+        process.exit(0);
       } catch (err) {
         if (err.errno !== undefined) {
           process.exit(err.errno);
@@ -469,15 +469,12 @@ const commands = {
 };
 
 const createNixClap = (handlers = {}) => {
-  // Merge our handlers with a flag to disable default no-action handler
-  const allHandlers = {
-    ...handlers,
-    "no-action": handlers["no-action"] || false // Disable default if we provide our own
-  };
   const nc = new NixClap({
     name: myPkg.name,
     usage: "$0 [options] <command>",
-    handlers: allHandlers
+    handlers: handlers,
+    defaultCommand: "install", // Run install when no command is given (e.g., `fyn` or `fyn --verbose`)
+    unknownCommandFallback: "run" // Make `fyn <script>` behave like `fyn run <script>`
   });
   nc.version(myPkg.version);
   return nc;
@@ -517,44 +514,8 @@ const run = async (args, start, tryRun = true) => {
         }
       }
     },
-    "unknown-option": () => {},
-    "no-action": async () => {
-      // When no command is given, check if this is due to --version or --help
-      // These should be handled by nix-clap's built-in handlers, not trigger install
-      const checkArgs = (args || process.argv).slice(start || 2);
-
-      // Check if --version, -V, -v, --help, -h, or -? is present
-      if (
-        checkArgs.some(
-          arg =>
-            arg === "--version" ||
-            arg === "-V" ||
-            arg === "-v" ||
-            arg === "--help" ||
-            arg === "-h" ||
-            arg === "-?"
-        )
-      ) {
-        // These flags should have been handled by nix-clap's default handlers
-        // Don't run install command
-        return;
-      }
-
-      // When no command is given and no special flags, run install as the default
-      // This replaces the defaultCommand config
-      // Re-parse to get the command with options
-      const nc2 = createNixClap();
-      nc2.init2({
-        options,
-        subCommands: commands
-      });
-      const parsed2 = await nc2.parseAsync(storedArgs, storedStart);
-      const installCmd = commands.install;
-      if (installCmd && installCmd.exec && parsed2.command) {
-        // Use the root command from parsed result which has all the options
-        await installCmd.exec(parsed2.command);
-      }
-    }
+    "unknown-option": () => {}
+    // No "no-action" handler needed - defaultCommand handles running install when no command is given
   };
 
   const nc = createNixClap(handlers);
