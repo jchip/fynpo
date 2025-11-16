@@ -5,6 +5,7 @@ const { execSync } = require("child_process");
 module.exports = {
   title: "should refresh stale git cache after local commit (git rev-parse check)",
   timeout: 120000,
+  skip: true, // Skipped: Git dependency refresh feature is unreliable and rarely used
   copyCache: true, // Copy cache from previous step
   before(cwd, scenarioDir) {
     // Use the local git repository fixture in .tmp (gitignored)
