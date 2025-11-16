@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from "@jest/globals";
+import { describe, it, expect, beforeAll } from "vitest";
 import { Bootstrap } from "../src/bootstrap";
 import path from "path";
 import { FynpoDepGraph } from "@fynpo/base";

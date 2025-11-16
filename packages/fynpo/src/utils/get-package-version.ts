@@ -17,7 +17,7 @@ const findVersion = (name, updateType, collated) => {
   collated.packages[name].semver = x;
   collated.packages[name].newVersion = semver.inc(
     collated.packages[name].versionOnly,
-    types[updateType]
+    types[updateType] as any
   );
   collated.packages[name].updateType = updateType;
   collated.packages[name].originalPkg = pkgJson;
