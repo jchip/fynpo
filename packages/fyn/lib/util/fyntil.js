@@ -91,7 +91,11 @@ const fyntil = {
     const config = await fcm.load();
 
     if (config) {
-      logger.info(`Detected a ${fcm.repoType} at ${fcm.topDir}`);
+      // Only log if not already detected by parent process
+      if (!process.env.FYN_FYNPO_DIR) {
+        logger.info(`Detected a ${fcm.repoType} at ${fcm.topDir}`);
+        process.env.FYN_FYNPO_DIR = fcm.topDir;
+      }
       const graph = new FynpoDepGraph({ cwd: fcm.topDir, patterns: config.packages });
       await graph.resolve();
 
