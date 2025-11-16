@@ -412,12 +412,38 @@ const commands = {
         // Exit successfully after running the script to prevent processing error nodes
         process.exit(0);
       } catch (err) {
-        if (err.errno !== undefined) {
-          process.exit(err.errno);
+        // Determine exit code from error
+        // @npmcli/run-script uses err.code (exit code), not err.errno
+        const exitCode = err.errno !== undefined ? err.errno : (err.code || 1);
+
+        // Format and log the error cleanly
+        if (err.event && err.script) {
+          // This is a script execution error
+          logger.error(chalk.red(`Script '${err.event}' failed${err.pkgid ? ` for ${err.pkgid}` : ''}`));
+          if (err.path) {
+            logger.error(chalk.dim(`  Location: ${err.path}`));
+          }
+          if (err.cmd && err.args) {
+            logger.error(chalk.dim(`  Command: ${err.cmd} ${err.args.join(' ')}`));
+          } else if (err.script) {
+            logger.error(chalk.dim(`  Script: ${err.script}`));
+          }
+          if (typeof exitCode === 'number') {
+            logger.error(chalk.dim(`  Exit code: ${exitCode}`));
+          }
+          if (err.signal) {
+            logger.error(chalk.dim(`  Signal: ${err.signal}`));
+          }
         } else {
-          logger.error("fyn run caught error without errno", err);
-          process.exit(1);
+          // Generic error
+          logger.error(chalk.red("Script execution failed:"));
+          logger.error(err.message || err.toString());
+          if (err.stack && logger._logLevel <= CliLogger.Levels.debug) {
+            logger.debug(err.stack);
+          }
         }
+
+        process.exit(typeof exitCode === 'number' ? exitCode : 1);
       }
     },
     options: {
