@@ -1,3 +1,84 @@
+# 11/15/2025
+
+## Packages
+
+-   `@fynpo/base@1.1.20` `(1.1.19 => 1.1.20)`
+-   `fyn@2.0.0` `(1.1.46 => 2.0.0)`
+-   `fynpo@2.0.0` `(1.1.49 => 2.0.0)`
+-   `pkg-preper@0.1.4` `(0.1.3 => 0.1.4)`
+
+## Commits
+
+-   `packages/fynpo-base`
+
+    -   fynpo: update tests [commit](https://github.com/electrode-io/fynpo/commit/0ce4c1a4227160f88c4b87cedcc216ab6caa8255)
+    -   chore: update deps [commit](https://github.com/electrode-io/fynpo/commit/d95d9845c9ad1c8bd01905995c9124bc115c15c4)
+    -   update docs [commit](https://github.com/electrode-io/fynpo/commit/5a6e24a4b903a93a5d52d05b0391fb54136ac902)
+
+-   `packages/fyn`
+
+    -   fynpo,fyn: [major] bump to v2 [commit](https://github.com/electrode-io/fynpo/commit/40bc40fd3cdb5ee06c71f4bd58fb4f1069cc6126)
+    -   chore: update deps [commit](https://github.com/electrode-io/fynpo/commit/d95d9845c9ad1c8bd01905995c9124bc115c15c4)
+    -   chore: update deps [commit](https://github.com/electrode-io/fynpo/commit/951c3a29f75ad51903bf8237108da770a6045e06)
+    -   fyn: skip tests - fix later [commit](https://github.com/electrode-io/fynpo/commit/728941519ca8ed93462d9dacacaed9aaca9954cc)
+    -   fyn: clearer message about local packages [commit](https://github.com/electrode-io/fynpo/commit/4ab5a38b6c3d8ce5af94846b66e0a94559890bb9)
+    -   fyn: fix cli args handling [commit](https://github.com/electrode-io/fynpo/commit/49c974760e83d8280257f5fb1a1088cde1a19af2)
+    -   fyn: fix url semver handling [commit](https://github.com/electrode-io/fynpo/commit/ecf376857dcbbfed5b72dee3587904f2b6a50d17)
+    -   fyn: fix git repo refresh check [commit](https://github.com/electrode-io/fynpo/commit/335b0c80c131f7c9f7a57852627afbe9e426795d)
+    -   use semver for git repo package cache key [commit](https://github.com/electrode-io/fynpo/commit/db9991a44f41b68c55e125042b82e48bc487818d)
+    -   tests for fetching packages from git repo [commit](https://github.com/electrode-io/fynpo/commit/71d9c0508897adf7fec3ba425542bfdb894b14a7)
+    -   fix use of new npm packages [commit](https://github.com/electrode-io/fynpo/commit/c8d23add782aac58b0a5ac53bb170bede5817570)
+    -   fix save-logs option [commit](https://github.com/electrode-io/fynpo/commit/e767ce9bd0e268830cda84d87fc813c8c64eaa2f)
+    -   Update nix-clap from v1.3 to v2.3 and fix import/args format [commit](https://github.com/electrode-io/fynpo/commit/cd7497c8e2e1ace93e8c6617d45eb1f65de06844)
+    -   Replace rimraf with fs.rmSync and fs.promises.rm in tests and remove from devDependencies [commit](https://github.com/electrode-io/fynpo/commit/fd6130dd3cc273d5c03cfcf15c26e1c2cdc73845)
+    -   Move rimraf to devDependencies for tests [commit](https://github.com/electrode-io/fynpo/commit/aebb61a1d8ec3aa9caaf55a13cbe1ec6f435824c)
+    -   Remove unused npmlog dependency [commit](https://github.com/electrode-io/fynpo/commit/8f82a10aebd6001a6c470761021c44e1bdbc06c5)
+    -   Update ci-info from v2 to v4 [commit](https://github.com/electrode-io/fynpo/commit/a3bc05dee455f57d0ad3a6528999567781ac02a4)
+    -   Remove unused es6-promisify local package [commit](https://github.com/electrode-io/fynpo/commit/250efb16a4d66dbcbf6c8b1a75b7a7953b9c2cd2)
+    -   Replace rimraf with fs.promises.rm and bump Node.js requirement to 14.14+ [commit](https://github.com/electrode-io/fynpo/commit/6593cfff3f431c3e86185cdb1ad6259a9d9f1f92)
+    -   Replace mkdirp with fs.mkdirSync({ recursive: true }) [commit](https://github.com/electrode-io/fynpo/commit/dcfe8b5cd579a9d2ed1f96b5b09657cccf2171b8)
+    -   Remove unused osenv dependency [commit](https://github.com/electrode-io/fynpo/commit/af0df8d7f755bff7f3aec1e1e2f399d2d7bcdebf)
+    -   3 [commit](https://github.com/electrode-io/fynpo/commit/d33c5c6e823524982f5842f7c905ea3142749fa8)
+    -   Set npm_node_execpath, npm_execpath, and INIT_CWD in fyn run [commit](https://github.com/electrode-io/fynpo/commit/f9a67df77f7bac63a7cf294c2c35aa005f063f4a)
+    -   Add npm_config_* env vars to fyn run and document lifecycle-scripts purpose [commit](https://github.com/electrode-io/fynpo/commit/81e4adc643b9a17790a4b6d0a29977645d11798d)
+    -   Remove legacy npm-config.js and fix scriptShell option handling [commit](https://github.com/electrode-io/fynpo/commit/4fb1aa9308320dbb33b2b530267cecb66783ae5e)
+    -   2 [commit](https://github.com/electrode-io/fynpo/commit/f05026fb54e713c3d440415e5fec872119c4197b)
+    -   1 [commit](https://github.com/electrode-io/fynpo/commit/764e97ad46f060c448836d7c685c6a6ef8874553)
+    -   fix outdated lock data causing null pkgInfo [commit](https://github.com/electrode-io/fynpo/commit/13964403e8784b6dc4b8328741b97fbd2a4acaf1)
+    -   fyn --auto-run options to allow turn off auto run npm after install [commit](https://github.com/electrode-io/fynpo/commit/987bb47905ccd042c48bae15f38a4f77278d2781)
+    -   chore: update yarn/README.md [commit](https://github.com/electrode-io/fynpo/commit/0edb9aa8fac026920b8e42c384c9ed2a2f54cf0b)
+    -   chore: add dev dep tsx [commit](https://github.com/electrode-io/fynpo/commit/c88046f3674d0d38e2f316ae83f54c7a226b592b)
+    -   chore: remove bin/node-gyp.js [commit](https://github.com/electrode-io/fynpo/commit/81e7a5a73389a7df38cc2223c0de9d83449c55f3)
+    -   chore: claude and fix tests [commit](https://github.com/electrode-io/fynpo/commit/bb05037ad61ccd580b7c5e9ef8fc8e1f2a12a977)
+    -   removing node-gyp from fyn [commit](https://github.com/electrode-io/fynpo/commit/b281e92048d41809279bbb89260e7a88ea3ece24)
+
+-   `packages/fynpo`
+
+    -   fynpo,fyn: [major] bump to v2 [commit](https://github.com/electrode-io/fynpo/commit/40bc40fd3cdb5ee06c71f4bd58fb4f1069cc6126)
+    -   fynpo: update tests [commit](https://github.com/electrode-io/fynpo/commit/0ce4c1a4227160f88c4b87cedcc216ab6caa8255)
+    -   fynpo: move to vitest [commit](https://github.com/electrode-io/fynpo/commit/7ee4b0ea560ca6dca6e12ee4a0169a952ac1b646)
+    -   fynpo: upgrade to nix-clap 2.4.1 [commit](https://github.com/electrode-io/fynpo/commit/7575b86842659cfbbb6e82c6e5a124d68d6c1ef4)
+    -   fynpo: fix copying build package to cache [commit](https://github.com/electrode-io/fynpo/commit/625c45e591d6745aca1745ef70b2626c24dfb6d2)
+    -   fynpo: use tsx to execute .ts directly [commit](https://github.com/electrode-io/fynpo/commit/5208b18be65dab11e4bc4b3a6dae2f8d1f7c8fda)
+
+-   `packages/pacote-jchip`
+
+    -   fynpo: update tests [commit](https://github.com/electrode-io/fynpo/commit/0ce4c1a4227160f88c4b87cedcc216ab6caa8255)
+    -   1 [commit](https://github.com/electrode-io/fynpo/commit/764e97ad46f060c448836d7c685c6a6ef8874553)
+
+-   `packages/pkg-preper`
+
+    -   chore: update deps [commit](https://github.com/electrode-io/fynpo/commit/d95d9845c9ad1c8bd01905995c9124bc115c15c4)
+    -   chore: update deps [commit](https://github.com/electrode-io/fynpo/commit/951c3a29f75ad51903bf8237108da770a6045e06)
+    -   tests for fetching packages from git repo [commit](https://github.com/electrode-io/fynpo/commit/71d9c0508897adf7fec3ba425542bfdb894b14a7)
+    -   fix use of new npm packages [commit](https://github.com/electrode-io/fynpo/commit/c8d23add782aac58b0a5ac53bb170bede5817570)
+    -   3 [commit](https://github.com/electrode-io/fynpo/commit/d33c5c6e823524982f5842f7c905ea3142749fa8)
+    -   1 [commit](https://github.com/electrode-io/fynpo/commit/764e97ad46f060c448836d7c685c6a6ef8874553)
+
+-   `MISC`
+
+    -   chore: update lock and meta files [commit](https://github.com/electrode-io/fynpo/commit/f1cac5ad77dbbb357ef3bc91260502e8065244fd)
+
 # 7/2/2025
 
 ## Packages
