@@ -483,11 +483,15 @@ class PkgDepResolver {
             const fullPkgDir = Path.join(fynpo.dir, fynpoPkg.path);
             fynDeps[name] = relativePath(fromDir, fullPkgDir, true);
           } else {
-            const dispName = logFormat.pkgId(name);
-            const versions = fynpo.graph.packages.byName[name].map(x => x.version).join(", ");
-            logger.info(
-              `No match version in your monorepo found for dependency ${dispName}@${semver}. Versions available: ${versions}`
-            );
+            const msgKey = `nomatch:${name}@${semver}`;
+            if (!this._fyn._shownMissingFiles.has(msgKey)) {
+              this._fyn._shownMissingFiles.add(msgKey);
+              const dispName = logFormat.pkgId(name);
+              const versions = fynpo.graph.packages.byName[name].map(x => x.version).join(", ");
+              logger.info(
+                `You have local copy of ${dispName}, but no version matching semver ${semver}. Versions available: ${versions}`
+              );
+            }
           }
         }
         if (locals.length > 0 && !this._options.deDuping) {
@@ -508,9 +512,13 @@ class PkgDepResolver {
             });
           }
           const names = locals.map(x => x.name).join(", ");
-          logger.info(
-            `Using local copies from your monorepo for these packages in ${pkg.name}'s ${depSec}: ${names}`
-          );
+          const msgKey = `localcopies:${pkg.name}:${depSec}:${names}`;
+          if (!this._fyn._shownMissingFiles.has(msgKey)) {
+            this._fyn._shownMissingFiles.add(msgKey);
+            logger.info(
+              `Using local copies from your monorepo for these packages in ${pkg.name}'s ${depSec}: ${names}`
+            );
+          }
         }
       }
 

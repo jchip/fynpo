@@ -37,6 +37,8 @@ const { posixify } = require("./util/fyntil");
 class Fyn {
   constructor({ opts = {}, _cliSource = {}, _fynpo = true }) {
     this._cliSource = { ..._cliSource };
+    // Track shown "not found" messages to avoid duplicates
+    this._shownMissingFiles = new Set();
     const options = (this._options = fynConfig(opts));
 
     this._cwd = options.cwd || process.cwd();
@@ -273,7 +275,11 @@ class Fyn {
         }
         this._installConfig = { ...this._installConfig, ...fynInstallConfig, layout };
       } catch (err) {
-        logger.debug("failed loaded fynInstallConfig from", filename, err);
+        const msgKey = `fynInstallConfig:${filename}`;
+        if (!this._shownMissingFiles.has(msgKey)) {
+          this._shownMissingFiles.add(msgKey);
+          logger.debug("failed loaded fynInstallConfig from", filename, err);
+        }
       }
 
       this.checkProductionMode();

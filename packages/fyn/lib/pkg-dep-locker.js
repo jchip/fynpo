@@ -497,7 +497,12 @@ class PkgDepLocker {
         logger.error("Can't proceed without lockfile in lock-only mode");
         fyntil.exit(err);
       } else {
-        logger.debug(`failed to load lockfile ${filename} -`, err.message);
+        // Track shown messages to avoid duplicates
+        const msgKey = `lockfile:${filename}`;
+        if (!this._fyn._shownMissingFiles.has(msgKey)) {
+          this._fyn._shownMissingFiles.add(msgKey);
+          logger.debug(`failed to load lockfile ${filename} -`, err.message);
+        }
       }
       this._shaSum = Date.now();
       this._lockData = {};
