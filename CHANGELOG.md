@@ -1,3 +1,29 @@
+# 11/18/2025
+
+## Packages
+
+-   `create-fynpo@1.0.6` `(1.0.5 => 1.0.6)`
+-   `fyn@2.0.1` `(2.0.0 => 2.0.1)`
+-   `fynpo@2.0.1` `(2.0.0 => 2.0.1)`
+
+## Commits
+
+-   `packages/create-fynpo`
+
+    -   chore: update xsh 0.4.6 [commit](https://github.com/electrode-io/fynpo/commit/6e6671d794ca863913ad366e6d3ee70a60e73baf)
+
+-   `packages/fyn`
+
+    -   fyn: improve run script error handling and formatting [commit](https://github.com/electrode-io/fynpo/commit/3ae6fb2c265377abce8873dad4f07cf9c6fb3acc)
+    -   chore: update xsh 0.4.6 [commit](https://github.com/electrode-io/fynpo/commit/6e6671d794ca863913ad366e6d3ee70a60e73baf)
+    -   fyn: memoize fynpo detected [commit](https://github.com/electrode-io/fynpo/commit/5a904c2658143d5803bfc4849da34afe64718008)
+    -   update to fynpo,fyn v2 [commit](https://github.com/electrode-io/fynpo/commit/1eed0a41118d83863899c0797479665a8366da1c)
+
+-   `packages/fynpo`
+
+    -   fynpo: fix nix-clap usage [commit](https://github.com/electrode-io/fynpo/commit/1911c91a3a2aa5f14d3146a0ef0584b8107a1494)
+    -   chore: update xsh 0.4.6 [commit](https://github.com/electrode-io/fynpo/commit/6e6671d794ca863913ad366e6d3ee70a60e73baf)
+
 # 11/15/2025
 
 ## Packages
