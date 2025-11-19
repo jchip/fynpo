@@ -277,56 +277,54 @@ export const fynpoMain = () => {
 
   const options = {
     cwd: {
-      type: "string",
+      args: "<path string>",
       desc: "set fynpo's working directory",
     },
     ignore: {
       alias: "i",
-      type: "string array",
+      args: "<vals string..>",
       desc: "list of packages to ignore",
       allowCmd: ["bootstrap", "local", "run"],
     },
     only: {
       alias: "o",
-      type: "string array",
+      args: "<vals string..>",
       desc: "list of packages to handle only",
       allowCmd: ["bootstrap", "local", "run"],
     },
     scope: {
       alias: "s",
-      type: "string array",
+      args: "<vals string..>",
       desc: "include only packages with names matching the given scopes",
       allowCmd: ["bootstrap", "local", "run"],
     },
     deps: {
       alias: "d",
-      type: "number",
-      default: 10,
+      args: "[val number]",
+      argDefault: "10",
       desc: "level of deps to include even if they were ignored",
       allowCmd: ["bootstrap", "local", "run"],
     },
     commit: {
-      type: "boolean",
-      default: true,
-      desc: "no-commit to disable committing the changes to changelog and package.json",
+      args: "[flag boolean]",
+      argDefault: "true",
+      desc: "commit the changes to changelog and package.json (use --no-commit to disable)",
       allowCmd: ["changelog", "version", "prepare"],
     },
     "force-publish": {
       alias: "fp",
-      type: "string array",
+      args: "<vals string..>",
       desc: "force publish packages",
       allowCmd: ["updated", "changelog", "version"],
     },
     "ignore-changes": {
       alias: "ic",
-      type: "string array",
+      args: "<vals string..>",
       desc: "ignore patterns",
       allowCmd: ["updated", "changelog", "version"],
     },
     "save-log": {
       alias: "sl",
-      type: "boolean",
-      default: false,
       desc: "save logs to fynpo-debug.log",
     },
   };
@@ -338,18 +336,18 @@ export const fynpoMain = () => {
       exec: execBootstrap,
       options: {
         build: {
-          type: "boolean",
-          default: true,
-          desc: "run npm script build if no prepare",
+          args: "[flag boolean]",
+          argDefault: "true",
+          desc: "run npm script build if no prepare (use --no-build to disable)",
         },
         concurrency: {
           alias: "cc",
-          type: "number",
-          default: 6,
+          args: "[val number]",
+          argDefault: "6",
           desc: "number of packages to bootstrap concurrently",
         },
         skip: {
-          type: "string array",
+          args: "<vals string..>",
           desc: "list of packages to skip running fyn install on, but won't ignore",
         },
       },
@@ -365,8 +363,6 @@ export const fynpoMain = () => {
       exec: execPrepare,
       options: {
         tag: {
-          type: "boolean",
-          default: false,
           desc: "create tags for individual packages",
         },
       },
@@ -382,13 +378,9 @@ export const fynpoMain = () => {
       exec: execChangelog,
       options: {
         publish: {
-          type: "boolean",
-          default: false,
           desc: "enable to trigger publish with changelog commit",
         },
         tag: {
-          type: "boolean",
-          default: false,
           desc: "create tags for individual packages",
         },
       },
@@ -400,39 +392,33 @@ export const fynpoMain = () => {
       exec: execRunScript,
       options: {
         stream: {
-          type: "boolean",
-          default: false,
           desc: "stream output from child processes, prefixed with the originating package name",
         },
         parallel: {
-          type: "boolean",
-          default: false,
           desc: "run script immediately in up to concurrency number of matching packages",
         },
         prefix: {
-          type: "boolean",
-          default: true,
-          desc: "add package name prefixing for stream output, --no-prefix to disable",
+          args: "[flag boolean]",
+          argDefault: "true",
+          desc: "add package name prefixing for stream output (use --no-prefix to disable)",
         },
         bail: {
-          type: "boolean",
-          default: true,
-          desc: "immediately stop if any package's script fail, --no-bail to disable",
+          args: "[flag boolean]",
+          argDefault: "true",
+          desc: "immediately stop if any package's script fail (use --no-bail to disable)",
         },
         concurrency: {
           alias: "cc",
-          type: "number",
-          default: 6,
+          args: "[val number]",
+          argDefault: "6",
           desc: "number of packages to run script concurrently when parallel is not set",
         },
         sort: {
-          type: "boolean",
-          default: true,
-          desc: "run the script through packages in topological sort order, --no-sort to disable",
+          args: "[flag boolean]",
+          argDefault: "true",
+          desc: "run the script through packages in topological sort order (use --no-sort to disable)",
         },
         cache: {
-          type: "boolean",
-          default: false,
           desc: "cache the run results",
         },
       },
@@ -443,8 +429,6 @@ export const fynpoMain = () => {
       exec: execVersion,
       options: {
         tag: {
-          type: "boolean",
-          default: false,
           desc: "create tags for individual packages",
         },
       },
@@ -455,18 +439,16 @@ export const fynpoMain = () => {
       exec: execPublish,
       options: {
         "dist-tag": {
-          type: "string",
+          args: "<tag string>",
           desc: "set publish tag for all packages",
         },
         "dry-run": {
-          type: "boolean",
-          default: false,
           desc: "publish dry run",
         },
         push: {
-          type: "boolean",
-          default: true,
-          desc: "no-push to skip pushing release tag to remote",
+          args: "[flag boolean]",
+          argDefault: "true",
+          desc: "push release tag to remote (use --no-push to skip)",
         },
       },
     },
@@ -476,8 +458,6 @@ export const fynpoMain = () => {
       exec: execInit,
       options: {
         commitlint: {
-          type: "boolean",
-          default: false,
           desc: "To add commitlint configuration",
         },
       },
@@ -488,25 +468,23 @@ export const fynpoMain = () => {
       exec: execLinting,
       options: {
         config: {
-          type: "string",
-          description: "path to the config file",
+          args: "<path string>",
+          desc: "path to the config file",
         },
         color: {
           alias: "c",
-          default: true,
-          description: "toggle colored output",
-          type: "boolean",
+          args: "[flag boolean]",
+          argDefault: "true",
+          desc: "toggle colored output (use --no-color to disable)",
         },
         edit: {
           alias: "e",
-          description:
-            "read last commit message from the specified file or fallbacks to ./.git/COMMIT_EDITMSG",
-          type: "string",
+          args: "<file string>",
+          desc: "read last commit message from the specified file or fallbacks to ./.git/COMMIT_EDITMSG",
         },
         verbose: {
           alias: "V",
-          type: "boolean",
-          description: "enable verbose output for reports without problems",
+          desc: "enable verbose output for reports without problems",
         },
       },
     },
