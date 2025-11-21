@@ -51,12 +51,10 @@ const readFynpoData = async (cwd) => {
   }
 };
 
-const makeOpts = async (cmd, parsed) => {
-  // In nix-clap v2, options are accessed via cmd.opts and cmd.rootCmd.opts
-  const rootOpts = cmd.rootCmd?.opts || {};
-  const cmdOpts = cmd.opts || {};
-  const allOpts = Object.assign({}, rootOpts, cmdOpts, parsed.opts || {});
-  
+const makeOpts = async (cmd, _parsed) => {
+  // In nix-clap v2, use cmd.jsonMeta.opts for merged options
+  const allOpts = cmd.jsonMeta?.opts || {};
+
   let cwd = process.cwd();
   if (allOpts.cwd) {
     logger.info(`Setting CWD to ${allOpts.cwd}`);
@@ -97,26 +95,20 @@ const execBootstrap = async (cmd, parsed, firstRunTime = 0) => {
   const fynpoDataStart = await readFynpoData(bootstrap.cwd);
   let statusCode = 0;
 
+  // In nix-clap v2, use cmd.jsonMeta for merged options and args
+  const meta = cmd.jsonMeta;
+
   if (!firstRunTime) {
-    // Avoid circular reference when logging - only log opts and args
-    const rootOpts = cmd.rootCmd?.opts || {};
-    const cmdOpts = cmd.opts || {};
-    const allOpts = Object.assign({}, rootOpts, cmdOpts, parsed.opts || {});
-    logger.debug("CLI options", JSON.stringify({ opts: allOpts, args: parsed.args || cmd.jsonMeta?.args || [] }));
+    logger.debug("CLI options", JSON.stringify({ opts: meta.opts, args: meta.argList }));
   }
 
   let secondRun = false;
   try {
-    // In nix-clap v2, options are accessed via cmd.opts and cmd.rootCmd.opts
-    const rootOpts = cmd.rootCmd?.opts || {};
-    const cmdOpts = cmd.opts || {};
-    const allOpts = Object.assign({}, rootOpts, cmdOpts, parsed.opts || {});
-    
     await bootstrap.exec({
-      build: allOpts.build,
-      fynOpts: allOpts.fynOpts,
-      concurrency: allOpts.concurrency,
-      skip: allOpts.skip,
+      build: meta.opts.build,
+      fynOpts: meta.opts.fynOpts,
+      concurrency: meta.opts.concurrency,
+      skip: meta.opts.skip,
     });
 
     if (!firstRunTime) {
@@ -141,10 +133,7 @@ const execBootstrap = async (cmd, parsed, firstRunTime = 0) => {
     if (!secondRun) {
       const sec = ((bootstrap.elapsedTime + firstRunTime) / 1000).toFixed(2);
       logger.info(`bootstrap completed in ${sec}secs`);
-      const rootOpts = cmd.rootCmd?.opts || {};
-      const cmdOpts = cmd.opts || {};
-      const allOpts = Object.assign({}, rootOpts, cmdOpts, parsed.opts || {});
-      if (statusCode !== 0 || allOpts.saveLog) {
+      if (statusCode !== 0 || meta.opts.saveLog) {
         Fs.writeFileSync("fynpo-debug.log", logger.logData.join("\n") + "\n");
         logger.error("Please check the file fynpo-debug.log for more info.");
       }
@@ -159,11 +148,9 @@ const execLocal = async (cmd, parsed) => {
   return await makeBootstrap(cmd, parsed);
 };
 
-const execPrepare = async (cmd, parsed) => {
-  const rootOpts = cmd.rootCmd?.opts || {};
-  const cmdOpts = cmd.opts || {};
-  const allOpts = Object.assign({}, rootOpts, cmdOpts, parsed.opts || {});
-  const opts = Object.assign({ cwd: process.cwd() }, allOpts);
+const execPrepare = async (cmd, _parsed) => {
+  // In nix-clap v2, use cmd.jsonMeta.opts for merged options
+  const opts = Object.assign({ cwd: process.cwd() }, cmd.jsonMeta?.opts || {});
 
   // prepare only applies at top level, so switch CWD there
   process.chdir(opts.cwd);
@@ -171,9 +158,9 @@ const execPrepare = async (cmd, parsed) => {
   return new Prepare(opts, await readPackages(opts)).exec();
 };
 
-const execChangelog = async (cmd, parsed) => {
+const execChangelog = async (cmd, _parsed) => {
   logger.info("updating changelog");
-  const opts = await makeOpts(cmd, parsed);
+  const opts = await makeOpts(cmd, _parsed);
   const graph = await makeDepGraph(opts);
 
   // changelog only applies at top level, so switch CWD there
@@ -182,34 +169,34 @@ const execChangelog = async (cmd, parsed) => {
   return new Changelog(opts, graph).exec();
 };
 
-const execUpdated = async (cmd, parsed) => {
-  const opts = await makeOpts(cmd, parsed);
+const execUpdated = async (cmd, _parsed) => {
+  const opts = await makeOpts(cmd, _parsed);
   const graph = await makeDepGraph(opts);
 
   return new Updated(opts, graph).exec();
 };
 
-const execPublish = async (cmd, parsed) => {
-  const opts = await makeOpts(cmd, parsed);
+const execPublish = async (cmd, _parsed) => {
+  const opts = await makeOpts(cmd, _parsed);
   const graph = await makeDepGraph(opts);
 
   return new Publish(opts, graph).exec();
 };
 
-const execVersion = async (cmd, parsed) => {
-  const opts = await makeOpts(cmd, parsed);
+const execVersion = async (cmd, _parsed) => {
+  const opts = await makeOpts(cmd, _parsed);
   const graph = await makeDepGraph(opts);
 
   return new Version(opts, graph).exec();
 };
 
-const execRunScript = async (cmd, parsed) => {
-  const opts = await makeOpts(cmd, parsed);
+const execRunScript = async (cmd, _parsed) => {
+  const opts = await makeOpts(cmd, _parsed);
   const graph = await makeDepGraph(opts);
   let exitCode = 0;
   try {
-    // In nix-clap v2, args are accessed via parsed.args or cmd.jsonMeta.args
-    const scriptArgs = parsed.args || cmd.jsonMeta?.args || [];
+    // In nix-clap v2, use cmd.jsonMeta.argList for array of args
+    const scriptArgs = cmd.jsonMeta?.argList || [];
     return await new Run(opts, scriptArgs, graph).exec();
   } catch (err) {
     exitCode = 1;
@@ -220,20 +207,16 @@ const execRunScript = async (cmd, parsed) => {
   return undefined;
 };
 
-const execInit = (cmd, parsed) => {
-  const rootOpts = cmd.rootCmd?.opts || {};
-  const cmdOpts = cmd.opts || {};
-  const allOpts = Object.assign({}, rootOpts, cmdOpts, parsed.opts || {});
-  const opts = Object.assign({ cwd: process.cwd() }, allOpts);
+const execInit = (cmd, _parsed) => {
+  // In nix-clap v2, use cmd.jsonMeta.opts for merged options
+  const opts = Object.assign({ cwd: process.cwd() }, cmd.jsonMeta?.opts || {});
 
   return new Init(opts).exec();
 };
 
-const execLinting = (cmd, parsed) => {
-  const rootOpts = cmd.rootCmd?.opts || {};
-  const cmdOpts = cmd.opts || {};
-  const allOpts = Object.assign({}, rootOpts, cmdOpts, parsed.opts || {});
-  const opts = Object.assign({ cwd: process.cwd() }, allOpts);
+const execLinting = (cmd, _parsed) => {
+  // In nix-clap v2, use cmd.jsonMeta.opts for merged options
+  const opts = Object.assign({ cwd: process.cwd() }, cmd.jsonMeta?.opts || {});
 
   return new Commitlint(opts).exec();
 };
@@ -241,36 +224,9 @@ const execLinting = (cmd, parsed) => {
 const myPkg = xrequire(Path.join(__dirname, "../package.json"));
 
 export const fynpoMain = () => {
-  const handlers = {
-    "parse-fail": (parsed) => {
-      // In v2, check errorNodes instead of commands
-      const hasCommands =
-        parsed.command &&
-        parsed.command.jsonMeta &&
-        Object.keys(parsed.command.jsonMeta.subCommands || {}).length > 0;
-      if (
-        !hasCommands &&
-        parsed.errorNodes &&
-        parsed.errorNodes.length > 0 &&
-        parsed.errorNodes[0].error.message.includes("Unknown command")
-      ) {
-        // Skip exec for unknown commands
-        return;
-      } else {
-        // Get the NixClap instance from the parsed result
-        const nc = parsed.command?._nixClap || this;
-        if (nc && nc.showHelp) {
-          nc.showHelp(parsed.errorNodes?.[0]?.error);
-        }
-      }
-    },
-    "unknown-option": () => {}
-  };
-
   const nixClap = new NixClap({
     name: myPkg.name,
     usage: "$0 [command] [options]",
-    handlers: handlers,
     defaultCommand: "bootstrap" // Run bootstrap when no command is given
   });
   nixClap.version(myPkg.version);
@@ -388,7 +344,7 @@ export const fynpoMain = () => {
     run: {
       alias: "r",
       desc: "Run passed npm script in each package",
-      args: "<script>",
+      args: "<script string>",
       exec: execRunScript,
       options: {
         stream: {
