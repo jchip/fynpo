@@ -408,9 +408,7 @@ const commands = {
       try {
         const meta = cmd.jsonMeta;
         const options = await pickOptions(cmd, !meta.opts.list);
-        await new FynCli(options).run(meta, undefined, cmd, parsed);
-        // Exit successfully after running the script to prevent processing error nodes
-        process.exit(0);
+        return await new FynCli(options).run(meta, undefined, cmd, parsed);
       } catch (err) {
         // Determine exit code from error
         // @npmcli/run-script uses err.code (exit code), not err.errno
@@ -443,7 +441,7 @@ const commands = {
           }
         }
 
-        process.exit(typeof exitCode === 'number' ? exitCode : 1);
+        fynTil.exit(typeof exitCode === 'number' ? exitCode : 1);
       }
     },
     options: {
