@@ -13,16 +13,7 @@ const loadRc = require("./load-rc");
 const defaultRc = require("./default-rc");
 const fynTil = require("../lib/util/fyntil");
 const optionalRequire = require("optional-require")(require);
-// Lazy load init-package to avoid resolution issues during tests
-const getRunInitPackage = () => {
-  try {
-    const initPkg = optionalRequire("init-package");
-    return initPkg ? initPkg.runInitPackage : null;
-  } catch (err) {
-    // init-package might not be available in all environments
-    return null;
-  }
-};
+const { runInitPackage } = require("init-package");
 
 function setLogLevel(ll) {
   if (ll) {
@@ -457,12 +448,6 @@ const commands = {
     usage: "$0 $1 <command> [--yes]",
     exec: async cmd => {
       try {
-        const runInitPackage = getRunInitPackage();
-        if (!runInitPackage) {
-          logger.error("init-package is not available. Please install it first.");
-          process.exit(1);
-          return;
-        }
         await runInitPackage(cmd.jsonMeta.opts.yes);
       } catch (err) {
         process.exit(1);
