@@ -608,7 +608,8 @@ const createNixClap = (handlers = {}) => {
     usage: "$0 [options] <command>",
     handlers: handlers,
     defaultCommand: "install", // Run install when no command is given (e.g., `fyn` or `fyn --verbose`)
-    unknownCommandFallback: "run" // Make `fyn <script>` behave like `fyn run <script>`
+    unknownCommandFallback: "run", // Make `fyn <script>` behave like `fyn run <script>`
+    helpZebra: true // Enable zebra striping for better readability on wide terminals
   });
   nc.version(myPkg.version);
   return nc;
@@ -643,8 +644,8 @@ const run = async (args, start, tryRun = true) => {
       } else {
         // Get the NixClap instance from the parsed result
         const nc = parsed.command?._nixClap || this;
-        if (nc && nc.showHelp) {
-          nc.showHelp(parsed.errorNodes?.[0]?.error);
+        if (nc && nc.showError) {
+          nc.showError(parsed.errorNodes?.[0]?.error);
         }
       }
     },
@@ -681,7 +682,7 @@ const run = async (args, start, tryRun = true) => {
     });
     await nc2.parseAsync(args2, x);
   } else {
-    nc.showHelp(parsed.errorNodes?.[0]?.error);
+    nc.showError(parsed.errorNodes?.[0]?.error);
   }
 };
 

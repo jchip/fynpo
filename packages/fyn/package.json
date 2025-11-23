@@ -104,7 +104,7 @@
     "make-fetch-happen": "^15.0.2",
     "minimatch": "^3.0.4",
     "mississippi": "^4.0.0",
-    "nix-clap": "^2.4.3",
+    "nix-clap": "^2.4.4",
     "npm-packlist": "^10.0.3",
     "npm-registry-fetch": "^19.1.0",
     "opfs": "^1.1.1",
@@ -215,5 +215,9 @@
       "@xarc/module-dev/config/test/setup.js"
     ],
     "recursive": true
+  },
+  "fyn": {
+    "dependencies": {
+    }
   }
 }
