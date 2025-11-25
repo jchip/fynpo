@@ -484,11 +484,12 @@ const commands = {
         desc: "Install packages globally",
         args: "<packages string..>",
         options: {
-          "dir": { args: "<dir string>", desc: "Directory for global packages (default: ~/.fyn/global)" }
+          "dir": { args: "<dir string>", desc: "Directory for global packages (default: ~/.fyn/global)" },
+          "yes": { alias: "y", desc: "Auto-confirm all prompts" }
         },
         async exec(cmd) {
           setLogLevel(cmd.opts?.logLevel || cmd.rootCmd?.opts?.logLevel);
-          const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir });
+          const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir, yes: cmd.opts?.yes });
           const packages = cmd.args?.packages || [];
 
           if (packages.length === 0) {
@@ -508,8 +509,32 @@ const commands = {
       },
 
       remove: {
-        desc: "Remove a global package",
+        desc: "Remove global package [name[@semver]]",
         alias: "rm",
+        args: "<package string>",
+        options: {
+          "dir": { args: "<dir string>", desc: "Directory for global packages (default: ~/.fyn/global)" },
+          "yes": { alias: "y", desc: "Auto-confirm all prompts" }
+        },
+        async exec(cmd) {
+          setLogLevel(cmd.opts?.logLevel || cmd.rootCmd?.opts?.logLevel);
+          const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir, yes: cmd.opts?.yes });
+          const packageSpec = cmd.args?.package;
+
+          if (!packageSpec) {
+            logger.error("No package specified");
+            fynTil.exit(1);
+          }
+
+          const removed = await fynGlobal.removeGlobalPackage(packageSpec);
+          if (!removed) {
+            fynTil.exit(1);
+          }
+        }
+      },
+
+      link: {
+        desc: "Link (activate) a specific version",
         args: "<package string>",
         options: {
           "dir": { args: "<dir string>", desc: "Directory for global packages (default: ~/.fyn/global)" }
@@ -517,15 +542,16 @@ const commands = {
         async exec(cmd) {
           setLogLevel(cmd.opts?.logLevel || cmd.rootCmd?.opts?.logLevel);
           const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir });
-          const packageName = cmd.args?.package;
+          const packageSpec = cmd.args?.package;
 
-          if (!packageName) {
+          if (!packageSpec) {
             logger.error("No package specified");
+            logger.info("Usage: fyn global link <name>@<version>");
             fynTil.exit(1);
           }
 
-          const removed = await fynGlobal.removeGlobalPackage(packageName);
-          if (!removed) {
+          const linked = await fynGlobal.linkPackageVersion(packageSpec);
+          if (!linked) {
             fynTil.exit(1);
           }
         }
@@ -534,13 +560,14 @@ const commands = {
       list: {
         desc: "List globally installed packages",
         alias: "ls",
+        args: "[name string]",
         options: {
           "dir": { args: "<dir string>", desc: "Directory for global packages (default: ~/.fyn/global)" }
         },
         async exec(cmd) {
           setLogLevel(cmd.opts?.logLevel || cmd.rootCmd?.opts?.logLevel);
           const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir });
-          await fynGlobal.listGlobalPackages();
+          await fynGlobal.listGlobalPackages(cmd.args?.name);
         }
       },
 
