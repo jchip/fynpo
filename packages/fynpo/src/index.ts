@@ -195,8 +195,8 @@ const execRunScript = async (cmd, _parsed) => {
   const graph = await makeDepGraph(opts);
   let exitCode = 0;
   try {
-    // In nix-clap v2, use cmd.jsonMeta.argList for array of args
-    const scriptArgs = cmd.jsonMeta?.argList || [];
+    // In nix-clap v2, use cmd.jsonMeta.args for named arguments
+    const scriptArgs = cmd.jsonMeta?.args || {};
     return await new Run(opts, scriptArgs, graph).exec();
   } catch (err) {
     exitCode = 1;
