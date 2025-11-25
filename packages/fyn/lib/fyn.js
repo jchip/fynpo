@@ -472,7 +472,38 @@ class Fyn {
     const options = _options || this._options;
 
     if (options.pkgFile) {
-      const pkgFile = Path.resolve(this._cwd, options.pkgFile);
+      const pathUpEach = require("./util/path-up-each");
+      let pkgFile;
+
+      // Search upward for package.json
+      if (options.pkgFile === "package.json") {
+        let foundDir = null;
+
+        // pathUpEach stops when callback returns true, but doesn't include that path
+        // So we need to check and capture the directory ourselves
+        const paths = pathUpEach(this._cwd, path => {
+          const testPath = Path.join(path, "package.json");
+          if (Fs.existsSync(testPath)) {
+            foundDir = path;
+            return true; // Stop searching
+          }
+          return false; // Continue searching
+        });
+
+        if (foundDir) {
+          // Found package.json - use it
+          pkgFile = Path.join(foundDir, "package.json");
+          // Update cwd to the directory containing package.json
+          this._cwd = foundDir;
+        } else {
+          // Fallback to original behavior if not found
+          pkgFile = Path.resolve(this._cwd, options.pkgFile);
+        }
+      } else {
+        // If a custom pkgFile is specified, use it as-is
+        pkgFile = Path.resolve(this._cwd, options.pkgFile);
+      }
+
       logger.debug("package.json file", pkgFile);
       this._pkgFile = pkgFile;
       try {
