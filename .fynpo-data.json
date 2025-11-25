@@ -1,45 +1,11 @@
 {
   "indirects": {
-    "_w/npm-packlist": [
+    "_w/filter-scan-dir": [
       {
         "fromPkg": {
-          "name": "npm-packlist",
-          "version": "10.0.3",
-          "path": "_w/npm-packlist"
-        },
-        "onPkg": {
-          "name": "npm-packlist",
-          "version": "10.0.3",
-          "path": "_w/npm-packlist"
-        },
-        "depSection": "dep",
-        "indirectSteps": [
-          "npm-packlist@10.0.3(dep)"
-        ]
-      }
-    ],
-    "packages/pkg-preper": [
-      {
-        "fromPkg": {
-          "name": "pkg-preper",
-          "version": "0.1.4",
-          "path": "packages/pkg-preper"
-        },
-        "onPkg": {
-          "name": "bluebird",
-          "version": "3.7.2",
-          "path": "packages/bluebird"
-        },
-        "depSection": "dep",
-        "indirectSteps": [
-          "pkg-preper@0.1.4(dep)"
-        ]
-      },
-      {
-        "fromPkg": {
-          "name": "pkg-preper",
-          "version": "0.1.4",
-          "path": "packages/pkg-preper"
+          "name": "filter-scan-dir",
+          "version": "1.5.6",
+          "path": "_w/filter-scan-dir"
         },
         "onPkg": {
           "name": "xsh",
@@ -48,7 +14,7 @@
         },
         "depSection": "dep",
         "indirectSteps": [
-          "pkg-preper@0.1.4(dep)"
+          "filter-scan-dir@1.5.6(dev)"
         ]
       }
     ],
@@ -71,5 +37,5 @@
       }
     ]
   },
-  "__timestamp": 1763616197689
+  "__timestamp": 1764054925293
 }
