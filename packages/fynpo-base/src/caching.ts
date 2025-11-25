@@ -177,6 +177,7 @@ async function scanFiles(
   excludes: mm.IMinimatch[]
 ): Promise<string[]> {
   const filter = (_file: string, _path: string, extras: ExtrasData) => {
+    // filter-scan-dir now handles filtering symlinks when includeDir: false and includeSymlink is not set
     if (!checkMmMatch(extras.dirFile, includes) || checkMmMatch(extras.dirFile, excludes)) {
       return false;
     }
@@ -202,7 +203,8 @@ async function scanFiles(
       cwd,
       filter,
       filterDir,
-      fullStat: false,
+      fullStat: false, // Use Dirent objects which are faster
+      includeDir: false, // Don't include directories in the result
       concurrency: 500,
     })
   ).sort();
