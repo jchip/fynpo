@@ -561,7 +561,11 @@ class FynGlobal {
           if (semver.valid(depVersion)) {
             return v.version === depVersion;
           }
-          // No specific version - any existing installation counts
+          // If semver range, check if installed version satisfies the range
+          if (semver.validRange(depVersion)) {
+            return semver.satisfies(v.version, depVersion);
+          }
+          // No specific version (e.g., "latest") - any existing installation counts
           return true;
         });
 
