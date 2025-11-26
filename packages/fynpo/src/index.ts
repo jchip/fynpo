@@ -151,8 +151,10 @@ const execLocal = async (cmd, parsed) => {
 };
 
 const execPrepare = async (cmd, _parsed) => {
-  // In nix-clap v2, use cmd.jsonMeta.opts for merged options
-  const opts = Object.assign({ cwd: process.cwd() }, cmd.jsonMeta?.opts || {});
+  // In nix-clap v2, merge root command opts with subcommand opts
+  const rootOpts = cmd.rootCmd?.jsonMeta?.opts || {};
+  const cmdOpts = cmd.jsonMeta?.opts || {};
+  const opts = Object.assign({ cwd: process.cwd() }, rootOpts, cmdOpts);
 
   // prepare only applies at top level, so switch CWD there
   process.chdir(opts.cwd);

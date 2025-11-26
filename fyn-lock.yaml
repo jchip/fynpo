@@ -1300,7 +1300,7 @@ nix-clap:
   ^2.4.5: 2.4.5
  2.4.5:
   $: sha512-EUJI4U1nL0XFnBL0iu7xkod9791ggnElOaExdYufBllNOqVE+cGcCdYGaYUdbIrrcxFnwhxKILq0nf+QBC7zRQ==
-  _: 'https://registry.npmjs.org/nix-clap/-/nix-clap-2.4.5.tgz'
+  _: 'https://registry.npmjs.com/nix-clap/-/nix-clap-2.4.5.tgz'
   dependencies:
    tslib: ^2.6.2
 normalize-package-data:

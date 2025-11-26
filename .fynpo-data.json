@@ -35,7 +35,41 @@
           "@fynpo/base@1.1.20(dev)"
         ]
       }
+    ],
+    "packages/pkg-preper": [
+      {
+        "fromPkg": {
+          "name": "pkg-preper",
+          "version": "0.1.4",
+          "path": "packages/pkg-preper"
+        },
+        "onPkg": {
+          "name": "bluebird",
+          "version": "3.7.2",
+          "path": "packages/bluebird"
+        },
+        "depSection": "dep",
+        "indirectSteps": [
+          "pkg-preper@0.1.4(dep)"
+        ]
+      },
+      {
+        "fromPkg": {
+          "name": "pkg-preper",
+          "version": "0.1.4",
+          "path": "packages/pkg-preper"
+        },
+        "onPkg": {
+          "name": "xsh",
+          "version": "0.4.6",
+          "path": "_w/xsh"
+        },
+        "depSection": "dep",
+        "indirectSteps": [
+          "pkg-preper@0.1.4(dep)"
+        ]
+      }
     ]
   },
-  "__timestamp": 1764054925293
+  "__timestamp": 1764130434919
 }

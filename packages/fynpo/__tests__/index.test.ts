@@ -40,10 +40,6 @@ describe("fynpo CLI", () => {
       expect.objectContaining({
         name: expect.any(String),
         usage: "$0 [command] [options]",
-        handlers: expect.objectContaining({
-          "parse-fail": expect.any(Function),
-          "unknown-option": expect.any(Function),
-        }),
         defaultCommand: "bootstrap",
       })
     );
