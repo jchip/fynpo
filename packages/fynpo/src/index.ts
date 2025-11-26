@@ -52,8 +52,10 @@ const readFynpoData = async (cwd) => {
 };
 
 const makeOpts = async (cmd, _parsed) => {
-  // In nix-clap v2, use cmd.jsonMeta.opts for merged options
-  const allOpts = cmd.jsonMeta?.opts || {};
+  // In nix-clap v2, merge root command opts with subcommand opts
+  const rootOpts = cmd.rootCmd?.jsonMeta?.opts || {};
+  const cmdOpts = cmd.jsonMeta?.opts || {};
+  const allOpts = { ...rootOpts, ...cmdOpts };
 
   let cwd = process.cwd();
   if (allOpts.cwd) {
