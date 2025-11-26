@@ -46,6 +46,30 @@ class FynGlobal {
   }
 
   /**
+   * Create a Fyn instance for global package installation
+   * @param {string} cwd - Working directory for the install
+   * @param {boolean} fynlocal - Whether this is a local package
+   * @returns {Fyn} Configured Fyn instance
+   */
+  _createFyn(cwd, fynlocal) {
+    process.env.FYN_CENTRAL_DIR = Path.join(this.globalRoot, "_central-storage");
+    return new Fyn({
+      opts: {
+        cwd,
+        targetDir: "node_modules",
+        centralStore: true,
+        lockfile: true,
+        fynlocal,
+        sourceMaps: false,
+        registry: this.options.registry || "https://registry.npmjs.org",
+        layout: "normal",
+        flattenTop: true
+      },
+      _fynpo: false
+    });
+  }
+
+  /**
    * Read the installed.json registry
    * @returns {Object} Registry object with packages info
    */
@@ -607,22 +631,7 @@ class FynGlobal {
       // Create Fyn instance for this package directory
       logger.info(`Installing ${packageName}${depVersion !== "latest" ? "@" + depVersion : ""} globally...`);
 
-      // Set FYN_CENTRAL_DIR env to put central store under global directory
-      process.env.FYN_CENTRAL_DIR = Path.join(this.globalRoot, "_central-storage");
-
-      const fyn = new Fyn({
-        opts: {
-          cwd: tempDir,
-          targetDir: "node_modules",
-          centralStore: true,
-          lockfile: true,
-          fynlocal: isLocal,
-          registry: this.options.registry || "https://registry.npmjs.org",
-          layout: "normal",
-          flattenTop: true
-        },
-        _fynpo: false
-      });
+      const fyn = this._createFyn(tempDir, isLocal);
 
       // Run installation
       await fyn.resolveDependencies();
@@ -1162,23 +1171,7 @@ class FynGlobal {
       // Lock file may not exist
     }
 
-    // Set FYN_CENTRAL_DIR env to put central store under global directory
-    process.env.FYN_CENTRAL_DIR = Path.join(this.globalRoot, "_central-storage");
-
-    // Create Fyn instance and run installation
-    const fyn = new Fyn({
-      opts: {
-        cwd: pkgDir,
-        targetDir: "node_modules",
-        centralStore: true,
-        lockfile: true,
-        fynlocal: targetVersion.local,
-        registry: this.options.registry || "https://registry.npmjs.org",
-        layout: "normal",
-        flattenTop: true
-      },
-      _fynpo: false
-    });
+    const fyn = this._createFyn(pkgDir, targetVersion.local);
 
     await fyn.resolveDependencies();
     await fyn.fetchPackages();
