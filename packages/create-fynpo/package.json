@@ -4,6 +4,7 @@
   "description": "Create a new fynpo monorepo",
   "main": "index.js",
   "homepage": "https://www.electrode.io/fynpo/",
+  "private": true,
   "scripts": {
     "build": "tsc",
     "test": "xrun xarc/test-only",
