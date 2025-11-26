@@ -1,6 +1,6 @@
 {
   "name": "fyn",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "fyn is the NPM for fynpo -- a zero setup monorepo tool",
   "main": "./bin/fyn.js",
   "homepage": "https://jchip.github.io/fynpo/",
@@ -84,7 +84,7 @@
     "Divya Karippath"
   ],
   "dependencies": {
-    "@fynpo/base": "^1.1.20",
+    "@fynpo/base": "^1.1.21",
     "@jchip/error": "^1.0.3",
     "@npmcli/arborist": "^9.1.6",
     "@npmcli/run-script": "^10.0.2",
@@ -110,7 +110,7 @@
     "opfs": "^1.1.1",
     "optional-require": "^1.1.10",
     "pacote": "^21.0.3",
-    "pkg-preper": "^0.1.4",
+    "pkg-preper": "^0.1.5",
     "publish-util": "^2.1.0",
     "semver": "^7.3.5",
     "source-map": "^0.7.3",
@@ -217,7 +217,6 @@
     "recursive": true
   },
   "fyn": {
-    "dependencies": {
-    }
+    "dependencies": {}
   }
 }
