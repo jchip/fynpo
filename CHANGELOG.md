@@ -1,3 +1,56 @@
+# 11/25/2025
+
+## Packages
+
+-   `@fynpo/base@1.1.21` `(1.1.20 => 1.1.21)`
+-   `create-fynpo@1.0.6` `(1.0.5 => 1.0.6)`
+-   `fyn@2.0.1` `(2.0.0 => 2.0.1)`
+-   `fynpo@2.0.1` `(2.0.0 => 2.0.1)`
+-   `pkg-preper@0.1.5` `(0.1.4 => 0.1.5)`
+
+## Commits
+
+-   `packages/fynpo-base`
+
+    -   update dependencies [commit](https://github.com/electrode-io/fynpo/commit/67e5c55272018e219f6ab5e46c9b006bef6be2f5)
+    -   fynpo-base: fix caching to not include directories [commit](https://github.com/electrode-io/fynpo/commit/c9f89093ac8804afb9e9b7c81867452c447f4326)
+
+-   `packages/create-fynpo`
+
+    -   fix fynpo publish [commit](https://github.com/electrode-io/fynpo/commit/3085e89683fc3748167e12f9f85dfc4b3ff442a1)
+    -   chore: update xsh 0.4.6 [commit](https://github.com/electrode-io/fynpo/commit/6e6671d794ca863913ad366e6d3ee70a60e73baf)
+
+-   `packages/fyn`
+
+    -   fyn: improve global commands - cleanup, update, and display fixes [commit](https://github.com/electrode-io/fynpo/commit/bef672cc84e082bd8a057ed580ef3d4c3c266ec7)
+    -   update lock files [commit](https://github.com/electrode-io/fynpo/commit/d299a1753f723b0b3e66aa04ba2f512786721d15)
+    -   update dependencies [commit](https://github.com/electrode-io/fynpo/commit/67e5c55272018e219f6ab5e46c9b006bef6be2f5)
+    -   fyn: global multi-version support with link command [commit](https://github.com/electrode-io/fynpo/commit/4d81cfbba127b3d1fb980ab606623d4fa8bbc631)
+    -   fyn: search upward for package.json like npm does [commit](https://github.com/electrode-io/fynpo/commit/70db591d03acadbbd5f208faa8826f16fa828cc2)
+    -   update nix-clap [commit](https://github.com/electrode-io/fynpo/commit/6c1ce4bc51d481461acd250a291375133fce23de)
+    -   fyn: global install [commit](https://github.com/electrode-io/fynpo/commit/3b3bb0c2a8f03fed9a0efdef57539d4ba376ea68)
+    -   fyn: fix init [commit](https://github.com/electrode-io/fynpo/commit/53ccff6a5c5ac73eb14336cfcd8721163358e364)
+    -   fix fynpo publish [commit](https://github.com/electrode-io/fynpo/commit/3085e89683fc3748167e12f9f85dfc4b3ff442a1)
+    -   fyn: improve run script error handling and formatting [commit](https://github.com/electrode-io/fynpo/commit/3ae6fb2c265377abce8873dad4f07cf9c6fb3acc)
+    -   chore: update xsh 0.4.6 [commit](https://github.com/electrode-io/fynpo/commit/6e6671d794ca863913ad366e6d3ee70a60e73baf)
+    -   fyn: memoize fynpo detected [commit](https://github.com/electrode-io/fynpo/commit/5a904c2658143d5803bfc4849da34afe64718008)
+    -   update to fynpo,fyn v2 [commit](https://github.com/electrode-io/fynpo/commit/1eed0a41118d83863899c0797479665a8366da1c)
+
+-   `packages/fynpo`
+
+    -   fynpo: fix tests and flag default [commit](https://github.com/electrode-io/fynpo/commit/f0c1f1a33c5019b0582617efb01f84b53bf4cf2f)
+    -   fynpo: fix makeOpts to merge root command opts with subcommand opts [commit](https://github.com/electrode-io/fynpo/commit/038eb1abc8bb556780a601d8626ab7e4ef7221e1)
+    -   fynpo: update dep [commit](https://github.com/electrode-io/fynpo/commit/beeea1ff36d80fb877779193ca98ef12cd28e29d)
+    -   fynpo: fix run command to use named args instead of argList [commit](https://github.com/electrode-io/fynpo/commit/fe3a82f61a3bf1d09c4bba7ea21c7387b5c7f78f)
+    -   update dependencies [commit](https://github.com/electrode-io/fynpo/commit/67e5c55272018e219f6ab5e46c9b006bef6be2f5)
+    -   fynpo: fix cli args [commit](https://github.com/electrode-io/fynpo/commit/e523440ed0c6975682df3ecf3c5c70cc703bb76a)
+    -   fynpo: fix nix-clap usage [commit](https://github.com/electrode-io/fynpo/commit/1911c91a3a2aa5f14d3146a0ef0584b8107a1494)
+    -   chore: update xsh 0.4.6 [commit](https://github.com/electrode-io/fynpo/commit/6e6671d794ca863913ad366e6d3ee70a60e73baf)
+
+-   `packages/pkg-preper`
+
+    -   fix fynpo publish [commit](https://github.com/electrode-io/fynpo/commit/3085e89683fc3748167e12f9f85dfc4b3ff442a1)
+
 # 11/15/2025
 
 ## Packages
