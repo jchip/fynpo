@@ -182,10 +182,10 @@ $pkg:
   cpu:
    - arm64
 '@fynpo/base':
- _latest: 1.1.20-fynlocal_h
+ _latest: 1.1.21-fynlocal_h
  _:
-  ../fynpo-base: 1.1.20-fynlocal_h
- 1.1.20-fynlocal_h:
+  ../fynpo-base: 1.1.21-fynlocal_h
+ 1.1.21-fynlocal_h:
   $: local
   _: ./packages/fynpo-base
   dependencies:
@@ -749,18 +749,18 @@ function-bind:
   $: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==
   _: 'https://registry.npmjs.com/function-bind/-/function-bind-1.1.2.tgz'
 fyn:
- _latest: 2.0.0-fynlocal_h
+ _latest: 2.0.1-fynlocal_h
  _:
-  '../fyn,./packages/fyn': 2.0.0-fynlocal_h
- 2.0.0-fynlocal_h:
+  '../fyn,./packages/fyn': 2.0.1-fynlocal_h
+ 2.0.1-fynlocal_h:
   top: 1
   $: local
   _: ./packages/fyn
 fynpo:
- _latest: 2.0.0-fynlocal_h
+ _latest: 2.0.1-fynlocal_h
  _:
-  ./packages/fynpo: 2.0.0-fynlocal_h
- 2.0.0-fynlocal_h:
+  ./packages/fynpo: 2.0.1-fynlocal_h
+ 2.0.1-fynlocal_h:
   top: 1
   $: local
   _: ./packages/fynpo
@@ -770,7 +770,7 @@ fynpo:
    '@commitlint/lint': ^18.6.1
    '@commitlint/read': ^18.6.1
    '@commitlint/resolve-extends': ^18.6.1
-   '@fynpo/base': ^1.1.20
+   '@fynpo/base': ^1.1.21
    '@jchip/error': ^1.0.3
    aveazul: ^1.0.2
    boxen: ^5.1.2
@@ -781,7 +781,7 @@ fynpo:
    env-paths: ^2.2.1
    execa: ^5.0.0
    fs-extra: ^9.1.0
-   fyn: ^2.0.0
+   fyn: ^2.0.1
    get-stdin: ^8.0.0
    import-fresh: 3.3.0
    item-queue: ^1.1.2
