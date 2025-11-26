@@ -26,6 +26,7 @@ class FynGlobal {
    * @param {string} [options.globalDir] - Root directory for global packages (default: ~/.fyn/global)
    * @param {string} [options.registry] - NPM registry URL (default: https://registry.npmjs.org)
    * @param {string} [options.nodeVersion] - Node.js major version (default: auto-detect)
+   * @param {string} [options.tag] - Specific tag (e.g., g1, g2) to operate on
    */
   constructor(options = {}) {
     this.options = options;
@@ -41,6 +42,7 @@ class FynGlobal {
     this.lockFile = Path.join(this.packagesDir, ".install.lock");
     this.interactive = options.interactive !== false; // Default to interactive
     this.yes = options.yes || false; // Auto-confirm prompts
+    this.tag = options.tag || null; // Specific tag to operate on
   }
 
   /**
@@ -86,6 +88,40 @@ class FynGlobal {
   }
 
   /**
+   * Find package info by tag (e.g., g1, g2)
+   * @param {string} tag - The tag to find
+   * @returns {Object|null} Object with packageName and versionInfo, or null if not found
+   */
+  async findByTag(tag) {
+    const registry = await this.readInstalledJson();
+
+    for (const [packageName, pkgInfo] of Object.entries(registry.packages)) {
+      for (const v of pkgInfo.versions || []) {
+        if (v.dir === tag) {
+          return { packageName, versionInfo: v };
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Validate that the tag option points to an existing installation
+   * @returns {Object} Object with packageName and versionInfo
+   * @throws {Error} If tag is set but doesn't exist
+   */
+  async validateTag() {
+    if (!this.tag) return null;
+
+    const found = await this.findByTag(this.tag);
+    if (!found) {
+      throw new Error(`Tag '${this.tag}' not found. Use 'fyn global list' to see installed packages.`);
+    }
+    return found;
+  }
+
+  /**
    * Add or update a package version in the registry
    */
   async addToRegistry(packageName, versionInfo) {
@@ -95,9 +131,9 @@ class FynGlobal {
       registry.packages[packageName] = { versions: [] };
     }
 
-    // Check if version already exists
+    // Check if this tag (dir) already exists
     const versions = registry.packages[packageName].versions;
-    const existingIdx = versions.findIndex(v => v.version === versionInfo.version);
+    const existingIdx = versions.findIndex(v => v.dir === versionInfo.dir);
 
     if (existingIdx >= 0) {
       versions[existingIdx] = versionInfo;
@@ -186,16 +222,33 @@ class FynGlobal {
   }
 
   /**
-   * Parse package spec to extract package name (async)
+   * Check if a package spec is a local path
+   * - file: prefix, absolute paths, or relative paths (./ or ../)
+   * - npm names only have / if scoped (@scope/name), so any / without @ prefix is a path
    */
-  async parsePackageName(packageSpec) {
-    // Handle file: or path specs
+  isLocalSpec(packageSpec) {
     if (
       packageSpec.startsWith("file:") ||
       packageSpec.startsWith("/") ||
       packageSpec.startsWith("./") ||
       packageSpec.startsWith("../")
     ) {
+      return true;
+    }
+    // npm package names only have / if scoped (starting with @)
+    // so a spec with / that doesn't start with @ must be a local path
+    if (packageSpec.includes("/") && !packageSpec.startsWith("@")) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Parse package spec to extract package name (async)
+   */
+  async parsePackageName(packageSpec) {
+    // Handle file: or path specs
+    if (this.isLocalSpec(packageSpec)) {
       const resolvedPath = Path.resolve(packageSpec.replace(/^file:/, ""));
       const pkgJsonPath = Path.join(resolvedPath, "package.json");
       try {
@@ -450,24 +503,38 @@ class FynGlobal {
    * - Latest version wins (becomes linked)
    * - Prompts if newer version available when installing older
    * - Prompts to remove old versions after installing new
+   * @param {string} packageSpec - Package spec to install
+   * @param {Object} [options] - Install options
+   * @param {boolean} [options.newTag] - Install as new tag even if same version exists
    */
-  async installGlobalPackage(packageSpec) {
+  async installGlobalPackage(packageSpec, options = {}) {
+    const { newTag } = options;
     await this.acquireLock();
+
+    // Track temp dir for cleanup on failure
+    let tempDir = null;
 
     try {
       const packageName = await this.parsePackageName(packageSpec);
 
       // Determine if local package
-      const isLocal =
-        packageSpec.startsWith("file:") ||
-        packageSpec.startsWith("/") ||
-        packageSpec.startsWith("./") ||
-        packageSpec.startsWith("../");
+      const isLocal = this.isLocalSpec(packageSpec);
+
+      // Safety check: if spec looks like npm package but exists as local file/dir, error out
+      if (!isLocal && (await Fs.exists(packageSpec))) {
+        logger.error(`'${packageSpec}' exists as a local path but looks like an npm package name.`);
+        logger.error(`Use './${packageSpec}' to install from local directory.`);
+        throw new Error(`Ambiguous package spec: '${packageSpec}' exists locally`);
+      }
 
       // Determine the version spec for dependencies
+      // For local packages, resolve to absolute path so fyn can find it
+      // when running from the global install directory
       let depVersion;
       if (isLocal) {
-        depVersion = packageSpec;
+        const localPath = packageSpec.replace(/^file:/, "");
+        const resolvedPath = Path.resolve(localPath);
+        depVersion = `file:${resolvedPath}`;
       } else if (packageSpec === packageName) {
         depVersion = "latest";
       } else if (packageSpec.includes("@") && !packageSpec.startsWith("@")) {
@@ -481,50 +548,45 @@ class FynGlobal {
       // Check existing installations from registry
       const existingVersions = await this.getPackageVersions(packageName);
 
-      // For non-local packages, check npm registry for latest version
-      let latestVersion = null;
+      // Check if already installed (skip if --new-tag)
+      if (!newTag) {
+        // For local packages, check if same spec is already installed
+        // For remote packages, check if specific version or any version is installed
+        const existingExact = existingVersions.find(v => {
+          if (isLocal) {
+            // Compare resolved path (stored in semver field)
+            return v.local && v.semver === depVersion;
+          }
+          // If specific version requested, check for that version
+          if (semver.valid(depVersion)) {
+            return v.version === depVersion;
+          }
+          // No specific version - any existing installation counts
+          return true;
+        });
 
-      if (!isLocal && depVersion !== "latest") {
-        try {
-          const registryInfo = await this.fetchLatestVersion(packageName);
-          if (registryInfo) {
-            latestVersion = registryInfo.latest;
-            // If user requested a specific version, check if newer is available
-            if (latestVersion && semver.valid(depVersion) && semver.gt(latestVersion, depVersion)) {
-              logger.info(`A newer version is available: ${latestVersion} (you requested ${depVersion})`);
-              const installNewer = await this.promptYesNo(`Install ${latestVersion} instead?`);
-              if (installNewer) {
-                depVersion = latestVersion;
-              }
+        if (existingExact) {
+          const fromSemver = existingExact.semver ? ` from '${existingExact.semver}'` : "";
+          logger.info(`${packageName}@${existingExact.version} is already installed in ${existingExact.dir}${fromSemver}`);
+          logger.info(`Use --new-tag to install another copy`);
+          if (!existingExact.linked) {
+            const linkIt = await this.promptYesNo(`Link this version to make it active?`);
+            if (linkIt) {
+              await this.linkPackageVersion(packageName, existingExact.version);
             }
           }
-        } catch (err) {
-          // Ignore registry errors, proceed with installation
+          return false;
         }
-      }
-
-      // Check if exact version already installed
-      const existingExact = existingVersions.find(v =>
-        v.version === depVersion || (depVersion === "latest" && v.version === latestVersion)
-      );
-
-      if (existingExact) {
-        logger.info(`${packageName}@${existingExact.version} is already installed in ${existingExact.dir}`);
-        if (!existingExact.linked) {
-          const linkIt = await this.promptYesNo(`Link this version to make it active?`);
-          if (linkIt) {
-            await this.linkPackageVersion(packageName, existingExact.version);
-          }
-        }
-        return false;
       }
 
       // Get next ID by reading directory
       const gId = await this.getNextGlobalId();
       const pkgDir = Path.join(this.packagesDir, gId);
 
-      // Create package directory
-      await Fs.$.mkdirp(pkgDir);
+      // Use a temp directory for install, then move into place on success
+      // This prevents failed installs from leaving partial state
+      tempDir = Path.join(this.packagesDir, `.tmp-${gId}`);
+      await Fs.$.mkdirp(tempDir);
 
       // Create minimal package.json for fyn install
       const pkgJson = {
@@ -536,7 +598,7 @@ class FynGlobal {
         }
       };
 
-      await Fs.writeFile(Path.join(pkgDir, "package.json"), JSON.stringify(pkgJson, null, 2) + "\n");
+      await Fs.writeFile(Path.join(tempDir, "package.json"), JSON.stringify(pkgJson, null, 2) + "\n");
 
       // Create Fyn instance for this package directory
       logger.info(`Installing ${packageName}${depVersion !== "latest" ? "@" + depVersion : ""} globally...`);
@@ -546,10 +608,9 @@ class FynGlobal {
 
       const fyn = new Fyn({
         opts: {
-          cwd: pkgDir,
+          cwd: tempDir,
           targetDir: "node_modules",
           centralStore: true,
-          production: true,
           lockfile: true,
           fynlocal: isLocal,
           registry: this.options.registry || "https://registry.npmjs.org",
@@ -567,7 +628,19 @@ class FynGlobal {
       await installer.install();
 
       // Get the actual installed version
-      const installedVersion = await this.getInstalledVersion(pkgDir, packageName);
+      const installedVersion = await this.getInstalledVersion(tempDir, packageName);
+
+      // Record the actual installed version in package.json (keep original semver spec)
+      if (installedVersion) {
+        const finalPkgJsonPath = Path.join(tempDir, "package.json");
+        const finalPkgJson = JSON.parse(await Fs.readFile(finalPkgJsonPath));
+        finalPkgJson.__installedVersion = installedVersion;
+        await Fs.writeFile(finalPkgJsonPath, JSON.stringify(finalPkgJson, null, 2) + "\n");
+      }
+
+      // Install succeeded - move temp dir to final location
+      await Fs.rename(tempDir, pkgDir);
+      tempDir = null; // Clear so finally block doesn't try to clean up
 
       // Discover bins
       const bins = await this.discoverBins(pkgDir, packageName);
@@ -586,10 +659,13 @@ class FynGlobal {
       }
 
       if (shouldLink) {
-        // Unlink previous version(s) bins
+        // Unlink previous version(s) bins and update registry
         for (const existing of existingVersions) {
           if (existing.linked) {
             await this.unlinkBinsForVersion(packageName, existing.version);
+            // Update registry to mark as unlinked
+            existing.linked = false;
+            await this.addToRegistry(packageName, existing);
           }
         }
         await this.linkBins(gId, bins, true); // force=true to overwrite
@@ -600,6 +676,7 @@ class FynGlobal {
         version: installedVersion,
         dir: gId,
         spec: packageSpec,
+        semver: depVersion,
         installedAt: new Date().toISOString(),
         bins: Object.keys(bins),
         local: isLocal,
@@ -640,7 +717,18 @@ class FynGlobal {
       }
 
       return true;
+    } catch (err) {
+      // Re-throw the error after cleanup in finally
+      throw err;
     } finally {
+      // Clean up temp directory if it still exists (install failed)
+      if (tempDir) {
+        try {
+          await Fs.$.rimraf(tempDir);
+        } catch (cleanupErr) {
+          logger.warn(`Failed to clean up temp directory ${tempDir}: ${cleanupErr.message}`);
+        }
+      }
       await this.releaseLock();
     }
   }
@@ -698,8 +786,18 @@ class FynGlobal {
    *   - name: remove all versions (warns if multiple, won't remove linked unless only one)
    *   - name@version: remove exact version
    *   - name@semver: remove all versions matching semver range
+   *   If --tag is specified, removes that specific installation
    */
   async removeGlobalPackage(packageSpec) {
+    // If --tag is specified, remove that specific installation
+    if (this.tag) {
+      const found = await this.validateTag();
+      logger.info(`Removing ${found.packageName}@${found.versionInfo.version} (${this.tag})`);
+      await this.removeVersion(found.packageName, found.versionInfo.version);
+      logger.info(`Removed ${found.packageName}@${found.versionInfo.version}`);
+      return true;
+    }
+
     // Parse package spec to extract name and optional version/semver
     let packageName, versionSpec;
 
@@ -812,26 +910,42 @@ class FynGlobal {
 
       if (versions.length === 0) continue;
 
-      // Sort versions by semver (newest first)
-      versions.sort((a, b) => {
-        if (semver.valid(a.version) && semver.valid(b.version)) {
-          return semver.rcompare(a.version, b.version);
+      // Group entries by version
+      const byVersion = {};
+      for (const v of versions) {
+        const key = v.version;
+        if (!byVersion[key]) {
+          byVersion[key] = [];
         }
-        return a.version.localeCompare(b.version);
+        byVersion[key].push(v);
+      }
+
+      // Sort version keys by semver (newest first)
+      const sortedVersions = Object.keys(byVersion).sort((a, b) => {
+        if (semver.valid(a) && semver.valid(b)) {
+          return semver.rcompare(a, b);
+        }
+        return a.localeCompare(b);
       });
 
       console.log(`\n${packageName}:`);
 
-      for (const v of versions) {
-        const linked = v.linked ? " *" : "";
-        const local = v.local ? " (local)" : "";
-        const bins = v.bins?.length > 0 ? ` [${v.bins.join(", ")}]` : "";
-        const date = new Date(v.installedAt).toLocaleDateString();
+      for (const version of sortedVersions) {
+        const entries = byVersion[version];
 
-        console.log(`  ${v.version}${linked}${local}${bins}`);
-        console.log(`    ${v.dir} - ${date}`);
-
-        result.push({ package: packageName, ...v });
+        // Show all tags for this version
+        for (const v of entries) {
+          const tagLinked = v.linked ? " *" : "";
+          const local = v.local ? " (local)" : "";
+          const bins = v.bins?.length > 0 ? ` [${v.bins.join(", ")}]` : "";
+          const fromSemver = v.semver ? `(from '${v.semver}')` : "";
+          const installedDate = new Date(v.installedAt);
+          const dateStr = installedDate.toLocaleDateString();
+          const timeStr = installedDate.toLocaleTimeString([], { hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" });
+          console.log(`  ${v.dir} (${v.version})${tagLinked}${local}${bins}${fromSemver ? ` ${fromSemver}` : ""}`);
+          console.log(`    installed ${dateStr} ${timeStr}`);
+          result.push({ package: packageName, ...v });
+        }
       }
     }
 
@@ -842,57 +956,66 @@ class FynGlobal {
 
   /**
    * Link (activate) a specific version of a package
-   * @param {string} packageSpec - Package name@version to link
+   * @param {string} packageSpec - Package name@version to link, or ignored if --tag is specified
    */
   async linkPackageVersion(packageSpec) {
-    // Parse package spec
-    let packageName, version;
+    let packageName, version, targetVersion;
 
-    if (packageSpec.startsWith("@")) {
-      // Scoped package: @scope/name@version
-      const lastAt = packageSpec.lastIndexOf("@");
-      if (lastAt > 0 && lastAt !== packageSpec.indexOf("@")) {
-        packageName = packageSpec.substring(0, lastAt);
-        version = packageSpec.substring(lastAt + 1);
-      } else {
-        packageName = packageSpec;
-      }
+    // If --tag is specified, link that specific installation
+    if (this.tag) {
+      const found = await this.validateTag();
+      packageName = found.packageName;
+      version = found.versionInfo.version;
+      targetVersion = found.versionInfo;
     } else {
-      // Regular package: name@version
-      const atIndex = packageSpec.indexOf("@");
-      if (atIndex > 0) {
-        packageName = packageSpec.substring(0, atIndex);
-        version = packageSpec.substring(atIndex + 1);
+      // Parse package spec
+      if (packageSpec.startsWith("@")) {
+        // Scoped package: @scope/name@version
+        const lastAt = packageSpec.lastIndexOf("@");
+        if (lastAt > 0 && lastAt !== packageSpec.indexOf("@")) {
+          packageName = packageSpec.substring(0, lastAt);
+          version = packageSpec.substring(lastAt + 1);
+        } else {
+          packageName = packageSpec;
+        }
       } else {
-        packageName = packageSpec;
+        // Regular package: name@version
+        const atIndex = packageSpec.indexOf("@");
+        if (atIndex > 0) {
+          packageName = packageSpec.substring(0, atIndex);
+          version = packageSpec.substring(atIndex + 1);
+        } else {
+          packageName = packageSpec;
+        }
       }
-    }
 
-    const versions = await this.getPackageVersions(packageName);
+      const versions = await this.getPackageVersions(packageName);
 
-    if (versions.length === 0) {
-      logger.error(`${packageName} is not installed globally`);
-      return false;
-    }
-
-    // If no version specified, show available versions
-    if (!version) {
-      logger.info(`Installed versions of ${packageName}:`);
-      for (const v of versions) {
-        const linked = v.linked ? " (linked)" : "";
-        console.log(`  ${v.version}${linked}`);
+      if (versions.length === 0) {
+        logger.error(`${packageName} is not installed globally`);
+        return false;
       }
-      logger.info(`\nUse: fyn global link ${packageName}@<version>`);
-      return false;
-    }
 
-    // Find the version to link
-    const targetVersion = versions.find(v => v.version === version);
+      // If no version specified, show available versions
+      if (!version) {
+        logger.info(`Installed versions of ${packageName}:`);
+        for (const v of versions) {
+          const linked = v.linked ? " (linked)" : "";
+          console.log(`  ${v.version}${linked} [${v.dir}]`);
+        }
+        logger.info(`\nUse: fyn global link ${packageName}@<version>`);
+        logger.info(`Or:  fyn global --tag=<tag> link`);
+        return false;
+      }
 
-    if (!targetVersion) {
-      logger.error(`${packageName}@${version} is not installed`);
-      logger.info(`Installed versions: ${versions.map(v => v.version).join(", ")}`);
-      return false;
+      // Find the version to link
+      targetVersion = versions.find(v => v.version === version);
+
+      if (!targetVersion) {
+        logger.error(`${packageName}@${version} is not installed`);
+        logger.info(`Installed versions: ${versions.map(v => v.version).join(", ")}`);
+        return false;
+      }
     }
 
     if (targetVersion.linked) {
@@ -901,6 +1024,7 @@ class FynGlobal {
     }
 
     // Unlink current version's bins
+    const versions = await this.getPackageVersions(packageName);
     const currentLinked = versions.find(v => v.linked);
     if (currentLinked) {
       await this.unlinkBinsForVersion(packageName, currentLinked.version);
@@ -914,7 +1038,7 @@ class FynGlobal {
     // Update registry
     await this.updateLinkedInRegistry(packageName, version, true);
 
-    logger.info(`${packageName}@${version} is now linked`);
+    logger.info(`${packageName}@${version} (${targetVersion.dir}) is now linked`);
     if (Object.keys(bins).length > 0) {
       logger.info(`Binaries: ${Object.keys(bins).join(", ")}`);
     }
@@ -923,34 +1047,106 @@ class FynGlobal {
   }
 
   /**
-   * Update a globally installed package (linked version)
+   * Find a package by its local path
+   * @param {string} localPath - The local path to search for
+   * @returns {Object|null} Object with packageName and versions, or null
    */
-  async updateGlobalPackage(packageName) {
-    const linkedVersion = await this.getLinkedVersion(packageName);
+  async findPackageByLocalPath(localPath) {
+    const resolvedPath = Path.resolve(localPath.replace(/^file:/, ""));
+    const searchSpec = `file:${resolvedPath}`;
+    const registry = await this.readInstalledJson();
 
-    if (!linkedVersion) {
-      logger.error(`${packageName} is not installed globally`);
+    for (const [packageName, pkgInfo] of Object.entries(registry.packages)) {
+      const matchingVersions = (pkgInfo.versions || []).filter(
+        v => v.local && v.semver === searchSpec
+      );
+      if (matchingVersions.length > 0) {
+        return { packageName, versions: matchingVersions };
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Update a globally installed package (linked version or specific tag)
+   * @param {string} packageSpec - Package name or local path
+   */
+  async updateGlobalPackage(packageSpec) {
+    let targetVersion;
+    let targetPackageName = packageSpec;
+
+    // If --tag is specified, update that specific installation
+    if (this.tag) {
+      const found = await this.validateTag();
+      targetVersion = found.versionInfo;
+      targetPackageName = found.packageName;
+    } else if (packageSpec) {
+      // Check if packageSpec is a local path
+      if (this.isLocalSpec(packageSpec)) {
+        const found = await this.findPackageByLocalPath(packageSpec);
+        if (!found) {
+          logger.error(`No package installed from path '${packageSpec}'`);
+          logger.info(`Use 'fyn global add ${packageSpec}' to install it first`);
+          return false;
+        }
+        targetPackageName = found.packageName;
+
+        if (found.versions.length > 1) {
+          logger.error(`Multiple installations of ${targetPackageName} from this path:`);
+          for (const v of found.versions) {
+            const linked = v.linked ? " *" : "";
+            logger.info(`  ${v.dir} (${v.version})${linked}`);
+          }
+          logger.info(`Use --tag to specify which one to update`);
+          return false;
+        }
+        targetVersion = found.versions[0];
+      } else {
+        // It's a package name - check how many versions are installed
+        const versions = await this.getPackageVersions(packageSpec);
+
+        if (versions.length === 0) {
+          logger.error(`Package '${packageSpec}' is not installed globally`);
+          logger.info(`Use 'fyn global list' to see installed packages`);
+          return false;
+        }
+
+        if (versions.length > 1) {
+          logger.error(`Multiple versions of ${packageSpec} installed:`);
+          for (const v of versions) {
+            const linked = v.linked ? " *" : "";
+            logger.info(`  ${v.dir} (${v.version})${linked}`);
+          }
+          logger.info(`Use --tag to specify which one to update`);
+          return false;
+        }
+        targetVersion = versions[0];
+      }
+    } else {
+      logger.error(`Package name required`);
+      logger.info(`Usage: fyn global update <package-name>`);
+      logger.info(`   Or: fyn global --tag=<tag> update`);
       return false;
     }
 
-    const pkgDir = Path.join(this.packagesDir, linkedVersion.dir);
+    const pkgDir = Path.join(this.packagesDir, targetVersion.dir);
 
-    logger.info(`Updating ${packageName}@${linkedVersion.version}...`);
+    logger.info(`Updating ${targetPackageName}@${targetVersion.version} (${targetVersion.dir})...`);
 
     // For local packages, validate path still exists
-    if (linkedVersion.local) {
-      const localPath = linkedVersion.spec.replace(/^file:/, "");
+    if (targetVersion.local) {
+      const localPath = targetVersion.spec.replace(/^file:/, "");
       const resolvedPath = Path.resolve(localPath);
       if (!(await Fs.exists(resolvedPath))) {
         logger.error(`Local package path no longer exists: ${localPath}`);
-        logger.error(`Remove and reinstall: fyn global remove ${packageName}`);
+        logger.error(`Remove and reinstall: fyn global remove ${targetPackageName}`);
         return false;
       }
     } else {
       // For registry packages, update to latest by modifying package.json
       const pkgJsonPath = Path.join(pkgDir, "package.json");
       const pkgJson = JSON.parse(await Fs.readFile(pkgJsonPath));
-      pkgJson.dependencies[packageName] = "latest";
+      pkgJson.dependencies[targetPackageName] = "latest";
       await Fs.writeFile(pkgJsonPath, JSON.stringify(pkgJson, null, 2) + "\n");
     }
 
@@ -971,9 +1167,8 @@ class FynGlobal {
         cwd: pkgDir,
         targetDir: "node_modules",
         centralStore: true,
-        production: true,
         lockfile: true,
-        fynlocal: linkedVersion.local,
+        fynlocal: targetVersion.local,
         registry: this.options.registry || "https://registry.npmjs.org",
         layout: "normal",
         flattenTop: true
@@ -988,25 +1183,25 @@ class FynGlobal {
     await installer.install();
 
     // Get the new installed version
-    const newVersion = await this.getInstalledVersion(pkgDir, packageName);
+    const newVersion = await this.getInstalledVersion(pkgDir, targetPackageName);
 
     // Re-discover bins
-    const bins = await this.discoverBins(pkgDir, packageName);
+    const bins = await this.discoverBins(pkgDir, targetPackageName);
 
     // Update registry with new version info
-    await this.addToRegistry(packageName, {
-      ...linkedVersion,
+    await this.addToRegistry(targetPackageName, {
+      ...targetVersion,
       version: newVersion,
       bins: Object.keys(bins),
       updatedAt: new Date().toISOString()
     });
 
     // Re-link bins if linked
-    if (linkedVersion.linked) {
-      await this.linkBins(linkedVersion.dir, bins, true);
+    if (targetVersion.linked) {
+      await this.linkBins(targetVersion.dir, bins, true);
     }
 
-    logger.info(`${packageName} updated to ${newVersion}${linkedVersion.local ? " from local source" : ""}`);
+    logger.info(`${targetPackageName} updated to ${newVersion}${targetVersion.local ? " from local source" : ""}`);
     return true;
   }
 
@@ -1050,6 +1245,56 @@ class FynGlobal {
 
     logger.info(`Switched from ${currentTarget || "none"} to ${versionDir}`);
     return true;
+  }
+
+  /**
+   * Cleanup non-linked versions of a package
+   * @param {string} [packageName] - Package name to cleanup, or all packages if not specified
+   * @returns {number} Number of versions removed
+   */
+  async cleanupPackage(packageName) {
+    const registry = await this.readInstalledJson();
+    let totalRemoved = 0;
+
+    const packagesToClean = packageName
+      ? [packageName]
+      : Object.keys(registry.packages);
+
+    for (const pkgName of packagesToClean) {
+      const versions = await this.getPackageVersions(pkgName);
+
+      if (versions.length === 0) {
+        if (packageName) {
+          logger.error(`${pkgName} is not installed globally`);
+        }
+        continue;
+      }
+
+      const nonLinked = versions.filter(v => !v.linked);
+
+      if (nonLinked.length === 0) {
+        if (packageName) {
+          logger.info(`${pkgName}: no non-linked versions to remove`);
+        }
+        continue;
+      }
+
+      // Check if there's a linked version (shouldn't remove all if nothing is linked)
+      const hasLinked = versions.some(v => v.linked);
+      if (!hasLinked) {
+        logger.warn(`${pkgName}: no linked version found, skipping cleanup`);
+        logger.info(`  Use 'fyn global link ${pkgName}@<version>' to link a version first`);
+        continue;
+      }
+
+      for (const v of nonLinked) {
+        await this.removeVersion(pkgName, v.version);
+        logger.info(`Removed ${pkgName}@${v.version} (${v.dir})`);
+        totalRemoved++;
+      }
+    }
+
+    return totalRemoved;
   }
 
   /**

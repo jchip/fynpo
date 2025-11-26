@@ -692,7 +692,7 @@ filter-scan-dir:
   ^1.6.0: 1.6.0
  1.6.0:
   $: sha512-Nz7fBjcEzBpuedy8niSLbp/Lfq3WvEBezKoM2yNPYAcdV/tWrvB8PfL4YggRnZGMCAfGfzX9PFSqxOrjyJpXZQ==
-  _: 'https://registry.npmjs.org/filter-scan-dir/-/filter-scan-dir-1.6.0.tgz'
+  _: 'https://registry.npmjs.com/filter-scan-dir/-/filter-scan-dir-1.6.0.tgz'
 find-up:
  _latest: 8.0.0
  _:

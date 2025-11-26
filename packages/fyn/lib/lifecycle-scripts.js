@@ -83,7 +83,10 @@ class LifecycleScripts {
 
     env.npm_node_execpath = env.NODE = env.NODE || process.execPath;
     env.npm_execpath = fynCli;
-    env.INIT_CWD = this._fyn.cwd;
+    // For scripts running in the package directory (like prepack during local package build),
+    // INIT_CWD should point to the package directory so tools like find-up work correctly.
+    // Use _pkgDir when available and different from fyn.cwd.
+    env.INIT_CWD = this._pkgDir || this._fyn.cwd;
 
     return env;
   }
