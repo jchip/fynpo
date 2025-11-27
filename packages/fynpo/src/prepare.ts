@@ -165,7 +165,7 @@ that's not latest but none set in fynpo config`
       .then((output) => {
         logger.info("git commit", output);
 
-        if (this._options.tag === false) {
+        if (this._options.tag !== true) {
           return false;
         }
 
