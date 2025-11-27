@@ -7,7 +7,7 @@ const Fs = require("./util/file-ops");
 const ssri = require("ssri");
 const Tar = require("tar");
 const { missPipe } = require("./util/fyntil");
-const { linkFile, copyFile } = require("./util/hard-link-dir");
+const { cloneFile, copyFile } = require("./util/hard-link-dir");
 const logger = require("./logger");
 const { AggregateError } = require("@jchip/error");
 const filterScanDir = require("filter-scan-dir");
@@ -284,7 +284,7 @@ class FynCentral {
           if (file === "package.json") {
             return copyFile(src, dest);
           }
-          return linkFile(src, dest);
+          return cloneFile(src, dest);
         },
         { concurrency: 5 }
       );

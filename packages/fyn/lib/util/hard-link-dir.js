@@ -11,6 +11,7 @@
 
 const Path = require("path");
 const Fs = require("./file-ops");
+const fs = require("fs");
 const xaa = require("./xaa");
 const npmPacklist = require("npm-packlist");
 const Arborist = require("@npmcli/arborist");
@@ -66,6 +67,18 @@ async function copyFile(srcFp, destFp) {
     const srcData = await Fs.readFile(srcFp);
     return Fs.writeFile(destFp, srcData);
   }
+}
+
+/**
+ * Clone a file using copy-on-write if supported (macOS APFS, Linux btrfs/xfs).
+ * Falls back to regular copy if CoW is not available.
+ *
+ * @param {*} srcFp - source file path
+ * @param {*} destFp - destination file path
+ * @returns
+ */
+async function cloneFile(srcFp, destFp) {
+  return fs.promises.copyFile(srcFp, destFp, fs.constants.COPYFILE_FICLONE);
 }
 
 async function prepDestDir(dest) {
@@ -399,6 +412,7 @@ async function linkSym1(src, dest) {
 module.exports = {
   link,
   linkFile,
+  cloneFile,
   copyFile,
   linkSym1,
   generatePackTree,
