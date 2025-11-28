@@ -63,9 +63,9 @@ const node18 = Object.assign({}, base, {
         // ensure all code are transpiled, in case a module we use no longer supports node 18
         exclude: () => false,
         use: {
-          loader: "babel-loader",
+          loader: "esbuild-loader",
           options: {
-            presets: [["@babel/env", { targets: { node: "18" } }]]
+            target: "node18"
           }
         },
         parser: {
