@@ -1,3 +1,26 @@
+# 11/28/2025
+
+## Packages
+
+-   `fyn@2.0.3` `(2.0.2 => 2.0.3)`
+-   `fynpo@2.0.3` `(2.0.2 => 2.0.3)`
+
+## Commits
+
+-   `packages/fyn`
+
+    -   chore: update dep [commit](https://github.com/electrode-io/fynpo/commit/d3a6dc66b004aa0dbfa182f3c676439f631cbfa5)
+    -   fyn: fix running postinstall npm script [commit](https://github.com/electrode-io/fynpo/commit/c4b6e1902d1edeecaae681492764619c9e48bdec)
+    -   fyn: rename xrun-tasks.js to .ts [commit](https://github.com/electrode-io/fynpo/commit/e24c6fe5772d754340801e11d77369800014d394)
+    -   fyn: rename test .js to .ts for TypeScript migration [commit](https://github.com/electrode-io/fynpo/commit/22c9fee22a24e14a9356f6d3b6a0326e955d18d3)
+    -   fyn: use esbuild-loader instead of babel for webpack [commit](https://github.com/electrode-io/fynpo/commit/a160b136ca63498ce922364bc74e36073cba302d)
+    -   fyn: rename .js to .ts for TypeScript migration [commit](https://github.com/electrode-io/fynpo/commit/cdd42f49ef47ee7498a6659e0ee16230930d34f2)
+
+-   `packages/fynpo`
+
+    -   chore: update dep [commit](https://github.com/electrode-io/fynpo/commit/d3a6dc66b004aa0dbfa182f3c676439f631cbfa5)
+    -   fynpo: update dep [commit](https://github.com/electrode-io/fynpo/commit/48fb46238f4de818dcdeb5c54fba3a6506afa22a)
+
 # 11/27/2025
 
 ## Packages
