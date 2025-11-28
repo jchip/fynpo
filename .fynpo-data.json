@@ -1,0 +1,23 @@
+{
+  "indirects": {
+    "packages/fynpo-base": [
+      {
+        "fromPkg": {
+          "name": "@fynpo/base",
+          "version": "1.1.22",
+          "path": "packages/fynpo-base"
+        },
+        "onPkg": {
+          "name": "xsh",
+          "version": "0.4.6",
+          "path": "_w/xsh"
+        },
+        "depSection": "dep",
+        "indirectSteps": [
+          "@fynpo/base@1.1.22(dev)"
+        ]
+      }
+    ]
+  },
+  "__timestamp": 1764359313487
+}
