@@ -212,6 +212,7 @@
   },
   "mocha": {
     "require": [
+      "tsx",
       "source-map-support/register",
       "@xarc/module-dev/config/test/setup.js"
     ],
