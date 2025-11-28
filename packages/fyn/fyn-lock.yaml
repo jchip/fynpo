@@ -7,7 +7,7 @@ $pkg:
   '@jchip/error': ^1.0.3
   '@npmcli/arborist': ^9.1.6
   '@npmcli/run-script': ^10.0.2
-  aveazul: ^1.0.2
+  aveazul: ^1.1.0
   bluebird: ../bluebird
   cacache: ^20.0.1
   chalk: ^4.1.2
@@ -37,7 +37,7 @@ $pkg:
   tar: ^4.4.19
   visual-exec: ^0.1.14
   visual-logger: ^1.1.3
-  xaa: ^1.8.0
+  xaa: ^2.0.0
   xenv-config: ^1.3.0
   xsh: ../../_w/xsh
   yamljs: ^0.3.0
@@ -46,9 +46,8 @@ $pkg:
   '@babel/core': ^7.16.0
   '@babel/preset-env': ^7.2.0
   '@babel/preset-flow': ^7.16.0
-  '@xarc/module-dev': ^3.0.0
+  '@xarc/module-dev': ^5.0.0
   agentkeepalive: ^3.5.3
-  aveazul: ^1.0.2
   babel-eslint: ^10.1.0
   babel-loader: ^8.0.4
   chai: ^4.2.0
@@ -2380,14 +2379,14 @@ $pkg:
    webpack: 5.x.x
    webpack-cli: 5.x.x
 '@xarc/module-dev':
- _latest: 3.2.1
+ _latest: 5.0.0
  _:
-  ^3.0.0: 3.2.1
- 3.2.1:
+  ^5.0.0: 5.0.0
+ 5.0.0:
   top: 1
   hasI: 1
-  $: sha512-kCbD6oNqWgWo6eEFpvERbQ4LBBWtkZRak07iDeoXEex2xteXzO1NxOyz6Zt93dOoePF3HvcbUoQG7tua2/X1xg==
-  _: 'https://registry.npmjs.com/@xarc/module-dev/-/module-dev-3.2.1.tgz'
+  $: sha512-FzKrTEZxjPZFuFz+ZfCoQ8urjUfbLPcoS3MpVSyGPoTvZc+c42PjFRuVspn9PYqH4LEYaOl2IoxVQZH8ht3QkQ==
+  _: 'https://registry.npmjs.com/@xarc/module-dev/-/module-dev-5.0.0.tgz'
   dependencies:
    '@xarc/run': ^1.0.4
    filter-scan-dir: ^1.0.10
@@ -2686,16 +2685,16 @@ asynckit:
   $: sha1-x57Zf380y48robyXkLzDZkdLS3k=
   _: 'https://registry.npmjs.com/asynckit/-/asynckit-0.4.0.tgz'
 aveazul:
- _latest: 1.0.2
+ _latest: 1.1.0
  _:
-  '^1.0.1,^1.0.2': 1.0.2
- 1.0.2:
+  '^1.0.1,^1.0.2,^1.1.0': 1.1.0
+ 1.1.0:
   top: 1
-  $: sha512-AxNC1s5Nv++jqk9qpyD6RojhoUrr5anfYWKIlUXVreXT3bVBjtOiibTc8snQSVNHq+5BAAE5gyM+XkOUR9fbEQ==
-  _: 'https://registry.npmjs.com/aveazul/-/aveazul-1.0.2.tgz'
+  $: sha512-BJNXJhZHxI+FWAOz9/AXGpRt82XTcUt2hPyoQRyKqnCIs/2JiO8qA6zAc28ZHuN6GeWOxdjKzw1amQ7erTNCSg==
+  _: 'https://registry.npmjs.org/aveazul/-/aveazul-1.1.0.tgz'
   dependencies:
    '@jchip/error': ^1.0.3
-   xaa: ^1.8.0
+   xaa: ^2.0.0
 aws-sign2:
  _latest: 0.7.0
  _:
@@ -3650,7 +3649,7 @@ esbuild:
  0.25.5:
   hasI: 1
   $: sha512-P8OtKZRv/5J5hhz0cUAdu/cLuPIKXpQl1R9pZtvmHWQvrAUVd0UNIPT4IB4W3rNOqVO0rlqHmCIbSwxh/c9yUQ==
-  _: 'https://registry.npmjs.org/esbuild/-/esbuild-0.25.5.tgz'
+  _: 'https://registry.npmjs.com/esbuild/-/esbuild-0.25.5.tgz'
   optionalDependencies:
    '@esbuild/aix-ppc64': 0.25.5
    '@esbuild/android-arm': 0.25.5
@@ -3684,7 +3683,7 @@ esbuild-loader:
  4.4.0:
   top: 1
   $: sha512-4J+hXTpTtEdzUNLoY8ReqDNJx2NoldfiljRCiKbeYUuZmVaiJeDqFgyAzz8uOopaekwRoCcqBFyEroGQLFVZ1g==
-  _: 'https://registry.npmjs.org/esbuild-loader/-/esbuild-loader-4.4.0.tgz'
+  _: 'https://registry.npmjs.com/esbuild-loader/-/esbuild-loader-4.4.0.tgz'
   dependencies:
    esbuild: ^0.25.0
    get-tsconfig: ^4.10.1
@@ -4259,7 +4258,7 @@ get-tsconfig:
   '^4.10.1,^4.7.5': 4.13.0
  4.13.0:
   $: sha512-1VKTZJCwBrvbd+Wn3AOgQP/2Av+TfTCOlE4AcRJE72W1ksZXbAx8PPBR9RzgTeSPzlPMHrbANMH3LbltH73wxQ==
-  _: 'https://registry.npmjs.org/get-tsconfig/-/get-tsconfig-4.13.0.tgz'
+  _: 'https://registry.npmjs.com/get-tsconfig/-/get-tsconfig-4.13.0.tgz'
   dependencies:
    resolve-pkg-maps: ^1.0.0
 getpass:
@@ -5199,14 +5198,14 @@ loader-utils:
   '^2.0.0,^2.0.4': 2.0.4
  2.0.4:
   $: sha512-xXqpXoINfFhgua9xiqD8fPFHgkoq1mmmpE92WlDbm9rNRd/EbRb+Gqf908T2DMfuHjjJlksiK2RbHVOdD/MqSw==
-  _: 'https://registry.npmjs.org/loader-utils/-/loader-utils-2.0.4.tgz'
+  _: 'https://registry.npmjs.com/loader-utils/-/loader-utils-2.0.4.tgz'
   dependencies:
    big.js: ^5.2.2
    emojis-list: ^3.0.0
    json5: ^2.1.2
  1.4.0:
   $: sha512-qH0WSMBtn/oHuwjy/NucEgbx5dbxxnxup9s4PVXJUDHZBQY+s0NWA9rJf53RBnQZxfch7euUui7hpoAPvALZdA==
-  _: 'https://registry.npmjs.org/loader-utils/-/loader-utils-1.4.0.tgz'
+  _: 'https://registry.npmjs.com/loader-utils/-/loader-utils-1.4.0.tgz'
   dependencies:
    big.js: ^5.2.2
    emojis-list: ^3.0.0
@@ -7069,7 +7068,7 @@ source-list-map:
   ^2.0.0: 2.0.1
  2.0.1:
   $: sha512-qnQ7gVMxGNxsiL4lEuJwe/To8UnK7fAnmbGEEH8RpLouuKbeEm0lhbQVFIrNSuB+G7tVrAlVsZgETT5nljf+Iw==
-  _: 'https://registry.npmjs.org/source-list-map/-/source-list-map-2.0.1.tgz'
+  _: 'https://registry.npmjs.com/source-list-map/-/source-list-map-2.0.1.tgz'
 source-map:
  _latest: 0.7.6
  _:
@@ -7079,13 +7078,13 @@ source-map:
  0.7.3:
   top: 1
   $: sha512-CkCj6giN3S+n9qrYiBTX5gystlENnRW5jZeNLHpe6aue+SrHcG5VYwujhW9s4dY31mEGsxBDrHR6oI69fTXsaQ==
-  _: 'https://registry.npmjs.org/source-map/-/source-map-0.7.3.tgz'
+  _: 'https://registry.npmjs.com/source-map/-/source-map-0.7.3.tgz'
  0.6.1:
   $: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
-  _: 'https://registry.npmjs.org/source-map/-/source-map-0.6.1.tgz'
+  _: 'https://registry.npmjs.com/source-map/-/source-map-0.6.1.tgz'
  0.5.7:
   $: sha512-LbrmJOMUSdEVxIKvdcJzQC+nQhe8FUZQTXQy6+I75skNgn3OoQ0DZA8YnFa7gp8tqtL3KPf1kmo0R5DoApeSGQ==
-  _: 'https://registry.npmjs.org/source-map/-/source-map-0.5.7.tgz'
+  _: 'https://registry.npmjs.com/source-map/-/source-map-0.5.7.tgz'
 source-map-support:
  _latest: 0.5.20
  _:
@@ -7889,10 +7888,10 @@ webpack-sources:
   ^3.2.3: 3.2.3
  3.2.3:
   $: sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==
-  _: 'https://registry.npmjs.org/webpack-sources/-/webpack-sources-3.2.3.tgz'
+  _: 'https://registry.npmjs.com/webpack-sources/-/webpack-sources-3.2.3.tgz'
  1.4.3:
   $: sha512-lgTS3Xhv1lCOKo7SA5TjKXMjpSM4sBjNV5+q2bqesbSPs5FjGmU6jjtBSkX9b4qW87vDIsCIlUPOEhbZrMdjeQ==
-  _: 'https://registry.npmjs.org/webpack-sources/-/webpack-sources-1.4.3.tgz'
+  _: 'https://registry.npmjs.com/webpack-sources/-/webpack-sources-1.4.3.tgz'
   dependencies:
    source-list-map: ^2.0.0
    source-map: ~0.6.1
@@ -8031,9 +8030,15 @@ ws:
 xaa:
  _latest: 1.8.0
  _:
-  '^1.6.0,^1.8.0': 1.8.0
- 1.8.0:
+  ^1.6.0: 1.8.0
+  ^2.0.0: 2.0.0
+ 2.0.0:
   top: 1
+  $: sha512-qJ58bzCh2/qzU1zSx8PQ77ySJotdSjwypxBF4i4tJzNkixjkqTSH1ryg2Gf1Z9dNyO0/jcuY2KHmrFF0Cn7YRA==
+  _: 'https://registry.npmjs.com/xaa/-/xaa-2.0.0.tgz'
+  dependencies:
+   tslib: ^2.6.2
+ 1.8.0:
   $: sha512-XPNHZLhbO/KyboMyJaJnqma/KUSRAkMUHZpNRVbilvsloJErKsTaOcxxte79u3Hj4UixCHR+y+p+DFp7rZ7MWQ==
   _: 'https://registry.npmjs.com/xaa/-/xaa-1.8.0.tgz'
   dependencies:

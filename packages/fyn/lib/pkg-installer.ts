@@ -469,10 +469,12 @@ class PkgInstaller {
       if (!depInfo.dir) depInfo.dir = dir;
     }
 
-    if (!json._fyn) json._fyn = {};
+    // Reset _fyn markers for fresh installs - these track script execution
+    // and shouldn't persist from cached package.json
+    json._fyn = {};
     const scripts = json.scripts || {};
     const hasPI = json.hasPI || Boolean(scripts.preinstall);
-    const piExed = json._fyn.preinstall || Boolean(depInfo.preinstall);
+    const piExed = Boolean(depInfo.preinstall);
 
     if (!piExed && hasPI) {
       if (depInfo.preInstalled) {
