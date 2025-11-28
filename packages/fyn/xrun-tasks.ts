@@ -1,6 +1,6 @@
 "use strict";
 
-const FsAsync = require("./lib/util/file-ops.ts");
+const Fs = require("fs/promises");
 const Path = require("path");
 const which = require("which");
 
@@ -21,7 +21,7 @@ xrun.load("fyn", {
       "fyn/bundle",
       async () => {
         const fyn = await which("fyn");
-        const realPath = await FsAsync.realpath(fyn);
+        const realPath = await Fs.realpath(fyn);
         const dist = Path.join(realPath, "../../dist/fyn.js");
         return xrun.exec(`cp dist/fyn.js ${dist}`);
       }
@@ -32,11 +32,11 @@ xrun.load("fyn", {
     desc: "Link 'npm i -g' version to source copy - for debugging",
     task: async () => {
       const fyn = await which("fyn");
-      const realPath = await FsAsync.realpath(fyn);
+      const realPath = await Fs.realpath(fyn);
       const bundlePath = Path.join(Path.dirname(realPath), "bundle.js");
       const main = Path.join(__dirname, "cli/main.js");
-      await FsAsync.unlink(bundlePath);
-      await FsAsync.writeFile(
+      await Fs.unlink(bundlePath);
+      await Fs.writeFile(
         bundlePath,
         `
 "use strict";
