@@ -10,7 +10,7 @@
     "debug-test": "node --inspect-brk node_modules/.bin/mocha --extension ts,js,tsx,jsx,cjs,mjs -c test/spec",
     "lint": "xrun xarc/lint",
     "compile-yarn": "babel yarn/src --out-dir yarn/lib",
-    "build": "xrun --serial fyn/create-tgz compile-yarn bundle",
+    "build": "tsx node_modules/.bin/xrun --serial fyn/create-tgz compile-yarn bundle",
     "analyze": "ANALYZE_BUNDLE=1 xrun compile-yarn bundle",
     "coverage": "xrun xarc/check",
     "ci:check": "xrun xarc/check",

@@ -8,7 +8,7 @@ const base = {
   mode: "production",
   // devtool: "source-map",
   entry: {
-    "fyn.js": Path.resolve("cli/main.js")
+    "fyn.js": Path.resolve("cli/main.ts")
   },
   optimization: {
     minimize: false,
@@ -28,6 +28,7 @@ const base = {
     process.env.ANALYZE_BUNDLE && new BundleAnalyzerPlugin()
   ].filter(x => x),
   resolve: {
+    extensions: [".ts", ".js", ".json"],
     symlinks: true, // resolve symlinks to their real path
     alias: {
       xml2js: Path.resolve("stubs/xml2js.js"),
@@ -54,17 +55,17 @@ const base = {
   }
 };
 
-const node8 = Object.assign({}, base, {
+const node18 = Object.assign({}, base, {
   module: {
     rules: [
       {
-        test: /\.js$/,
-        // ensure all code are transpiled, in case a module we use no longer supports node 8.0
+        test: /\.[jt]s$/,
+        // ensure all code are transpiled, in case a module we use no longer supports node 18
         exclude: () => false,
         use: {
           loader: "babel-loader",
           options: {
-            presets: [["@babel/env", { targets: { node: "8" } }]]
+            presets: [["@babel/env", { targets: { node: "18" } }]]
           }
         },
         parser: {
@@ -92,4 +93,4 @@ const node8 = Object.assign({}, base, {
   }
 });
 
-module.exports = [node8];
+module.exports = [node18];
