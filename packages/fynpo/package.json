@@ -131,7 +131,6 @@
     "printWidth": 100
   },
   "fyn": {
-    "dependencies": {
-    }
+    "dependencies": {}
   }
 }

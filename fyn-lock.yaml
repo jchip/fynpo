@@ -182,10 +182,10 @@ $pkg:
   cpu:
    - arm64
 '@fynpo/base':
- _latest: 1.1.21-fynlocal_h
+ _latest: 1.1.22-fynlocal_h
  _:
-  ../fynpo-base: 1.1.21-fynlocal_h
- 1.1.21-fynlocal_h:
+  ../fynpo-base: 1.1.22-fynlocal_h
+ 1.1.22-fynlocal_h:
   $: local
   _: ./packages/fynpo-base
   dependencies:
@@ -342,15 +342,15 @@ at-least-node:
   $: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==
   _: 'https://registry.npmjs.com/at-least-node/-/at-least-node-1.0.0.tgz'
 aveazul:
- _latest: 1.0.2
+ _latest: 1.1.0
  _:
-  ^1.0.2: 1.0.2
- 1.0.2:
-  $: sha512-AxNC1s5Nv++jqk9qpyD6RojhoUrr5anfYWKIlUXVreXT3bVBjtOiibTc8snQSVNHq+5BAAE5gyM+XkOUR9fbEQ==
-  _: 'https://registry.npmjs.com/aveazul/-/aveazul-1.0.2.tgz'
+  ^1.1.0: 1.1.0
+ 1.1.0:
+  $: sha512-BJNXJhZHxI+FWAOz9/AXGpRt82XTcUt2hPyoQRyKqnCIs/2JiO8qA6zAc28ZHuN6GeWOxdjKzw1amQ7erTNCSg==
+  _: 'https://registry.npmjs.com/aveazul/-/aveazul-1.1.0.tgz'
   dependencies:
    '@jchip/error': ^1.0.3
-   xaa: ^1.8.0
+   xaa: ^2.0.0
 balanced-match:
  _latest: 3.0.1
  _:
@@ -749,18 +749,18 @@ function-bind:
   $: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==
   _: 'https://registry.npmjs.com/function-bind/-/function-bind-1.1.2.tgz'
 fyn:
- _latest: 2.0.1-fynlocal_h
+ _latest: 2.0.2-fynlocal_h
  _:
-  '../fyn,./packages/fyn': 2.0.1-fynlocal_h
- 2.0.1-fynlocal_h:
+  '../fyn,./packages/fyn': 2.0.2-fynlocal_h
+ 2.0.2-fynlocal_h:
   top: 1
   $: local
   _: ./packages/fyn
 fynpo:
- _latest: 2.0.1-fynlocal_h
+ _latest: 2.0.2-fynlocal_h
  _:
-  ./packages/fynpo: 2.0.1-fynlocal_h
- 2.0.1-fynlocal_h:
+  ./packages/fynpo: 2.0.2-fynlocal_h
+ 2.0.2-fynlocal_h:
   top: 1
   $: local
   _: ./packages/fynpo
@@ -770,9 +770,9 @@ fynpo:
    '@commitlint/lint': ^18.6.1
    '@commitlint/read': ^18.6.1
    '@commitlint/resolve-extends': ^18.6.1
-   '@fynpo/base': ^1.1.21
+   '@fynpo/base': ^1.1.22
    '@jchip/error': ^1.0.3
-   aveazul: ^1.0.2
+   aveazul: ^1.1.0
    boxen: ^5.1.2
    chalk: ^4.1.2
    chalker: ^1.2.0
@@ -781,7 +781,7 @@ fynpo:
    env-paths: ^2.2.1
    execa: ^5.0.0
    fs-extra: ^9.1.0
-   fyn: ^2.0.1
+   fyn: ^2.0.2
    get-stdin: ^8.0.0
    import-fresh: 3.3.0
    item-queue: ^1.1.2
@@ -803,7 +803,7 @@ fynpo:
    undici: ^4.14.1
    visual-exec: ^0.1.14
    visual-logger: ^1.1.3
-   xaa: ^1.7.2
+   xaa: ^2.0.0
    xsh: ^0.4.6
 get-stdin:
  _latest: 9.0.0
@@ -2027,12 +2027,12 @@ wrap-ansi-cjs:
    string-width: ^4.1.0
    strip-ansi: ^6.0.0
 xaa:
- _latest: 1.8.0
+ _latest: 2.0.0
  _:
-  '^1.7.2,^1.8.0': 1.8.0
- 1.8.0:
-  $: sha512-XPNHZLhbO/KyboMyJaJnqma/KUSRAkMUHZpNRVbilvsloJErKsTaOcxxte79u3Hj4UixCHR+y+p+DFp7rZ7MWQ==
-  _: 'https://registry.npmjs.com/xaa/-/xaa-1.8.0.tgz'
+  ^2.0.0: 2.0.0
+ 2.0.0:
+  $: sha512-qJ58bzCh2/qzU1zSx8PQ77ySJotdSjwypxBF4i4tJzNkixjkqTSH1ryg2Gf1Z9dNyO0/jcuY2KHmrFF0Cn7YRA==
+  _: 'https://registry.npmjs.com/xaa/-/xaa-2.0.0.tgz'
   dependencies:
    tslib: ^2.6.2
 xsh:
