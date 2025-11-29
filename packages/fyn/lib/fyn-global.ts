@@ -1157,10 +1157,10 @@ class FynGlobal {
         return false;
       }
     } else {
-      // For registry packages, update to latest by modifying package.json
+      // For registry packages, update using original semver spec
       const pkgJsonPath = Path.join(pkgDir, "package.json");
       const pkgJson = JSON.parse(await Fs.readFile(pkgJsonPath));
-      pkgJson.dependencies[targetPackageName] = "latest";
+      pkgJson.dependencies[targetPackageName] = targetVersion.semver || "latest";
       await Fs.writeFile(pkgJsonPath, JSON.stringify(pkgJson, null, 2) + "\n");
     }
 
