@@ -9,6 +9,16 @@ import fyn from "fyn/bin";
 import shcmd from "shcmd";
 import { FynpoDepGraph, FynpoPackageInfo } from "@fynpo/base";
 import { TopoRunner } from "./topo-runner";
+import {
+  printHeader,
+  printSection,
+  printList,
+  printSuccess,
+  printWarning,
+  printError,
+  printNextSteps,
+  printCommand,
+} from "./release-output";
 
 /**
  * `fynpo publish` command executor class
@@ -193,8 +203,8 @@ export default class Publish {
     return errors;
   }
 
-  async addReleaseTag() {
-    logger.info(`===== Adding Release Tag =====`);
+  async addReleaseTag(): Promise<{ tag: string; pushed: boolean } | undefined> {
+    printSection("Creating Release Tag");
 
     let newTag: string;
 
@@ -218,24 +228,18 @@ export default class Publish {
       const [gitRemote, gitBranch] = upstream.split(" ")[2].split("/");
 
       if (!gitRemote || !gitBranch) {
-        logger.error(
-          `Unable to figure out git tracking remote and branch - skip create and push git release tag`
-        );
-        return;
+        printWarning("Unable to determine git remote - tag created locally only");
+        return { tag: newTag, pushed: false };
       }
 
       if (!this._push) {
-        logger.info(
-          `Release tag ${newTag} created for branch ${gitBranch}, but not pushing to git remote ${gitRemote}!`
-        );
-        return;
+        printSuccess(`Release tag ${newTag} created (not pushed)`);
+        return { tag: newTag, pushed: false };
       }
 
-      logger.info(
-        `Release tag ${newTag} created for branch ${gitBranch}. Pushing the tag to remote ${gitRemote}..`
-      );
-
       await this._sh(`${dryRun}git push ${gitRemote} ${newTag}`, this._cwd, false);
+      printSuccess(`Release tag ${newTag} created and pushed to ${gitRemote}`);
+      return { tag: newTag, pushed: true };
     } catch (err) {
       this._logError(`Failed to create release tag ${newTag}`, err);
       process.exit(1);
@@ -243,20 +247,23 @@ export default class Publish {
   }
 
   async exec() {
+    printHeader("Publish Packages");
+
     await this.getLatestTag();
     const packagesToPublish = await this.getPackagesToPublish();
 
     if (!packagesToPublish.length) {
-      logger.warn("No changed packages to publish!");
+      printWarning("No changed packages to publish!");
       process.exit(1);
     }
 
     this._packagesToPublish = packagesToPublish;
-    const messages = packagesToPublish.map(
-      (pkg: FynpoPackageInfo) => ` - ${pkg.name}@${pkg.version}`
+    const pkgList = packagesToPublish.map(
+      (pkg: FynpoPackageInfo) => `${pkg.name}@${pkg.version}`
     );
 
-    logger.info(`Found these packages to publish:\n${messages.join("\n")}`);
+    printSection("Packages to Publish");
+    printList(pkgList);
 
     try {
       const fynpoPkgJson = JSON.parse(
@@ -272,14 +279,24 @@ export default class Publish {
         } as FynpoPackageInfo,
         "prepublishOnly"
       );
+
+      printSection("Publishing");
       const errors = await this.publishPackages();
+
       if (errors.length > 0) {
-        logger.error(`Some error occurred with publishing - skipping create git release tag`);
+        printError(`Some packages failed to publish - skipping git release tag`);
       } else {
-        await this.addReleaseTag();
+        const tagInfo = await this.addReleaseTag();
+        printSuccess("All packages published successfully");
+        if (tagInfo && !tagInfo.pushed) {
+          printNextSteps([
+            `Push the release tag: ${printCommand(`git push origin ${tagInfo.tag}`)}`,
+          ]);
+        }
       }
     } catch (err) {
-      logger.error(`==== failure encountered publishing packages =====`, err);
+      printError("Failure encountered publishing packages");
+      logger.error(err);
       process.exit(1);
     }
   }

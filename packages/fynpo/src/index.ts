@@ -163,7 +163,6 @@ const execPrepare = async (cmd, _parsed) => {
 };
 
 const execChangelog = async (cmd, _parsed) => {
-  logger.info("updating changelog");
   const opts = await makeOpts(cmd, _parsed);
   const graph = await makeDepGraph(opts);
 

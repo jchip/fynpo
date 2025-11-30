@@ -11,6 +11,15 @@ import Chalk from "chalk";
 import assert from "assert";
 import semver from "semver";
 import * as utils from "./utils";
+import {
+  printHeader,
+  printSection,
+  printList,
+  printSuccess,
+  printWarning,
+  printNextSteps,
+  printCommand,
+} from "./release-output";
 // prepare packages for publish
 
 export class Prepare {
@@ -179,6 +188,8 @@ that's not latest but none set in fynpo config`
   };
 
   async exec() {
+    printHeader("Prepare Packages for Publish");
+
     this.readChangelog();
     if (_.isEmpty(this._versions)) {
       logger.error("No versions found in CHANGELOG.md");
@@ -186,6 +197,7 @@ that's not latest but none set in fynpo config`
     }
 
     const packages = [];
+    const updatedPackages: string[] = [];
 
     _.each(this._data.packages, (pkg, name) => {
       if (!this._versions.hasOwnProperty(name)) return;
@@ -194,7 +206,7 @@ that's not latest but none set in fynpo config`
       if (newV === pkg.version) return;
 
       if (pkg.private === true) {
-        logger.info("skipping private package", pkg.name);
+        printWarning(`Skipping private package: ${pkg.name}`);
         return;
       }
 
@@ -205,6 +217,7 @@ that's not latest but none set in fynpo config`
       });
 
       packages.push(Path.join("packages", pkg.pkgDir, "package.json"));
+      updatedPackages.push(`${name}@${newV}`);
     });
 
     await this.checkGitClean();
@@ -214,7 +227,14 @@ that's not latest but none set in fynpo config`
       Fs.writeFileSync(pkg.pkgFile, `${JSON.stringify(pkg.pkgJson, null, 2)}\n`);
     });
 
-    return this.commitAndTagUpdates(packages);
+    await this.commitAndTagUpdates(packages);
+
+    printSuccess("Package versions updated and committed");
+    printNextSteps([
+      `Review git status: ${printCommand("git status")}`,
+      `Review package changes: ${printCommand("git diff HEAD~1 --stat")}`,
+      `Publish packages: ${printCommand("fynpo publish")}`,
+    ]);
   }
 
   readChangelog() {
@@ -222,17 +242,12 @@ that's not latest but none set in fynpo config`
     this._versions = fromCl.versions;
     this._tags = fromCl.tags;
     if (this._tags.length) {
-      logger.info("Found these versions from CHANGELOG");
-
-      const names = [];
+      printSection("Versions from CHANGELOG");
+      const versionList: string[] = [];
       _.each(this._versions, (ver, name) => {
-        logger.info("  ", name, ver);
-        names.push(name);
+        versionList.push(`${name}@${ver}`);
       });
-
-      logger.info("tags", this._tags.join(", "));
-
-      logger.info("packages to be published:", names.join(" "));
+      printList(versionList);
     }
   }
 }

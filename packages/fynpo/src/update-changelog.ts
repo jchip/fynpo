@@ -21,6 +21,15 @@ xsh.envPath.addToFront(Path.join(__dirname, "../node_modules/.bin"));
 import _ from "lodash";
 import * as utils from "./utils";
 import { logger } from "./logger";
+import {
+  printHeader,
+  printSection,
+  printList,
+  printSuccess,
+  printWarning,
+  printNextSteps,
+  printCommand,
+} from "./release-output";
 import { getUpdatedPackages } from "./utils/get-updated-packages";
 import {
   isAnythingCommitted,
@@ -153,6 +162,8 @@ export default class Changelog {
   };
 
   async exec() {
+    printHeader("Changelog Update");
+
     const execOpts = {
       cwd: this._cwd,
     };
@@ -182,12 +193,12 @@ export default class Changelog {
     const changed = getUpdatedPackages(this._graph, opts);
 
     if (!changed.pkgs.length) {
-      logger.info(`No changed packages to update changelog.`);
+      printWarning("No changed packages to update changelog.");
       return;
     }
 
-    const messages = changed.pkgs.map((name) => ` - ${name}`);
-    logger.info(`Changed packages: \n${messages.join("\n")}`);
+    printSection("Changed Packages");
+    printList(changed.pkgs);
 
     await this.checkGitClean();
 
@@ -196,7 +207,17 @@ export default class Changelog {
       .then(determinePackageVersions)
       .then(updateChangelog)
       .then((output) => {
-        return opts.publish ? this.preparePackages(output) : this.commitChangeLogFile();
+        if (opts.publish) {
+          return this.preparePackages(output);
+        }
+        return this.commitChangeLogFile().then(() => {
+          printSuccess("Changelog updated and committed");
+          printNextSteps([
+            `Review the changes: ${printCommand("git diff HEAD~1 CHANGELOG.md")}`,
+            `Check git status: ${printCommand("git status")}`,
+            `Prepare packages: ${printCommand("fynpo prepare")}`,
+          ]);
+        });
       });
   }
 }
