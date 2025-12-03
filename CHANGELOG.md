@@ -1,3 +1,24 @@
+# 12/2/2025
+
+## Packages
+
+-   `fyn@2.0.4` `(2.0.3 => 2.0.4)`
+-   `fynpo@2.0.4` `(2.0.3 => 2.0.4)`
+
+## Commits
+
+-   `packages/fyn`
+
+    -   fyn: global update respects original version constraint instead of defaulting to latest [commit](https://github.com/electrode-io/fynpo/commit/30f5b332f71c980030333effe9da373faec49a47)
+
+-   `packages/fynpo`
+
+    -   fynpo: improve release steps output [commit](https://github.com/electrode-io/fynpo/commit/fcbc43f9a65ff527a6345756b62c8704f671cee8)
+
+-   `MISC`
+
+    -   chore: update dep [commit](https://github.com/electrode-io/fynpo/commit/f7d8d8a39928e78ff3b6d26f1db309f27574fc4a)
+
 # 11/28/2025
 
 ## Packages
