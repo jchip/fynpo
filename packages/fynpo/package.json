@@ -1,6 +1,6 @@
 {
   "name": "fynpo",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "fynpo is a zero setup monorepo manager for node.js",
   "main": "dist/index.js",
   "homepage": "https://jchip.github.io/fynpo/",
@@ -85,7 +85,7 @@
     "env-paths": "^2.2.1",
     "execa": "^5.0.0",
     "fs-extra": "^9.1.0",
-    "fyn": "^2.0.3",
+    "fyn": "^2.0.4",
     "get-stdin": "^8.0.0",
     "import-fresh": "3.3.0",
     "item-queue": "^1.1.2",
