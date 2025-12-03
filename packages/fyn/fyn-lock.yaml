@@ -39,7 +39,7 @@ $pkg:
   visual-logger: ^1.1.3
   xaa: ^2.0.0
   xenv-config: ^1.3.0
-  xsh: ^0.4.6
+  xsh: ../../_w/xsh
   yamljs: ^0.3.0
  dev:
   '@babel/cli': ^7.16.0
@@ -8052,13 +8052,13 @@ xenv-config:
   $: sha512-ekNalpPoXwgWx1tE384qlkx8+17ANcpmCtak4TYK1EsEcM+0a607TqszGHv4sWMBuogM28XyJmzcRoIgMjABIA==
   _: 'https://registry.npmjs.com/xenv-config/-/xenv-config-1.3.1.tgz'
 xsh:
- _latest: 0.4.6
+ _latest: 0.4.6-fynlocal_h
  _:
-  '^0.4.5,^0.4.6': 0.4.6
- 0.4.6:
+  ../../_w/xsh: 0.4.6-fynlocal_h
+ 0.4.6-fynlocal_h:
   top: 1
-  $: sha512-CzY2CN5EoECp1gfULlGfnqFQ5MKh2fEM5zcgWM60PNSyCNn/7wGYXy9Zlgu7EDxhPi6Xb642wFlV+vj4qgDBGA==
-  _: 'https://registry.npmjs.com/xsh/-/xsh-0.4.6.tgz'
+  $: local
+  _: ../../_w/xsh
   dependencies:
    shcmd: ^0.8.4
 xstdout:

@@ -31,12 +31,17 @@ class FynGlobal {
    */
   constructor(options = {}) {
     this.options = options;
-    this.nodeVersion = options.nodeVersion || process.version.match(/^v(\d+)/)[1];
+
+    // Detect runtime: Bun vs Node.js
+    const isBun = typeof process.versions.bun === "string";
+    const runtimeVersion = options.nodeVersion || process.version.match(/^v?(\d+)/)[1];
+    this.runtimePrefix = isBun ? "bun" : "v";
+    this.nodeVersion = runtimeVersion; // kept for backwards compatibility
 
     // Allow customizing the global root directory
     this.globalRoot = options.globalDir || Path.join(Os.homedir(), ".fyn", "global");
 
-    this.versionDir = Path.join(this.globalRoot, `v${this.nodeVersion}`);
+    this.versionDir = Path.join(this.globalRoot, `${this.runtimePrefix}${runtimeVersion}`);
     this.packagesDir = Path.join(this.versionDir, "packages");
     this.globalBinDir = Path.join(this.versionDir, "bin");
     this.installedJsonPath = Path.join(this.versionDir, "installed.json");
@@ -411,7 +416,7 @@ class FynGlobal {
    */
   async ensureBinSymlink() {
     const binSymlink = Path.join(this.globalRoot, "bin");
-    const targetDir = `v${this.nodeVersion}/bin`;
+    const targetDir = `${this.runtimePrefix}${this.nodeVersion}/bin`;
 
     try {
       const currentTarget = await Fs.readlink(binSymlink);
