@@ -1130,6 +1130,146 @@ ${item.depPath.join(" > ")}`
     return undefined;
   }
 
+  /**
+   * Apply npm-style overrides to a dependency item
+   *
+   * npm overrides differ from yarn resolutions:
+   * - They apply to ALL instances of a package by default (not path-based)
+   * - They can be scoped to specific parent packages
+   * - They support version constraints on the source package
+   *
+   * @param {*} item - The dependency item to check for overrides
+   * @returns {undefined}
+   */
+  _applyOverrides(item) {
+    if (!this._fyn._overridesMatchers || item._semver.$$) {
+      return undefined;
+    }
+
+    const matchers = this._fyn._overridesMatchers;
+
+    for (const matcher of matchers) {
+      const { pkgName, versionConstraint, parentPath, replacement } = matcher;
+
+      // Check if package name matches
+      if (pkgName !== item.name) {
+        continue;
+      }
+
+      // Check version constraint if specified (e.g., "lodash@^4.0.0")
+      if (versionConstraint) {
+        // Check if the original semver satisfies the constraint
+        // This handles cases like "lodash@^4.0.0": "4.17.21"
+        // where we only override lodash if it's requested as ^4.0.0 range
+        if (!this._matchesVersionConstraint(item.semver, versionConstraint)) {
+          continue;
+        }
+      }
+
+      // Check parent path constraint if specified
+      if (parentPath) {
+        if (!this._matchesParentPath(item, parentPath)) {
+          continue;
+        }
+      }
+
+      // Apply the override
+      if (replacement !== item.semver) {
+        const parentInfo = parentPath ? ` (under ${parentPath})` : "";
+        const constraintInfo = versionConstraint ? `@${versionConstraint}` : "";
+        logger.info(
+          `Override: ${item.name}${constraintInfo}${parentInfo} changed from ${item.semver} to ${replacement}`
+        );
+        semverUtil.replace(item._semver, replacement);
+        return undefined;
+      }
+    }
+
+    return undefined;
+  }
+
+  /**
+   * Check if the item's semver matches the version constraint specified in the override key
+   *
+   * @param {string} itemSemver - The semver from the dependency
+   * @param {string} constraint - The version constraint from override key (e.g., "^4.0.0", ">=1.0.0")
+   * @returns {boolean}
+   */
+  _matchesVersionConstraint(itemSemver, constraint) {
+    // If the constraint is a specific version, check exact match or if itemSemver could resolve to it
+    if (Semver.valid(constraint)) {
+      // Exact version constraint - the item's semver should potentially resolve to this version
+      return Semver.satisfies(constraint, itemSemver);
+    }
+
+    // For range constraints, check if the item's semver intersects with the constraint
+    // This is a bit tricky - npm checks if the requested semver would match the constraint
+    // For example, if override is "lodash@^4.0.0" and item.semver is "^4.17.0",
+    // they overlap so the override applies
+
+    // Check if they intersect by seeing if the constraint range overlaps with item's range
+    try {
+      return Semver.intersects(itemSemver, constraint);
+    } catch {
+      // If semver parsing fails, fall back to string comparison
+      return itemSemver === constraint;
+    }
+  }
+
+  /**
+   * Check if the item's parent path matches the override's parent path constraint
+   *
+   * For example, if override is { "foo": { "bar": "1.0.0" } },
+   * parentPath would be "foo" and we check if item's parent chain includes "foo"
+   *
+   * @param {*} item - The dependency item
+   * @param {string} parentPath - The parent path from the override (e.g., "foo" or "foo/baz")
+   * @returns {boolean}
+   */
+  _matchesParentPath(item, parentPath) {
+    if (!item.parent || item.parent.depth === 0) {
+      return false;
+    }
+
+    // Build the parent chain
+    const parentChain = [];
+    let current = item.parent;
+    while (current && current.depth > 0) {
+      parentChain.unshift(current.name);
+      current = current.parent;
+    }
+
+    // Convert parentPath to array (handles scoped packages)
+    const pathParts = parentPath.split("/").filter(p => p);
+
+    // Handle scoped packages in path - rejoin @scope/name
+    const normalizedParts = [];
+    for (let i = 0; i < pathParts.length; i++) {
+      if (pathParts[i].startsWith("@") && i + 1 < pathParts.length) {
+        normalizedParts.push(`${pathParts[i]}/${pathParts[i + 1]}`);
+        i++;
+      } else {
+        normalizedParts.push(pathParts[i]);
+      }
+    }
+
+    // Check if the parent chain ends with the required path
+    // e.g., if parentPath is "foo/bar", parent chain should be [..., "foo", "bar"]
+    if (normalizedParts.length > parentChain.length) {
+      return false;
+    }
+
+    // Check from the end of the chain
+    const startIdx = parentChain.length - normalizedParts.length;
+    for (let i = 0; i < normalizedParts.length; i++) {
+      if (parentChain[startIdx + i] !== normalizedParts[i]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   _resolveWithLockData(item) {
     //
     // Force resolve from lock data in regen mode if item was not a direct
@@ -1235,6 +1375,9 @@ ${item.depPath.join(" > ")}`
       });
     };
 
+    // Apply overrides first (npm style), then resolutions (yarn style)
+    // Overrides take precedence as they are more specific
+    this._applyOverrides(item);
     this._replaceWithResolutionsData(item);
 
     const promise =

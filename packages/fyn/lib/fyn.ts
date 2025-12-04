@@ -332,7 +332,99 @@ class Fyn {
           return { mm: new mm.Minimatch(finalPath), res: resData[depPath] };
         });
       }
+
+      // Process npm-style overrides
+      const overridesData = {
+        ...this._pkg.overrides,
+        ..._.get(this._fynpo, ["config", "overrides"])
+      };
+
+      if (!_.isEmpty(overridesData)) {
+        this._overrides = overridesData;
+        this._overridesMatchers = this._processOverrides(overridesData);
+      }
     }
+  }
+
+  /**
+   * Process npm-style overrides into matchers
+   *
+   * npm overrides support:
+   * 1. Simple: "package-name": "version"
+   * 2. Nested: "parent-pkg": { "child-pkg": "version" }
+   * 3. Version-conditional: "package@^1.0.0": "1.0.5"
+   * 4. Reference: "$package-name" to reference a direct dependency version
+   *
+   * @param {object} overrides - The overrides object from package.json
+   * @param {string} parentPath - The parent path for nested overrides
+   * @returns {Array} Array of override matcher objects
+   */
+  _processOverrides(overrides, parentPath = "") {
+    const matchers = [];
+
+    for (const key of Object.keys(overrides)) {
+      const value = overrides[key];
+
+      // Parse the key which may be "package" or "package@version"
+      let pkgName = key;
+      let versionConstraint = null;
+
+      const atIdx = key.lastIndexOf("@");
+      // Handle scoped packages (@scope/pkg) - @ at position 0 is scope, not version
+      if (atIdx > 0) {
+        pkgName = key.substring(0, atIdx);
+        versionConstraint = key.substring(atIdx + 1);
+      }
+
+      if (typeof value === "string") {
+        // Simple override or reference ($)
+        let resolvedValue = value;
+
+        // Handle $ reference syntax - reference to direct dependency version
+        if (value.startsWith("$")) {
+          const refPkgName = value.substring(1);
+          const directDepVersion = this._getDirectDependencyVersion(refPkgName);
+          if (directDepVersion) {
+            resolvedValue = directDepVersion;
+          } else {
+            logger.warn(
+              `Override reference $${refPkgName} not found in direct dependencies, using as-is`
+            );
+            resolvedValue = value;
+          }
+        }
+
+        matchers.push({
+          pkgName,
+          versionConstraint,
+          parentPath,
+          replacement: resolvedValue
+        });
+      } else if (typeof value === "object" && value !== null) {
+        // Nested override - the key is the parent package
+        const newParentPath = parentPath ? `${parentPath}/${pkgName}` : pkgName;
+        const nestedMatchers = this._processOverrides(value, newParentPath);
+        matchers.push(...nestedMatchers);
+      }
+    }
+
+    return matchers;
+  }
+
+  /**
+   * Get the version of a direct dependency from package.json
+   * @param {string} pkgName - Package name to look up
+   * @returns {string|null} The version or null if not found
+   */
+  _getDirectDependencyVersion(pkgName) {
+    const sections = ["dependencies", "devDependencies", "optionalDependencies"];
+    for (const section of sections) {
+      const version = _.get(this._pkg, [section, pkgName]);
+      if (version) {
+        return version;
+      }
+    }
+    return null;
   }
 
   async _startInstall() {

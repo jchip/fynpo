@@ -1012,12 +1012,12 @@ xaa:
   dependencies:
    tslib: ^2.6.2
 xsh:
- _latest: 0.4.6-fynlocal_h
+ _latest: 0.4.6
  _:
-  ../../_w/xsh: 0.4.6-fynlocal_h
- 0.4.6-fynlocal_h:
-  $: local
-  _: ../../_w/xsh
+  ^0.4.4: 0.4.6
+ 0.4.6:
+  $: sha512-CzY2CN5EoECp1gfULlGfnqFQ5MKh2fEM5zcgWM60PNSyCNn/7wGYXy9Zlgu7EDxhPi6Xb642wFlV+vj4qgDBGA==
+  _: 'https://registry.npmjs.com/xsh/-/xsh-0.4.6.tgz'
   dependencies:
    shcmd: ^0.8.4
 xtend:

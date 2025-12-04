@@ -72,21 +72,21 @@ fsevents:
 fyn:
  _latest: 1.1.46
  _:
-  ^2.0.3: 2.0.3
- 2.0.3:
+  '^2.0.3,^2.0.4': 2.0.4
+ 2.0.4:
   top: 1
-  $: sha512-IErkS3uf8rLGyv8ZuVFSZAwlkKirkoJMkGcMU3+TfzB3zEbYZOhf9qFrGMqXXpM5oyRNl6MHv5wjb0PUzM7QYw==
-  _: 'https://registry.npmjs.org/fyn/-/fyn-2.0.3.tgz'
+  $: sha512-JcHHBb5pOeruYdP4b2NoiKczQz4DgAhYhKSGpM+Tv2xzE0RLxZMRH/cIfWB4iay+7RBxjTueIdnP1qxrI0QK2Q==
+  _: 'https://registry.npmjs.org/fyn/-/fyn-2.0.4.tgz'
 fynpo:
  _latest: 1.1.49
  _:
-  ^2.0.3: 2.0.3
- 2.0.3:
+  ^2.0.3: 2.0.4
+ 2.0.4:
   top: 1
-  $: sha512-WuE446SqSf9AEXpNv8fObcZakNwBL2nO3YBlYzjjP8yPsuB01AJ+5srVB9DY+JxCiaBS03Q5XdV2K+1fLA55ew==
-  _: 'https://registry.npmjs.org/fynpo/-/fynpo-2.0.3.tgz'
+  $: sha512-fbRv1kmtYCI6EMlueUAtNnNRZD/L3b6f2G8A3wcCkrAtAEruXsdtTBjvZQCBtnu/5FkrJ4qoPViQOiRquDQujA==
+  _: 'https://registry.npmjs.org/fynpo/-/fynpo-2.0.4.tgz'
   dependencies:
-   fyn: ^2.0.3
+   fyn: ^2.0.4
    import-fresh: 3.3.0
    resolve-global: 1.0.0
    prettier: 2.4.1
