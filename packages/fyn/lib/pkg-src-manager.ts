@@ -732,7 +732,48 @@ class PkgSrcManager {
     }
 
     const packumentUrl = this.makePackumentUrl(pkgName);
-    const cacheKey = `make-fetch-happen:request-cache:full:${packumentUrl}`;
+    const cacheKey = `make-fetch-happen:request-cache:${packumentUrl}`;
+    const legacyCacheKey = `make-fetch-happen:request-cache:full:${packumentUrl}`;
+    const cacheKeys = [cacheKey, legacyCacheKey];
+
+    const loadCachedPackument = async (key, memoize = true) => {
+      try {
+        const cached = await cacache.get(this._cacheDir, key, { memoize });
+        const info = await getCacheInfoWithRefreshTime(this._cacheDir, key);
+        return Object.assign(cached, {
+          refreshTime: info && info.refreshTime,
+          cacheKey: key
+        });
+      } catch (err) {
+        if (err.code === "ENOENT") {
+          return undefined;
+        }
+        throw err;
+      }
+    };
+
+    const loadBestCachedPackument = async (memoize = true) => {
+      const cachedEntries = (
+        await Promise.all(cacheKeys.map(key => loadCachedPackument(key, memoize)))
+      ).filter(Boolean);
+
+      if (cachedEntries.length === 0) {
+        return undefined;
+      }
+
+      return _.maxBy(cachedEntries, cached => cached.refreshTime || 0) || cachedEntries[0];
+    };
+
+    const readMemoizedPackument = async () => {
+      const memoized = await loadBestCachedPackument(false);
+      if (!(memoized && memoized.data)) {
+        return undefined;
+      }
+      logger.debug(`using memoized packument cache for '${pkgName}'`);
+      cacheMemoized = true;
+      this._metaStat.wait--;
+      return JSON.parse(memoized.data.toString());
+    };
 
     const queueMetaFetchRequest = cached => {
       const offline = this._fyn.remoteMetaDisabled;
@@ -778,6 +819,9 @@ class PkgSrcManager {
     // "make-fetch-happen:request-cache:https://registry.npmjs.org/electrode-static-paths"
     // "make-fetch-happen:request-cache:https://registry.npmjs.org/@octokit%2frest"
     //
+    // Older fyn versions used the non-standard "full:" prefix. Read both so we
+    // can consume existing cache entries after upgrading pacote/npm-registry-fetch.
+    //
 
     //
     // Much slower way to get cache with pacote
@@ -800,17 +844,7 @@ class PkgSrcManager {
       ? // when the semver is a url then the meta is not from npm registry and
         // we can't use the cache for registry
         Promise.resolve()
-      : cacache.get(this._cacheDir, cacheKey, { memoize: true })
-          .then(async cached => {
-            // Add refreshTime from bucket mtime
-            if (cached) {
-              const info = await getCacheInfoWithRefreshTime(this._cacheDir, cacheKey);
-              if (info) {
-                cached.refreshTime = info.refreshTime;
-              }
-            }
-            return cached;
-          })
+      : loadBestCachedPackument(true)
     )
       .then(cached => {
         const packument = cached && cached.data && JSON.parse(cached.data);
@@ -833,14 +867,27 @@ class PkgSrcManager {
         }
         
         if (cached && metaMemoizeUrl) {
-          const encKey = encodeURIComponent(cacheKey);
-          return nodeFetch(`${metaMemoizeUrl}?key=${encKey}`).then(
-            res => {
+          const checkMemoizedCache = async () => {
+            for (const key of cacheKeys) {
+              const encKey = encodeURIComponent(key);
+              const res = await nodeFetch(`${metaMemoizeUrl}?key=${encKey}`);
               if (res.status === 200) {
-                logger.debug(`using memoized packument cache for '${pkgName}'`);
-                cacheMemoized = true;
-                this._metaStat.wait--;
-                return packument;
+                return true;
+              }
+            }
+            return false;
+          };
+
+          return checkMemoizedCache().then(
+            async hasMemoizedCache => {
+              if (hasMemoizedCache) {
+                const memoizedPackument = await readMemoizedPackument();
+                if (memoizedPackument) {
+                  return memoizedPackument;
+                }
+                logger.warn(
+                  `memoized packument cache for '${pkgName}' was signaled but cache entry was missing; refetching`
+                );
               }
               return queueMetaFetchRequest(packument);
             },

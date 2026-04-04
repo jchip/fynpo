@@ -39,7 +39,7 @@ $pkg:
   visual-logger: ^1.1.3
   xaa: ^2.0.0
   xenv-config: ^1.3.0
-  xsh: ../../_w/xsh
+  xsh: ^0.4.6
   yamljs: ^0.3.0
  dev:
   '@babel/cli': ^7.16.0
@@ -5489,11 +5489,11 @@ mimic-fn:
   $: sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==
   _: 'https://registry.npmjs.com/mimic-fn/-/mimic-fn-2.1.0.tgz'
 minimatch:
- _latest: 10.1.1
+ _latest: 10.2.5
  _:
   3.0.4: 3.0.4
   ^10.0.3: 10.1.1
-  '^3.0.4,^3.1.2': 3.1.2
+  '^3.0.4,^3.1.2': 3.1.5
   '^9.0.4,^9.0.5': 9.0.5
  10.1.1:
   $: sha512-enIvLvRAFZYXJzkCYG5RKmPfrFArdLv+R+lbQ53BmIMLIry74bjKzX6iHAm8WYamJkhSSEabrWN5D97XnKObjQ==
@@ -5505,10 +5505,10 @@ minimatch:
   _: 'https://registry.npmjs.com/minimatch/-/minimatch-9.0.5.tgz'
   dependencies:
    brace-expansion: ^2.0.1
- 3.1.2:
+ 3.1.5:
   top: 1
-  $: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==
-  _: 'https://registry.npmjs.com/minimatch/-/minimatch-3.1.2.tgz'
+  $: sha512-VgjWUsnnT6n+NUk6eZq77zeFdpW2LWDzP6zFGrCbHXiYNul5Dzqk2HHQ5uFH2DNW5Xbp8+jVzaeNt94ssEEl4w==
+  _: 'https://registry.npmjs.com/minimatch/-/minimatch-3.1.5.tgz'
   dependencies:
    brace-expansion: ^1.1.7
  3.0.4:
@@ -6865,16 +6865,16 @@ schema-utils:
    ajv-keywords: ^3.5.2
    '@types/json-schema': ^7.0.5
 semver:
- _latest: 7.7.3
+ _latest: 7.7.4
  _:
   '2 || 3 || 4 || 5,^5.5.0,^5.6.0': 5.7.1
   7.0.0: 7.0.0
   '^6.0.0,^6.3.0,^6.3.1': 6.3.1
-  '^7.1.1,^7.2.1,^7.3.4,^7.3.5,^7.3.7,^7.5.3,^7.7.2': 7.7.3
- 7.7.3:
+  '^7.1.1,^7.2.1,^7.3.4,^7.3.5,^7.3.7,^7.5.3,^7.7.2': 7.7.4
+ 7.7.4:
   top: 1
-  $: sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==
-  _: 'https://registry.npmjs.com/semver/-/semver-7.7.3.tgz'
+  $: sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==
+  _: 'https://registry.npmjs.com/semver/-/semver-7.7.4.tgz'
  7.0.0:
   $: sha512-+GB6zVA9LWh6zovYQLALHwv5rb2PHGlJi3lfiqIHxR0uuwCgefcOJc59v9fv1w8GbStwxuuqqAjI9NMAOOgq1A==
   _: 'https://registry.npmjs.com/semver/-/semver-7.0.0.tgz'
@@ -8052,13 +8052,13 @@ xenv-config:
   $: sha512-ekNalpPoXwgWx1tE384qlkx8+17ANcpmCtak4TYK1EsEcM+0a607TqszGHv4sWMBuogM28XyJmzcRoIgMjABIA==
   _: 'https://registry.npmjs.com/xenv-config/-/xenv-config-1.3.1.tgz'
 xsh:
- _latest: 0.4.6-fynlocal_h
+ _latest: 0.4.6
  _:
-  ../../_w/xsh: 0.4.6-fynlocal_h
- 0.4.6-fynlocal_h:
+  '^0.4.5,^0.4.6': 0.4.6
+ 0.4.6:
   top: 1
-  $: local
-  _: ../../_w/xsh
+  $: sha512-CzY2CN5EoECp1gfULlGfnqFQ5MKh2fEM5zcgWM60PNSyCNn/7wGYXy9Zlgu7EDxhPi6Xb642wFlV+vj4qgDBGA==
+  _: 'https://registry.npmjs.com/xsh/-/xsh-0.4.6.tgz'
   dependencies:
    shcmd: ^0.8.4
 xstdout:
