@@ -15,9 +15,42 @@ const logger = require("./logger");
 
 class PkgBinLinkerBase {
   constructor(options) {
-    this._binDir = Path.join(options.outputDir, ".bin");
+    this._binDir = options.binDir || Path.join(options.outputDir, ".bin");
     this._fyn = options.fyn;
     this._linked = {};
+  }
+
+  async hasBinLink(sym) {
+    return Fs.exists(Path.join(this._binDir, sym));
+  }
+
+  async matchesBinPath(sym, target) {
+    const symlink = Path.join(this._binDir, sym);
+    const relTarget = Path.relative(this._binDir, target);
+    return this._isBinLinkTarget(symlink, relTarget);
+  }
+
+  async linkBinPath(target, sym, options = {}) {
+    const relTarget = Path.relative(this._binDir, target);
+    const symlink = Path.join(this._binDir, sym);
+
+    await this._mkBinDir();
+
+    if (options.overwrite) {
+      await this._rmBinLink(symlink);
+    }
+
+    if (!(await this._ensureGoodLink(symlink, relTarget))) {
+      await this._generateBinLink(relTarget, symlink);
+    }
+
+    await this._chmod(target);
+
+    return relTarget;
+  }
+
+  async removeBinLink(sym) {
+    await this._rmBinLink(Path.join(this._binDir, sym));
   }
 
   async clearExtras() {

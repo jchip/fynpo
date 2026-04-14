@@ -46,14 +46,18 @@ class PkgBinLinkerWin32 extends PkgBinLinkerBase {
   // Platform specific
   //
 
-  async _ensureGoodLink(symlink, target) {
+  async _isBinLinkTarget(symlink, target) {
     try {
       const existTarget = (await Fs.readFile(symlink)).toString();
-      if (existTarget.indexOf(target) >= 0) {
-        return true;
-      }
+      return existTarget.indexOf(target) >= 0;
     } catch (err) {
-      //
+      return false;
+    }
+  }
+
+  async _ensureGoodLink(symlink, target) {
+    if (await this._isBinLinkTarget(symlink, target)) {
+      return true;
     }
 
     await this._rmBinLink(symlink);

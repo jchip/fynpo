@@ -6,6 +6,7 @@ const Os = require("os");
 const Fs = require("./util/file-ops");
 const Fyn = require("./fyn");
 const PkgInstaller = require("./pkg-installer");
+const PkgBinLinker = require("./pkg-bin-linker");
 const logger = require("./logger");
 const fynTil = require("./util/fyntil");
 const lockfile = require("lockfile");
@@ -73,6 +74,25 @@ class FynGlobal {
       },
       _fynpo: false
     });
+  }
+
+  _getBinLinker() {
+    if (!this._binLinker) {
+      this._binLinker = new PkgBinLinker({ binDir: this.globalBinDir });
+    }
+
+    return this._binLinker;
+  }
+
+  _getVersionBinTargets(versionInfo) {
+    const binDir = Path.join(this.packagesDir, versionInfo.dir, "node_modules", ".bin");
+    const bins = {};
+
+    for (const binName of versionInfo.bins || []) {
+      bins[binName] = Path.join(binDir, binName);
+    }
+
+    return bins;
   }
 
   /**
@@ -491,26 +511,17 @@ class FynGlobal {
    * @param {boolean} force - If true, overwrite existing bins
    */
   async linkBins(gId, bins, force = false) {
-    await Fs.$.mkdirp(this.globalBinDir);
+    const binLinker = this._getBinLinker();
 
     for (const [binName, binPath] of Object.entries(bins)) {
-      const globalBinPath = Path.join(this.globalBinDir, binName);
-
       // Check if bin already exists
-      if (await Fs.exists(globalBinPath)) {
-        if (force) {
-          // Remove existing symlink
-          await Fs.unlink(globalBinPath);
-        } else {
-          const owner = await this.findBinOwner(binName);
-          logger.warn(`${binName} already exists (from ${owner || "unknown"}), skipping`);
-          continue;
-        }
+      if (!force && (await binLinker.hasBinLink(binName))) {
+        const owner = await this.findBinOwner(binName);
+        logger.warn(`${binName} already exists (from ${owner || "unknown"}), skipping`);
+        continue;
       }
 
-      // Create relative symlink
-      const relativePath = Path.relative(this.globalBinDir, binPath);
-      await Fs.symlink(relativePath, globalBinPath);
+      await binLinker.linkBinPath(binPath, binName, { overwrite: force });
     }
   }
 
@@ -760,12 +771,13 @@ class FynGlobal {
     const versionInfo = versions.find(v => v.version === version);
     if (!versionInfo) return;
 
-    for (const binName of versionInfo.bins || []) {
-      const binPath = Path.join(this.globalBinDir, binName);
+    const binLinker = this._getBinLinker();
+    const bins = this._getVersionBinTargets(versionInfo);
+
+    for (const [binName, binPath] of Object.entries(bins)) {
       try {
-        const linkTarget = await Fs.readlink(binPath);
-        if (linkTarget.includes(versionInfo.dir)) {
-          await Fs.unlink(binPath);
+        if (await binLinker.matchesBinPath(binName, binPath)) {
+          await binLinker.removeBinLink(binName);
         }
       } catch (err) {
         // Ignore errors

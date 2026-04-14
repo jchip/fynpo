@@ -21,14 +21,17 @@ class PkgBinLinker extends PkgBinLinkerBase {
   // Platform specific
   //
 
-  async _ensureGoodLink(symlink, target) {
+  async _isBinLinkTarget(symlink, target) {
     try {
-      const existTarget = await Fs.readlink(symlink);
-      if (existTarget === target) {
-        return true;
-      }
+      return (await Fs.readlink(symlink)) === target;
     } catch (err) {
-      //
+      return false;
+    }
+  }
+
+  async _ensureGoodLink(symlink, target) {
+    if (await this._isBinLinkTarget(symlink, target)) {
+      return true;
     }
 
     await this._rmBinLink(symlink);
