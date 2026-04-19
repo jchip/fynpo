@@ -198,6 +198,46 @@ class PkgDepLocker {
     return Boolean(this._enable && this._lockData[item.name]);
   }
 
+  normalizeTarballUrl(item, tarballUrl) {
+    if (!tarballUrl || !this._fyn || !this._fyn._pkgSrcMgr) {
+      return tarballUrl;
+    }
+
+    const currentRegistry = this._fyn._pkgSrcMgr.getRegistryUrl(item.name);
+    if (!currentRegistry || tarballUrl.startsWith(currentRegistry)) {
+      return tarballUrl;
+    }
+
+    try {
+      const currentUrl = new URL(currentRegistry);
+      const lockedUrl = new URL(tarballUrl);
+      const currentPath = decodeURIComponent(currentUrl.pathname);
+      const lockedPath = decodeURIComponent(lockedUrl.pathname);
+
+      if (lockedPath.startsWith(currentPath)) {
+        lockedUrl.protocol = currentUrl.protocol;
+        lockedUrl.username = currentUrl.username;
+        lockedUrl.password = currentUrl.password;
+        lockedUrl.host = currentUrl.host;
+        return lockedUrl.toString();
+      }
+
+      const tarballMarker = `/${item.name}/-/`;
+      const markerIndex = lockedPath.indexOf(tarballMarker);
+
+      if (markerIndex >= 0) {
+        const rebuiltUrl = new URL(lockedPath.slice(markerIndex + 1), currentRegistry);
+        rebuiltUrl.search = lockedUrl.search;
+        rebuiltUrl.hash = lockedUrl.hash;
+        return rebuiltUrl.toString();
+      }
+    } catch (err) {
+      return tarballUrl;
+    }
+
+    return tarballUrl;
+  }
+
   //
   // convert from fyn lock format to npm meta format
   //
@@ -225,21 +265,7 @@ class PkgDepLocker {
           } else {
             // When loading from lockfile, the tarball URL may have an old registry host/port
             // We need to update it to use the current registry to avoid connection errors
-            let tarballUrl = vpkg._;
-            if (tarballUrl && this._fyn && this._fyn._pkgSrcMgr) {
-              const currentRegistry = this._fyn._pkgSrcMgr.getRegistryUrl(item.name);
-              // Check if the tarball URL starts with a different registry
-              // Format: http://host:port/package/-/package-version.tgz
-              const urlMatch = tarballUrl.match(/^(https?:\/\/[^\/]+)(\/.*)/);
-              if (urlMatch && currentRegistry) {
-                const lockRegistry = urlMatch[1] + "/";
-                const tarballPath = urlMatch[2];
-                // If registries don't match, use current registry
-                if (lockRegistry !== currentRegistry) {
-                  tarballUrl = currentRegistry.replace(/\/$/, "") + tarballPath;
-                }
-              }
-            }
+            const tarballUrl = this.normalizeTarballUrl(item, vpkg._);
             vpkg.dist = {
               integrity: fyntil.shaToIntegrity(vpkg.$),
               tarball: tarballUrl
