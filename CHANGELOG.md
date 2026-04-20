@@ -1,3 +1,37 @@
+# 4/20/2026
+
+## Packages
+
+### Directly Updated
+
+-   `fyn@2.1.1` `(2.0.4 => 2.1.1)`
+-   `pkg-preper@0.1.7` `(0.1.6 => 0.1.7)`
+
+### Fynpo Updated
+
+-   `fynpo@2.1.1` `(2.1.1 => 2.1.1)`
+
+## Commits
+
+-   `packages/bluebird`
+
+    -   fyn: support overrides [commit](https://github.com/electrode-io/fynpo/commit/c0f3084050ca04d3c94eccaca6ac5dd019bd3fcf)
+
+-   `packages/fyn`
+
+    -   chore: npmjs.org [commit](https://github.com/electrode-io/fynpo/commit/acacfa128d764943b61053e41edb2120152bef4a)
+    -   fix fyn lockfile tarball registry rewrite [commit](https://github.com/electrode-io/fynpo/commit/45006845ad44fb69b715c11fe7e94a8447b7b226)
+    -   fix(fyn): use shared global bin linker [commit](https://github.com/electrode-io/fynpo/commit/ac788806381df814bfd1607e02e068a4fe01eb79)
+    -   fyn: fix pacote cache key [commit](https://github.com/electrode-io/fynpo/commit/b87afcad3be8674479391ca8d6ea9d3cf945872f)
+    -   fyn: detect Bun runtime for global package version directories [commit](https://github.com/electrode-io/fynpo/commit/3ee576f2d8385b52492c10735aa2167fc3068049)
+    -   fyn: support overrides [commit](https://github.com/electrode-io/fynpo/commit/c0f3084050ca04d3c94eccaca6ac5dd019bd3fcf)
+
+-   `packages/pkg-preper`
+
+    -   fyn: fix pacote cache key [commit](https://github.com/electrode-io/fynpo/commit/b87afcad3be8674479391ca8d6ea9d3cf945872f)
+    -   fyn: detect Bun runtime for global package version directories [commit](https://github.com/electrode-io/fynpo/commit/3ee576f2d8385b52492c10735aa2167fc3068049)
+    -   fyn: support overrides [commit](https://github.com/electrode-io/fynpo/commit/c0f3084050ca04d3c94eccaca6ac5dd019bd3fcf)
+
 # 12/2/2025
 
 ## Packages
