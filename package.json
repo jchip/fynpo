@@ -34,10 +34,16 @@
     "url": "https://github.com/electrode-io/fynpo/issues"
   },
   "devDependencies": {
-    "fyn": "^2.0.3",
-    "fynpo": "^2.0.3"
+    "fyn": "^2.1.1",
+    "fynpo": "^2.1.1"
   },
   "dependencies": {
     "tsx": "^4.20.6"
+  },
+  "fyn": {
+    "devDependencies": {
+      "fyn": false,
+      "fynpo": false
+    }
   }
 }
