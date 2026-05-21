@@ -1404,7 +1404,31 @@ ${item.depPath.join(" > ")}`
               throw new Error(failMetaMsg(item.name));
             }
             const updated = this._fyn.depLocker.update(item, meta);
-            return this._resolveWithMeta({ item, meta: updated, force: true, noLocal: true });
+            // First try without force: the meta may be a stale local cacache
+            // packument (e.g. surfaced via a parallel install's meta-mem signal)
+            // that doesn't contain a version satisfying item.semver. If so,
+            // bypass the cache and re-fetch directly from the registry before
+            // giving up.
+            const r = this._resolveWithMeta({ item, meta: updated, force: false, noLocal: true });
+            if (r) {
+              return r;
+            }
+            logger.debug(
+              `cached meta for ${item.name} has no version satisfying ${item.semver}` +
+                `; refetching from registry`
+            );
+            return this._pkgSrcMgr.fetchMeta(item, true).then(freshMeta => {
+              if (!freshMeta) {
+                throw new Error(failMetaMsg(item.name));
+              }
+              const freshUpdated = this._fyn.depLocker.update(item, freshMeta);
+              return this._resolveWithMeta({
+                item,
+                meta: freshUpdated,
+                force: true,
+                noLocal: true
+              });
+            });
           })
           .catch(err => {
             // item is not optional => fail

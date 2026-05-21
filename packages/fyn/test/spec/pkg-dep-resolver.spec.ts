@@ -4,8 +4,10 @@ const Fs = require("fs");
 const Yaml = require("js-yaml");
 const Path = require("path");
 const Fyn = require("../../lib/fyn");
+const PkgSrcManager = require("../../lib/pkg-src-manager");
 const mockNpm = require("../fixtures/mock-npm");
 const expect = require("chai").expect;
+const sinon = require("sinon");
 const _ = require("lodash");
 const logger = require("../../lib/logger");
 const chalk = require("chalk");
@@ -200,6 +202,68 @@ describe("pkg-dep-resolver", function() {
   }).timeout(10000);
 
   it("should resolve with the `latest` tag", () => {});
+
+  it("should refetch meta when cached meta has no satisfying version", () => {
+    // Simulate the race where another fyn process has POSTed to meta-mem for
+    // a stale local cacache entry. The first fetchMeta returns a packument
+    // missing the version we need; the resolver must detect the miss and
+    // call fetchMeta again with forceRefresh=true to bypass the cache.
+    const realFetchMeta = PkgSrcManager.prototype.fetchMeta;
+    const stub = sinon
+      .stub(PkgSrcManager.prototype, "fetchMeta")
+      .callsFake(function(item, forceRefresh) {
+        if (item.name === "mod-a" && !forceRefresh) {
+          // Stale packument: missing the 1.1.x versions the resolver needs.
+          return Promise.resolve({
+            name: "mod-a",
+            "dist-tags": { latest: "1.0.3" },
+            versions: {
+              "0.1.0": {
+                name: "mod-a",
+                version: "0.1.0",
+                dist: { shasum: "x", tarball: "http://example/mod-a-0.1.0.tgz" }
+              },
+              "1.0.3": {
+                name: "mod-a",
+                version: "1.0.3",
+                dist: { shasum: "x", tarball: "http://example/mod-a-1.0.3.tgz" }
+              }
+            }
+          });
+        }
+        return realFetchMeta.call(this, item, forceRefresh);
+      });
+
+    const fyn = new Fyn({
+      opts: {
+        registry: `http://localhost:${server.info.port}`,
+        pkgFile: false,
+        pkgData: {
+          name: "test",
+          version: "1.0.0",
+          dependencies: {
+            "mod-a": "^1.1.0"
+          }
+        },
+        fynDir,
+        cwd: fynDir,
+        ignoreDist: true
+      }
+    });
+
+    return fyn
+      .resolveDependencies()
+      .then(() => {
+        const calls = stub.getCalls().filter(c => c.args[0] && c.args[0].name === "mod-a");
+        expect(calls.length).to.be.at.least(2);
+        const refreshed = calls.filter(c => c.args[1] === true);
+        expect(refreshed.length, "expected a fetchMeta refetch with forceRefresh=true").to.be.at.least(1);
+        const resolved = Object.keys(fyn._data.pkgs["mod-a"] || {});
+        const found11x = resolved.some(v => v.startsWith("1.1"));
+        expect(found11x, `expected a 1.1.x version, got ${resolved.join(",")}`).to.equal(true);
+      })
+      .finally(() => stub.restore());
+  }).timeout(10000);
 
   describe("overrides", function() {
     it("should apply simple package override", async () => {

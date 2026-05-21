@@ -718,17 +718,19 @@ class PkgSrcManager {
     };
   }
 
-  fetchMeta(item) {
+  fetchMeta(item, forceRefresh = false) {
     const pkgName = item.name;
     const pkgKey = `${pkgName}@${item.urlType ? item.urlType : "semver"}`;
 
-    if (this._meta[pkgKey]) {
-      return Promise.resolve(this._meta[pkgKey]);
-    }
+    if (!forceRefresh) {
+      if (this._meta[pkgKey]) {
+        return Promise.resolve(this._meta[pkgKey]);
+      }
 
-    const inflight = this._inflights.meta.get(pkgKey);
-    if (inflight) {
-      return inflight;
+      const inflight = this._inflights.meta.get(pkgKey);
+      if (inflight) {
+        return inflight;
+      }
     }
 
     const packumentUrl = this.makePackumentUrl(pkgName);
@@ -840,9 +842,11 @@ class PkgSrcManager {
     let cacheMemoized = false;
     const metaMemoizeUrl = this._fyn._options.metaMemoize;
 
-    const promise = (item.urlType
+    const promise = (item.urlType || forceRefresh
       ? // when the semver is a url then the meta is not from npm registry and
-        // we can't use the cache for registry
+        // we can't use the cache for registry.
+        // when forceRefresh, skip the local cacache + meta-mem path so we go
+        // straight to a fresh registry fetch via queueMetaFetchRequest.
         Promise.resolve()
       : loadBestCachedPackument(true)
     )
@@ -918,9 +922,14 @@ class PkgSrcManager {
         return meta;
       })
       .finally(() => {
-        this._inflights.meta.remove(pkgKey);
+        if (!forceRefresh) {
+          this._inflights.meta.remove(pkgKey);
+        }
       });
 
+    if (forceRefresh) {
+      return promise;
+    }
     return this._inflights.meta.add(pkgKey, promise);
   }
 
