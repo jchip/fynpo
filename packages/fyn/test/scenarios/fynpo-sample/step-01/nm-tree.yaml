@@ -4,7 +4,8 @@ node_modules:
     _:
       pkg2:
         1.0.0-fynlocal_h:
-          pkg2:
-            package.json:
-              id: pkg2@1.0.0-fynlocal_h
-  pkg2: "-> .f/_/pkg2/1.0.0-fynlocal_h/pkg2"
+          node_modules:
+            pkg2:
+              package.json:
+                id: pkg2@1.0.0-fynlocal_h
+  pkg2: '-> .f/_/pkg2/1.0.0-fynlocal_h/node_modules/pkg2'

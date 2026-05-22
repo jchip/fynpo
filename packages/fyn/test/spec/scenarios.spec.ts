@@ -239,10 +239,19 @@ const debug = false;
               console.log(`directory node_modules tree:\n${Yaml.dump(nmTree, 2)}`);
             }
 
-            const expectNmTree = Yaml.safeLoad(
-              Fs.readFileSync(Path.join(stepDir, "nm-tree.yaml")).toString()
+            // when running the suite with FYN_SHORT_PKG_DIR=1, the on-disk store
+            // ends in <version>/<name> instead of <version>/node_modules/<name>;
+            // compare against (or regenerate) the parallel short fixture.
+            const nmTreeFile = Path.join(
+              stepDir,
+              process.env.FYN_SHORT_PKG_DIR ? "nm-tree-short.yaml" : "nm-tree.yaml"
             );
-            expect(nmTree).to.deep.equal(expectNmTree);
+            if (process.env.UPDATE_NM_TREE) {
+              Fs.writeFileSync(nmTreeFile, Yaml.dump(nmTree, { indent: 2 }));
+            } else {
+              const expectNmTree = Yaml.safeLoad(Fs.readFileSync(nmTreeFile).toString());
+              expect(nmTree).to.deep.equal(expectNmTree);
+            }
             verifyLock(cwd, stepDir);
           })
           .catch(err => {
@@ -358,6 +367,19 @@ const debug = false;
           Fs.rmSync(Path.join(cwd, "fyn-lock.yaml"), { recursive: true, force: true });
           // Don't clean .fyn here - let copyCache handle it
           Fs.rmSync(Path.join(cwd, "node_modules"), { recursive: true, force: true });
+          // Steps with pkgDir install into a sub-cwd (e.g. ".ignore-dir", "@scope/pkg-2");
+          // clean stale node_modules/fyn-lock there too, but preserve any committed package.json.
+          const stepDirs = Fs.readdirSync(cwd).filter(x => x.startsWith("step-"));
+          const seen = new Set();
+          for (const step of stepDirs) {
+            const stepAction = optionalRequire(Path.join(cwd, step), { default: {} });
+            if (stepAction.pkgDir && !seen.has(stepAction.pkgDir)) {
+              seen.add(stepAction.pkgDir);
+              const subDir = Path.join(cwd, stepAction.pkgDir);
+              Fs.rmSync(Path.join(subDir, "node_modules"), { recursive: true, force: true });
+              Fs.rmSync(Path.join(subDir, "fyn-lock.yaml"), { recursive: true, force: true });
+            }
+          }
         };
 
         const copyCacheIfNeeded = () => {

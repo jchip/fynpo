@@ -655,12 +655,16 @@ class PkgInstaller {
     for (const pkgDir of removed) {
       let dir = pkgDir;
       try {
-        // first remove the scope dir
+        // long form has an extra node_modules level between the version dir
+        // and the package's <name> dir; short form does not.
+        if (!this._fyn._shortPkgDir) {
+          dir = Path.dirname(dir);
+          await Fs.rmdir(dir);
+        }
         if (pkgName.startsWith("@")) {
           dir = Path.dirname(dir);
           await Fs.rmdir(dir);
         }
-        // next remove the version dir
         dir = Path.dirname(dir);
         await Fs.rmdir(dir);
       } catch (err) {

@@ -40,7 +40,7 @@
       {
         "fromPkg": {
           "name": "pkg-preper",
-          "version": "0.1.6",
+          "version": "0.1.7",
           "path": "packages/pkg-preper"
         },
         "onPkg": {
@@ -50,10 +50,10 @@
         },
         "depSection": "dep",
         "indirectSteps": [
-          "pkg-preper@0.1.6(dep)"
+          "pkg-preper@0.1.7(dep)"
         ]
       }
     ]
   },
-  "__timestamp": 1775173271765
+  "__timestamp": 1779475834109
 }

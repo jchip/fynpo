@@ -1,22 +1,24 @@
 node_modules:
   .bin:
-    bin2: '-> ../.f/_/mod-g/3.0.0/mod-g/bin/bin2.js'
-    binx: '-> ../.f/_/mod-g/3.0.0/mod-g/bin/binx.js'
+    bin2: '-> ../.f/_/mod-g/3.0.0/node_modules/mod-g/bin/bin2.js'
+    binx: '-> ../.f/_/mod-g/3.0.0/node_modules/mod-g/bin/binx.js'
   .f:
     .fyn.json: file
     _:
       mod-g:
         3.0.0:
-          mod-g:
-            bin:
-              bin2.js: file
-              binx.js: file
-            package.json:
-              id: mod-g@3.0.0
+          node_modules:
+            mod-g:
+              bin:
+                bin2.js: file
+                binx.js: file
+              package.json:
+                id: mod-g@3.0.0
       mod-i:
         1.0.0:
-          mod-i:
-            package.json:
-              id: mod-i@1.0.0
-  mod-g: '-> .f/_/mod-g/3.0.0/mod-g'
-  mod-i: '-> .f/_/mod-i/1.0.0/mod-i'
+          node_modules:
+            mod-i:
+              package.json:
+                id: mod-i@1.0.0
+  mod-g: '-> .f/_/mod-g/3.0.0/node_modules/mod-g'
+  mod-i: '-> .f/_/mod-i/1.0.0/node_modules/mod-i'

@@ -50,9 +50,12 @@ class Fyn {
       logger.info("dep lock time set to", this._lockTime.toString());
     }
     this._installConfig = { time: 0 };
-    // set this env for more learning and research on ensuring
-    // package dir name matches package name.
-    this._noPkgDirMatchName = Boolean(process.env.FYN_NO_PKG_DIR_MATCH_NAME);
+    // when true, store path is .f/_/<name>/<version>/<name>;
+    // when false (default), it's .f/_/<name>/<version>/node_modules/<name>
+    // so the package's real path ends in node_modules/<name> for bundlers
+    // (turbopack et al) that use that as the package boundary marker.
+    // can be overridden by an existing install's recorded value in .fyn.json.
+    this._shortPkgDir = Boolean(process.env.FYN_SHORT_PKG_DIR);
     if (!_fynpo) {
       this._fynpo = {};
     }
@@ -273,6 +276,18 @@ class Fyn {
             );
           }
           this._layout = layout;
+        }
+        // absent shortPkgDir on an existing .fyn.json means it was written before
+        // the long-pkg-dir layout shipped, i.e. the store is in short form.
+        const recordedShort =
+          fynInstallConfig.shortPkgDir === undefined ? true : fynInstallConfig.shortPkgDir;
+        if (recordedShort !== this._shortPkgDir) {
+          if (process.env.FYN_SHORT_PKG_DIR !== undefined) {
+            logger.warn(
+              `Forcing pkg-dir to ${recordedShort ? "short" : "long"} form because your existing node_modules uses that. To change it, please remove node_modules first.`
+            );
+          }
+          this._shortPkgDir = recordedShort;
         }
         this._installConfig = { ...this._installConfig, ...fynInstallConfig, layout };
       } catch (err) {
@@ -531,7 +546,8 @@ class Fyn {
         time: Date.now() + 5,
         centralDir,
         production: this.production,
-        layout: this._layout
+        layout: this._layout,
+        shortPkgDir: this._shortPkgDir
         // not a good idea to save --run-npm options to install config because
         // future fyn install will automatically run them and would be unexpected.
         // if fynpo bootstrap should run certain npm scripts, user should set those
@@ -892,17 +908,16 @@ class Fyn {
       return Path.join(this.getOutputDir(), name);
     }
 
-    // it's important that each package is directly extracted to a directory
-    // that has name exactly the same as the package because there are code
-    // and tools that depend on that.
-    // for example: webpack module de-duping seems to depend on that, otherwise
-    // the bundle bloats.
+    // each package's real path ends in node_modules/<name> so tools (turbopack,
+    // webpack, etc) that use the node_modules/<name> suffix as a package
+    // boundary marker can identify the package root.
+    // short form (.../<version>/<name>) is preserved for legacy installs and
+    // can be opted into for new installs via FYN_SHORT_PKG_DIR=1.
     if (version) {
-      if (this._noPkgDirMatchName) {
-        return Path.join(this.getOutputDir(), FV_DIR, "_", name, version);
-      } else {
+      if (this._shortPkgDir) {
         return Path.join(this.getOutputDir(), FV_DIR, "_", name, version, name);
       }
+      return Path.join(this.getOutputDir(), FV_DIR, "_", name, version, "node_modules", name);
     }
 
     return Path.join(this.getOutputDir(), FV_DIR, "_", name);

@@ -1,27 +1,30 @@
 node_modules:
   .bin:
-    bin1: "-> ../.f/_/mod-h/1.0.0/mod-h/bin/bin1.js"
-    bin2: "-> ../.f/_/mod-h/1.0.0/mod-h/bin/bin2.js"
+    bin1: '-> ../.f/_/mod-h/1.0.0/node_modules/mod-h/bin/bin1.js'
+    bin2: '-> ../.f/_/mod-h/1.0.0/node_modules/mod-h/bin/bin2.js'
   .f:
     .fyn.json: file
     _:
       e1:
         1.0.0-fynlocal_h:
-          e1:
-            index.js: file
-            index.js.fyn.map: file
-            node_modules:
-              mod-h: "-> ../../../../mod-h/3.0.11/mod-h"
-            package.json:
-              id: e1@1.0.0-fynlocal_h
+          node_modules:
+            e1:
+              index.js: file
+              index.js.fyn.map: file
+              node_modules:
+                mod-h: '-> ../../../../../mod-h/3.0.11/node_modules/mod-h'
+              package.json:
+                id: e1@1.0.0-fynlocal_h
       mod-h:
         1.0.0:
-          mod-h:
-            package.json:
-              id: mod-h@1.0.0
+          node_modules:
+            mod-h:
+              package.json:
+                id: mod-h@1.0.0
         3.0.11:
-          mod-h:
-            package.json:
-              id: mod-h@3.0.11
-  e1: "-> .f/_/e1/1.0.0-fynlocal_h/e1"
-  mod-h: "-> .f/_/mod-h/1.0.0/mod-h"
+          node_modules:
+            mod-h:
+              package.json:
+                id: mod-h@3.0.11
+  e1: '-> .f/_/e1/1.0.0-fynlocal_h/node_modules/e1'
+  mod-h: '-> .f/_/mod-h/1.0.0/node_modules/mod-h'

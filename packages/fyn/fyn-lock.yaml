@@ -24,7 +24,7 @@ $pkg:
   minimatch: ^3.0.4
   mississippi: ^4.0.0
   nix-clap: ^2.4.4
-  npm-packlist: ^10.0.3
+  npm-packlist: ../../_w/npm-packlist
   npm-registry-fetch: ^19.1.0
   opfs: ^1.1.1
   optional-require: ^1.1.10
@@ -4542,12 +4542,12 @@ ignore:
   $: sha512-cyFDKrqc/YdcWFniJhzI42+AzS+gNwmUzOSFcRCQYwySuBBBy/KjuxWLZ/FHEH6Moq1NizMOBWyTcv8O4OZIMg==
   _: 'https://registry.npmjs.org/ignore/-/ignore-4.0.6.tgz'
 ignore-walk:
- _latest: 8.0.0
+ _latest: 8.0.0-fynlocal_h
  _:
-  ^8.0.0: 8.0.0
- 8.0.0:
-  $: sha512-FCeMZT4NiRQGh+YkeKMtWrOmBgWjHjMJ26WQWrRQyoyzqevdaGSakUaJW5xQYmjLlUVk2qUnCjYVBax9EKKg8A==
-  _: 'https://registry.npmjs.org/ignore-walk/-/ignore-walk-8.0.0.tgz'
+  ../ignore-walk: 8.0.0-fynlocal_h
+ 8.0.0-fynlocal_h:
+  $: local
+  _: ../../_w/ignore-walk
   dependencies:
    minimatch: ^10.0.3
 import-fresh:
@@ -5895,13 +5895,13 @@ npm-package-arg:
    semver: ^7.3.5
    validate-npm-package-name: ^6.0.0
 npm-packlist:
- _latest: 10.0.4
+ _latest: 10.0.3-fynlocal_h
  _:
-  '^10.0.1,^10.0.3': 10.0.4
- 10.0.4:
+  ../../_w/npm-packlist: 10.0.3-fynlocal_h
+ 10.0.3-fynlocal_h:
   top: 1
-  $: sha512-uMW73iajD8hiH4ZBxEV3HC+eTnppIqwakjOYuvgddnalIw2lJguKviK1pcUJDlIWm1wSJkchpDZDSVVsZEYRng==
-  _: 'https://registry.npmjs.org/npm-packlist/-/npm-packlist-10.0.4.tgz'
+  $: local
+  _: ../../_w/npm-packlist
   dependencies:
    ignore-walk: ^8.0.0
    proc-log: ^6.0.0
@@ -6865,16 +6865,16 @@ schema-utils:
    ajv-keywords: ^3.5.2
    '@types/json-schema': ^7.0.5
 semver:
- _latest: 7.7.4
+ _latest: 7.8.0
  _:
   '2 || 3 || 4 || 5,^5.5.0,^5.6.0': 5.7.1
   7.0.0: 7.0.0
   '^6.0.0,^6.3.0,^6.3.1': 6.3.1
-  '^7.1.1,^7.2.1,^7.3.4,^7.3.5,^7.3.7,^7.5.3,^7.7.2': 7.7.4
- 7.7.4:
+  '^7.1.1,^7.2.1,^7.3.4,^7.3.5,^7.3.7,^7.5.3,^7.7.2': 7.8.0
+ 7.8.0:
   top: 1
-  $: sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==
-  _: 'https://registry.npmjs.org/semver/-/semver-7.7.4.tgz'
+  $: sha512-AcM7dV/5ul4EekoQ29Agm5vri8JNqRyj39o0qpX6vDF2GZrtutZl5RwgD1XnZjiTAfncsJhMI48QQH3sN87YNA==
+  _: 'https://registry.npmjs.org/semver/-/semver-7.8.0.tgz'
  7.0.0:
   $: sha512-+GB6zVA9LWh6zovYQLALHwv5rb2PHGlJi3lfiqIHxR0uuwCgefcOJc59v9fv1w8GbStwxuuqqAjI9NMAOOgq1A==
   _: 'https://registry.npmjs.org/semver/-/semver-7.0.0.tgz'
