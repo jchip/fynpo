@@ -19,6 +19,7 @@ async function main() {
   try {
     await load().fynpoMain();
   } catch (err) {
+    console.error("fynpo failed\n\n", err && err.stack || err);
     process.exit(1);
   }
 }
