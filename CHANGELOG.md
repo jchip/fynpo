@@ -1,3 +1,32 @@
+# 5/22/2026
+
+## Packages
+
+### Directly Updated
+
+-   `fyn@2.1.2` `(2.1.1 => 2.1.2)`
+-   `pkg-preper@0.1.8` `(0.1.7 => 0.1.8)`
+
+### Fynpo Updated
+
+-   `fynpo@2.1.2` `(2.1.1 => 2.1.2)`
+
+## Commits
+
+-   `packages/fyn`
+
+    -   fyn(fix): package dir should always have node_modules prefix [commit](https://github.com/electrode-io/fynpo/commit/eead8c3ec502842889f78680b981560aacd88905)
+    -   fix(fyn): retry meta fetch with forceRefresh when cached packument is stale [commit](https://github.com/electrode-io/fynpo/commit/03320d401e54d324891eed961394e1c6f4ab0819)
+    -   chore: update top level dep [commit](https://github.com/electrode-io/fynpo/commit/1f247991de7eb6567d7ae73c237b253310d726e8)
+
+-   `packages/pkg-preper`
+
+    -   fyn(fix): package dir should always have node_modules prefix [commit](https://github.com/electrode-io/fynpo/commit/eead8c3ec502842889f78680b981560aacd88905)
+
+-   `notes`
+
+    -   fyn(fix): package dir should always have node_modules prefix [commit](https://github.com/electrode-io/fynpo/commit/eead8c3ec502842889f78680b981560aacd88905)
+
 # 4/20/2026
 
 ## Packages
