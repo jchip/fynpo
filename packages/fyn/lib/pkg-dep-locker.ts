@@ -10,6 +10,7 @@ const Fs = require("./util/file-ops");
 const _ = require("lodash");
 const chalk = require("chalk");
 const simpleSemverCompare = require("./util/semver").simpleCompare;
+const Semver = require("semver");
 const Yaml = require("yamljs");
 const sortObjKeys = require("./util/sort-obj-keys");
 const {
@@ -255,7 +256,13 @@ class PkgDepLocker {
       const versions = {};
       _.each(sorted, version => {
         const vpkg = locked[version];
-        if (!_.isEmpty(vpkg) && vpkg._valid !== false) {
+        const isLocalVpkg = vpkg && vpkg.$ === "local";
+        // A corrupt lock (e.g. from a rebase/merge or a partial install) can carry a
+        // bogus version key, or a version whose recorded dependencies point at versions
+        // that don't exist anywhere in the lock. Trusting either yields a broken install.
+        const badVersionKey = !isLocalVpkg && !Semver.valid(version);
+        const badDeps = vpkg && vpkg.dependencies && !this._depsResolvable(vpkg.dependencies);
+        if (!_.isEmpty(vpkg) && vpkg._valid !== false && !badVersionKey && !badDeps) {
           if (vpkg.$ === "local") {
             vpkg.local = true;
             vpkg.dist = {
@@ -280,6 +287,17 @@ class PkgDepLocker {
           }
           versions[version] = vpkg;
         } else {
+          if (badVersionKey) {
+            logger.error(
+              `lockfile entry for ${item.name} has invalid version key "${version}"` +
+                ` - ignoring and re-resolving from registry`
+            );
+          } else if (badDeps) {
+            logger.error(
+              `lockfile entry ${item.name}@${version} has dependencies not satisfiable within` +
+                ` the lock (corrupt lock) - ignoring and re-resolving from registry`
+            );
+          }
           valid = false;
         }
       });
@@ -303,6 +321,47 @@ class PkgDepLocker {
     }
 
     return valid && locked;
+  }
+
+  //
+  // Check that every recorded dependency pin can be resolved within the lock data.
+  // A healthy fyn lock is self-contained: every locked package's dependency specs are
+  // satisfied by some version that also has a lock entry. A pin that points at a version
+  // absent from the lock signals corruption (e.g. a version block's deps got swapped
+  // during a rebase/merge), so the entry must be dropped and re-resolved.
+  //
+  _depsResolvable(deps) {
+    for (const depName in deps) {
+      if (!this._isDepResolvable(depName, deps[depName])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  _isDepResolvable(depName, spec) {
+    const depLock = this._lockData[depName];
+    // dep not locked here (resolved elsewhere / fresh) - nothing to validate against
+    if (!depLock) return true;
+
+    let versions;
+    let rangeMap;
+    if (depLock.versions) {
+      // already converted to runtime format
+      versions = Object.keys(depLock.versions);
+      rangeMap = depLock[LOCK_RSEMVERS] || {};
+    } else {
+      // serialized fyn lock format
+      versions = Object.keys(depLock).filter(k => !k.startsWith("_"));
+      rangeMap = depLock._ || {};
+    }
+
+    // the spec was already recorded as a resolved semver mapping
+    if (Object.prototype.hasOwnProperty.call(rangeMap, spec)) return true;
+    // non-semver specs (url/git/file/tag) can't be checked here - don't flag them
+    if (!Semver.validRange(spec)) return true;
+
+    return versions.some(v => Semver.valid(v) && Semver.satisfies(v, spec));
   }
 
   /**
@@ -507,6 +566,18 @@ class PkgDepLocker {
       if (!Path.isAbsolute(filename)) filename = Path.resolve(filename);
       const data = (await Fs.readFile(filename)).toString();
       this._shaSum = this.shasum(data);
+
+      // A lockfile with git conflict markers (e.g. from a rebase/merge) is corrupt
+      // and cannot be trusted. Ignore it and re-resolve everything from the registry.
+      if (/^(<<<<<<<|=======|>>>>>>>)/m.test(data)) {
+        logger.error(
+          `lockfile ${filename} has git conflict markers - ignoring it and re-resolving from registry`
+        );
+        this._shaSum = Date.now();
+        this._lockData = {};
+        return false;
+      }
+
       this._lockData = Yaml.parse(data);
 
       const basedir = Path.dirname(filename);
