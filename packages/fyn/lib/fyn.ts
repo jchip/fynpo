@@ -178,7 +178,15 @@ class Fyn {
     } else {
       centralDir = this._fynpo.config.centralDir;
       if (!centralDir) {
-        centralDir = Path.join(this._fynpo.dir, ".fynpo", "_store");
+        // when the monorepo is a git worktree, share the central store from the
+        // main worktree instead of duplicating a .fynpo store per worktree
+        const storeBaseDir = await fynTil.resolveGitMainWorktreeDir(this._fynpo.dir);
+        if (storeBaseDir !== this._fynpo.dir) {
+          logger.info(
+            `fynpo monorepo is a git worktree; sharing central store from main worktree ${storeBaseDir}`
+          );
+        }
+        centralDir = Path.join(storeBaseDir, ".fynpo", "_store");
       }
       logger.info(`Enabling central store by fynpo monorepo using dir ${centralDir}`);
     }

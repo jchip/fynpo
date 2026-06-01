@@ -1,6 +1,9 @@
 "use strict";
 
 const { expect } = require("chai");
+const fs = require("fs/promises");
+const os = require("os");
+const Path = require("path");
 const fyntil = require("../../../lib/util/fyntil");
 
 describe("fyntil", function() {
@@ -136,6 +139,67 @@ describe("fyntil", function() {
 
     it("should deny value that's not listed", () => {
       expect(fyntil.checkValueSatisfyRules(["foo"], "blah")).equal(false);
+    });
+  });
+
+  describe("resolveGitMainWorktreeDir", () => {
+    let tmpRoot;
+
+    beforeEach(async () => {
+      tmpRoot = await fs.mkdtemp(Path.join(os.tmpdir(), "fyn-wt-"));
+    });
+
+    afterEach(async () => {
+      if (tmpRoot) {
+        await fs.rm(tmpRoot, { recursive: true, force: true });
+      }
+    });
+
+    it("returns dir unchanged when not in a git repo", async () => {
+      const dir = Path.join(tmpRoot, "no-git");
+      await fs.mkdir(dir, { recursive: true });
+      expect(await fyntil.resolveGitMainWorktreeDir(dir)).to.equal(dir);
+    });
+
+    it("returns dir unchanged for a normal repo with a .git directory", async () => {
+      const dir = Path.join(tmpRoot, "normal");
+      await fs.mkdir(Path.join(dir, ".git"), { recursive: true });
+      expect(await fyntil.resolveGitMainWorktreeDir(dir)).to.equal(dir);
+    });
+
+    // create a main worktree with a linked worktree pointing back at it
+    const setupWorktree = async () => {
+      const mainTree = Path.join(tmpRoot, "main");
+      const wtGitDir = Path.join(mainTree, ".git", "worktrees", "wt1");
+      await fs.mkdir(wtGitDir, { recursive: true });
+      await fs.writeFile(Path.join(wtGitDir, "commondir"), "../..\n");
+
+      const worktree = Path.join(tmpRoot, "wt1");
+      await fs.mkdir(worktree, { recursive: true });
+      await fs.writeFile(Path.join(worktree, ".git"), `gitdir: ${wtGitDir}\n`);
+
+      return { mainTree, worktree };
+    };
+
+    it("resolves a linked worktree root to the main worktree", async () => {
+      const { mainTree, worktree } = await setupWorktree();
+      expect(await fyntil.resolveGitMainWorktreeDir(worktree)).to.equal(mainTree);
+    });
+
+    it("preserves the sub-path when the dir is below the worktree root", async () => {
+      const { mainTree, worktree } = await setupWorktree();
+      const sub = Path.join(worktree, "packages", "foo");
+      await fs.mkdir(sub, { recursive: true });
+      expect(await fyntil.resolveGitMainWorktreeDir(sub)).to.equal(
+        Path.join(mainTree, "packages", "foo")
+      );
+    });
+
+    it("returns dir unchanged when the .git file has no gitdir", async () => {
+      const worktree = Path.join(tmpRoot, "bad");
+      await fs.mkdir(worktree, { recursive: true });
+      await fs.writeFile(Path.join(worktree, ".git"), "not a gitdir line\n");
+      expect(await fyntil.resolveGitMainWorktreeDir(worktree)).to.equal(worktree);
     });
   });
 

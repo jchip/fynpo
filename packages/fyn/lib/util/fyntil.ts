@@ -111,6 +111,83 @@ const fyntil = {
     }
   },
 
+  /**
+   * Detect if `dir` lives inside a git linked worktree and, if so, resolve the
+   * equivalent directory in the repo's main worktree.
+   *
+   * fynpo uses `<monorepo>/.fynpo/_store` as the central package store. When the
+   * monorepo is checked out as a git linked worktree, each worktree would
+   * otherwise get its own `.fynpo` store - wasteful and slow. Pointing them at
+   * the main worktree's store lets all worktrees share one central store.
+   *
+   * @param dir directory to resolve (typically the fynpo monorepo top dir)
+   * @returns the equivalent directory in the main worktree, or `dir` unchanged
+   *          when it's not in a git repo or already in the main worktree.
+   */
+  async resolveGitMainWorktreeDir(dir) {
+    const startDir = Path.resolve(dir);
+
+    // walk up to locate the .git entry for the tree containing `dir`
+    let treeTop = startDir;
+    let gitPath;
+    let gitStat;
+    for (;;) {
+      try {
+        const p = Path.join(treeTop, ".git");
+        gitStat = await Fs.stat(p);
+        gitPath = p;
+        break;
+      } catch (err) {
+        if (err.code !== "ENOENT") {
+          throw err;
+        }
+      }
+      const parent = Path.dirname(treeTop);
+      if (parent === treeTop) {
+        break;
+      }
+      treeTop = parent;
+    }
+
+    // not in a git repo, or .git is a real directory (main / normal worktree)
+    if (!gitPath || gitStat.isDirectory()) {
+      return dir;
+    }
+
+    try {
+      // a linked worktree has a `.git` file: "gitdir: <repo>/.git/worktrees/<name>"
+      const gitFile = await Fs.readFile(gitPath, "utf8");
+      const m = gitFile.match(/^gitdir:\s*(.+)$/m);
+      if (!m) {
+        return dir;
+      }
+
+      let worktreeGitDir = m[1].trim();
+      if (!Path.isAbsolute(worktreeGitDir)) {
+        worktreeGitDir = Path.resolve(treeTop, worktreeGitDir);
+      }
+
+      // `commondir` points to the main repo's git dir (usually "../..")
+      const commondir = (await Fs.readFile(Path.join(worktreeGitDir, "commondir"), "utf8")).trim();
+      const commonGitDir = Path.isAbsolute(commondir)
+        ? commondir
+        : Path.resolve(worktreeGitDir, commondir);
+
+      // only handle the standard `<mainTree>/.git` layout
+      if (Path.basename(commonGitDir) !== ".git") {
+        return dir;
+      }
+
+      const mainTreeTop = Path.dirname(commonGitDir);
+      // preserve dir's position relative to its own worktree root
+      const rel = Path.relative(treeTop, startDir);
+      return Path.join(mainTreeTop, rel);
+    } catch (err) {
+      logger.debug(`resolveGitMainWorktreeDir failed for ${dir}: ${err.message}`);
+      return dir;
+    }
+  },
+
   removeAuthInfo(rcObj) {
     const rmObj = {};
     for (const key in rcObj) {
