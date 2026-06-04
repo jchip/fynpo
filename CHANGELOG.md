@@ -1,3 +1,21 @@
+# 6/4/2026
+
+## Packages
+
+-   `fyn@2.1.3` `(2.1.2 => 2.1.3)`
+-   `fynpo@2.1.3` `(2.1.2 => 2.1.3)`
+
+## Commits
+
+-   `packages/fyn`
+
+    -   fyn: share fynpo central store from git main worktree [commit](https://github.com/electrode-io/fynpo/commit/ee6d3f7511606db5941262cdbeac1a94e329e1f6)
+    -   fyn: detect bad semver [commit](https://github.com/electrode-io/fynpo/commit/076583dca5bfd87086d4d576f59763116c16d4a9)
+
+-   `packages/fynpo`
+
+    -   fynpo(fix): show start error [commit](https://github.com/electrode-io/fynpo/commit/41794d6cbff74a6bf32d5d5c4a38c0fa52086e67)
+
 # 5/22/2026
 
 ## Packages
