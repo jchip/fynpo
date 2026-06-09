@@ -105,13 +105,33 @@ describe("fyn-global", function() {
     expect(calls).to.deep.include({ type: "remove", binName: "foo" });
   });
 
-  it("should forward refreshMeta to the Fyn instance it creates", () => {
-    const fynGlobal = new FynGlobal({ globalDir, nodeVersion: "20", refreshMeta: true });
+  it("should propagate CLI fynOpts into the Fyn instance it creates", () => {
+    const fynGlobal = new FynGlobal({
+      globalDir,
+      nodeVersion: "20",
+      fynOpts: { refreshMeta: true, production: true }
+    });
 
     fynGlobal._createFyn(globalDir, false);
 
     const fynCall = calls.find(c => c.type === "fyn");
     expect(fynCall).to.exist;
     expect(fynCall.opts.refreshMeta).to.equal(true);
+    expect(fynCall.opts.production).to.equal(true);
+  });
+
+  it("should override global-install settings even if fynOpts sets them", () => {
+    const fynGlobal = new FynGlobal({
+      globalDir,
+      nodeVersion: "20",
+      fynOpts: { centralStore: false, lockfile: false, layout: "detail" }
+    });
+
+    fynGlobal._createFyn(globalDir, false);
+
+    const fynCall = calls.find(c => c.type === "fyn");
+    expect(fynCall.opts.centralStore).to.equal(true);
+    expect(fynCall.opts.lockfile).to.equal(true);
+    expect(fynCall.opts.layout).to.equal("normal");
   });
 });

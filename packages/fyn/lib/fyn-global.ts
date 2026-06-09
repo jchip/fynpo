@@ -60,16 +60,20 @@ class FynGlobal {
    */
   _createFyn(cwd, fynlocal) {
     process.env.FYN_CENTRAL_DIR = Path.join(this.globalRoot, "_central-storage");
+    // Start from the full set of CLI/rc options so any fyn flag the user passed
+    // (e.g. --refresh-meta) propagates, then force the settings that define a
+    // global install. Overrides win over whatever was in fynOpts.
+    const fynOpts = this.options.fynOpts || {};
     return new Fyn({
       opts: {
+        ...fynOpts,
         cwd,
         targetDir: "node_modules",
         centralStore: true,
         lockfile: true,
         fynlocal,
         sourceMaps: false,
-        registry: this.options.registry || "https://registry.npmjs.org",
-        refreshMeta: this.options.refreshMeta,
+        registry: this.options.registry || fynOpts.registry || "https://registry.npmjs.org",
         layout: "normal",
         flattenTop: true
       },

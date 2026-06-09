@@ -107,6 +107,16 @@ const pickOptions = async (cmd, checkFynpo = true) => {
   return { opts: allOpts, rcData, _cliSource: meta.source, _fynpo: fynpo };
 };
 
+// Build a FynGlobal using the same fully-merged options (root flags + command
+// flags + rc) that the normal install path uses via pickOptions. Passing them
+// through as fynOpts means every fyn option/flag — current and future — flows
+// into the Fyn instances FynGlobal creates, instead of a hand-curated subset.
+const makeFynGlobal = async (cmd, extra = {}) => {
+  const { opts } = await pickOptions(cmd, false);
+  const tag = cmd.getParent()?.opts?.tag;
+  return new FynGlobal({ globalDir: cmd.opts?.dir, tag, fynOpts: opts, ...extra });
+};
+
 const options = {
   fynlocal: {
     args: "<flag boolean>",
@@ -493,9 +503,7 @@ const commands = {
           "new-tag": { args: "<flag boolean>", desc: "Install as new tag even if same version exists" }
         },
         async exec(cmd) {
-          setLogLevel(cmd.opts?.logLevel || cmd.rootCmd?.opts?.logLevel);
-          const tag = cmd.getParent()?.opts?.tag;
-          const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir, yes: cmd.opts?.yes, tag });
+          const fynGlobal = await makeFynGlobal(cmd, { yes: cmd.opts?.yes });
           const packages = cmd.args?.packages || [];
 
           if (packages.length === 0) {
@@ -523,12 +531,10 @@ const commands = {
           "yes": { alias: "y", desc: "Auto-confirm all prompts" }
         },
         async exec(cmd) {
-          setLogLevel(cmd.opts?.logLevel || cmd.rootCmd?.opts?.logLevel);
-          const tag = cmd.getParent()?.opts?.tag;
-          const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir, yes: cmd.opts?.yes, tag });
+          const fynGlobal = await makeFynGlobal(cmd, { yes: cmd.opts?.yes });
           const packageSpec = cmd.args?.package;
 
-          if (!packageSpec && !tag) {
+          if (!packageSpec && !fynGlobal.tag) {
             logger.error("No package specified");
             logger.info("Usage: fyn global remove <name>[@<version>]");
             logger.info("   Or: fyn global --tag=<tag> remove");
@@ -549,12 +555,10 @@ const commands = {
           "dir": { args: "<dir string>", desc: "Directory for global packages (default: ~/.fyn/global)" }
         },
         async exec(cmd) {
-          setLogLevel(cmd.opts?.logLevel || cmd.rootCmd?.opts?.logLevel);
-          const tag = cmd.getParent()?.opts?.tag;
-          const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir, tag });
+          const fynGlobal = await makeFynGlobal(cmd);
           const packageSpec = cmd.args?.package;
 
-          if (!packageSpec && !tag) {
+          if (!packageSpec && !fynGlobal.tag) {
             logger.error("No package specified");
             logger.info("Usage: fyn global link <name>@<version>");
             logger.info("   Or: fyn global --tag=<tag> link");
@@ -576,9 +580,7 @@ const commands = {
           "dir": { args: "<dir string>", desc: "Directory for global packages (default: ~/.fyn/global)" }
         },
         async exec(cmd) {
-          setLogLevel(cmd.opts?.logLevel || cmd.rootCmd?.opts?.logLevel);
-          const tag = cmd.getParent()?.opts?.tag;
-          const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir, tag });
+          const fynGlobal = await makeFynGlobal(cmd);
           await fynGlobal.listGlobalPackages(cmd.args?.name);
         }
       },
@@ -590,10 +592,7 @@ const commands = {
           "dir": { args: "<dir string>", desc: "Directory for global packages (default: ~/.fyn/global)" }
         },
         async exec(cmd) {
-          setLogLevel(cmd.opts?.logLevel || cmd.rootCmd?.opts?.logLevel);
-          const tag = cmd.getParent()?.opts?.tag;
-          const refreshMeta = cmd.rootCmd?.opts?.refreshMeta;
-          const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir, tag, refreshMeta });
+          const fynGlobal = await makeFynGlobal(cmd);
           const packageSpec = cmd.args?.package;
 
           const updated = await fynGlobal.updateGlobalPackage(packageSpec);
@@ -610,9 +609,7 @@ const commands = {
           "dir": { args: "<dir string>", desc: "Directory for global packages (default: ~/.fyn/global)" }
         },
         async exec(cmd) {
-          setLogLevel(cmd.opts?.logLevel || cmd.rootCmd?.opts?.logLevel);
-          const tag = cmd.getParent()?.opts?.tag;
-          const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir, tag });
+          const fynGlobal = await makeFynGlobal(cmd);
           await fynGlobal.useNodeVersion(cmd.args?.version);
         }
       },
@@ -624,8 +621,7 @@ const commands = {
           "dir": { args: "<dir string>", desc: "Directory for global packages (default: ~/.fyn/global)" }
         },
         async exec(cmd) {
-          setLogLevel(cmd.opts?.logLevel || cmd.rootCmd?.opts?.logLevel);
-          const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir });
+          const fynGlobal = await makeFynGlobal(cmd);
           const packageName = cmd.args?.package;
 
           const removed = await fynGlobal.cleanupPackage(packageName);
@@ -643,9 +639,7 @@ const commands = {
           "dir": { args: "<dir string>", desc: "Directory for global packages (default: ~/.fyn/global)" }
         },
         async exec(cmd) {
-          setLogLevel(cmd.opts?.logLevel || cmd.rootCmd?.opts?.logLevel);
-          const tag = cmd.getParent()?.opts?.tag;
-          const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir, tag });
+          const fynGlobal = await makeFynGlobal(cmd);
           fynGlobal.showPathSetup();
         }
       }
