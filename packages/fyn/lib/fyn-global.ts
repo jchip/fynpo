@@ -69,6 +69,7 @@ class FynGlobal {
         fynlocal,
         sourceMaps: false,
         registry: this.options.registry || "https://registry.npmjs.org",
+        refreshMeta: this.options.refreshMeta,
         layout: "normal",
         flattenTop: true
       },

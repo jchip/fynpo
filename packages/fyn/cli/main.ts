@@ -592,7 +592,8 @@ const commands = {
         async exec(cmd) {
           setLogLevel(cmd.opts?.logLevel || cmd.rootCmd?.opts?.logLevel);
           const tag = cmd.getParent()?.opts?.tag;
-          const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir, tag });
+          const refreshMeta = cmd.rootCmd?.opts?.refreshMeta;
+          const fynGlobal = new FynGlobal({ globalDir: cmd.opts?.dir, tag, refreshMeta });
           const packageSpec = cmd.args?.package;
 
           const updated = await fynGlobal.updateGlobalPackage(packageSpec);

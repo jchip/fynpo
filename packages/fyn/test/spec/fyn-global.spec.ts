@@ -8,6 +8,7 @@ describe("fyn-global", function() {
   const globalDir = path.join(__dirname, "../.fyn-global");
   const fynGlobalPath = require.resolve("../../lib/fyn-global");
   const pkgBinLinkerPath = require.resolve("../../lib/pkg-bin-linker");
+  const fynPath = require.resolve("../../lib/fyn");
   const cleanup = () => {
     fs.rmSync(globalDir, { recursive: true, force: true });
   };
@@ -43,9 +44,17 @@ describe("fyn-global", function() {
       }
     }
 
+    class FakeFyn {
+      constructor(config) {
+        calls.push({ type: "fyn", opts: config.opts });
+      }
+    }
+
     delete require.cache[fynGlobalPath];
     delete require.cache[pkgBinLinkerPath];
+    delete require.cache[fynPath];
     mockRequire(pkgBinLinkerPath, FakePkgBinLinker);
+    mockRequire(fynPath, FakeFyn);
     FynGlobal = require(fynGlobalPath);
   });
 
@@ -53,6 +62,7 @@ describe("fyn-global", function() {
     mockRequire.stopAll();
     delete require.cache[fynGlobalPath];
     delete require.cache[pkgBinLinkerPath];
+    delete require.cache[fynPath];
     cleanup();
   });
 
@@ -93,5 +103,15 @@ describe("fyn-global", function() {
       target: path.join(globalDir, "v20/packages/g1/node_modules/.bin/foo")
     });
     expect(calls).to.deep.include({ type: "remove", binName: "foo" });
+  });
+
+  it("should forward refreshMeta to the Fyn instance it creates", () => {
+    const fynGlobal = new FynGlobal({ globalDir, nodeVersion: "20", refreshMeta: true });
+
+    fynGlobal._createFyn(globalDir, false);
+
+    const fynCall = calls.find(c => c.type === "fyn");
+    expect(fynCall).to.exist;
+    expect(fynCall.opts.refreshMeta).to.equal(true);
   });
 });
