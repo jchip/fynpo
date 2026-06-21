@@ -46,12 +46,20 @@ const WATCH_TIME = 5000;
 // This is a fallback - git ls-remote checks for new commits more frequently
 const META_CACHE_STALE_TIME = 24 * 60 * 60 * 1000;
 
+// Git refs/committishes are letters, digits and  . _ / - ~ ^  — never shell metacharacters
+// and never a leading '-' (which git treats as an option). Reject anything else so a
+// dependency spec like "x": "github:a/b#;cmd" can't reach a shell.
+const SAFE_GIT_TOKEN = /^[A-Za-z0-9._/~^-]+$/;
+function isSafeGitToken(s) {
+  return typeof s === "string" && s.length > 0 && s.length < 256 && SAFE_GIT_TOKEN.test(s) && !s.startsWith("-");
+}
+
 // Helper to check if git repo has new commits using fast git ls-remote or git rev-parse
 async function checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash) {
   if (!cachedCommitHash) return true; // No cache, assume new commits
   
   try {
-    const { execSync } = require("child_process");
+    const { execFileSync } = require("child_process");
     const Path = require("path");
     const fs = require("fs");
     
@@ -77,7 +85,12 @@ async function checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash) {
     if (isLocalRepo && localRepoPath) {
       // For local repos, use git rev-parse to get the current HEAD commit
       // This is more reliable than ls-remote for local repos
-      const output = execSync(`git rev-parse ${ref || "HEAD"}`, {
+      const safeRef = ref || "HEAD";
+      if (!isSafeGitToken(safeRef)) {
+        logger.debug(`refusing potentially unsafe git ref: ${safeRef}`);
+        return null;
+      }
+      const output = execFileSync("git", ["rev-parse", safeRef], {
         cwd: localRepoPath,
         stdio: "pipe",
         encoding: "utf8",
@@ -105,7 +118,12 @@ async function checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash) {
       }
       
       // Use git ls-remote to get the latest commit for the ref without cloning
-      const output = execSync(`git ls-remote ${actualGitUrl} ${ref || "HEAD"}`, {
+      const safeRef = ref || "HEAD";
+      if (!isSafeGitToken(safeRef) || actualGitUrl.startsWith("-")) {
+        logger.debug(`refusing potentially unsafe git url/ref: ${actualGitUrl}#${safeRef}`);
+        return null;
+      }
+      const output = execFileSync("git", ["ls-remote", actualGitUrl, safeRef], {
         stdio: "pipe",
         encoding: "utf8",
         timeout: 10000 // 10 second timeout
