@@ -217,6 +217,10 @@ const options = {
     args: "<flag boolean>",
     desc: "Ignore host in tarball URL from meta dist."
   },
+  "enforce-registry-deps": {
+    args: "<flag boolean>",
+    desc: "Require transitive deps to be from a registry (default on). --no-enforce-registry-deps to disable."
+  },
   "show-deprecated": {
     alias: "s",
     args: "<flag boolean>",

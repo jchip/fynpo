@@ -140,28 +140,40 @@ any non-registry package that is declared **directly** in your top-level
 
 ### Registry-only transitive dependencies (`fyn.enforceRegistryDeps`)
 
-A separate **opt-in** hardening: require that **transitive** (non-top-level)
-dependencies resolve from a published registry. This blocks a transitive
-dependency from quietly pulling code off `github:`/git/URL sources that you never
-chose — only the top-level `package.json` is allowed to declare such sources.
+By default, `fyn` requires that **transitive** (non-top-level) dependencies
+resolve from a published registry. This blocks a transitive dependency from
+quietly pulling code off `github:`/git/URL sources that you never chose — only
+the top-level `package.json` is allowed to declare such sources.
 
-```json
-{
-  "fyn": {
-    "enforceRegistryDeps": true
-  }
-}
-```
-
-- **Off by default.** When enabled, a transitive dependency from a non-registry
-  source (`github:`, `git+ssh`/`https`/`http`/`file`, `git:`, `http(s)` tarball)
-  — or one with an unparseable version selector — causes `fyn` to **abort the
+- **On by default.** A transitive dependency from a non-registry source
+  (`github:`, `git+ssh`/`https`/`http`/`file`, `git:`, `http(s)` tarball) — or
+  one with an unparseable version selector — causes `fyn` to **abort the
   install** with an error naming the offending package and its parent.
 - **Top-level `package.json` is unrestricted** — you may still declare `github:`,
   git, URL, and local dependencies for your own project.
 - **Accepted for transitive deps:** registry semver/ranges/dist-tags
   (`^1.2.3`, `1.x`, `latest`, `*`), `npm:` aliases (registry-backed), and local
   `file:`/`link:`/symlink deps — including monorepo siblings linked by `fynpo`.
+
+To **disable** the policy (e.g. you genuinely need a transitive git/URL dep),
+turn it off in `package.json`:
+
+```json
+{
+  "fyn": {
+    "enforceRegistryDeps": false
+  }
+}
+```
+
+or per-invocation on the command line:
+
+```sh
+fyn install --no-enforce-registry-deps
+```
+
+The CLI flag takes precedence over the `package.json` setting, which takes
+precedence over the default (on).
 
 This is independent of the lifecycle-script controls above: `allowScripts` /
 `allowTopLevelScripts` decide whether *scripts run*, while `enforceRegistryDeps`

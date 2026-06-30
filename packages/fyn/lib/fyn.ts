@@ -725,17 +725,28 @@ class Fyn {
     return this._allowTopLevelScripts || false;
   }
 
-  // package.json `fyn.enforceRegistryDeps` - opt-in (default off) security
-  // policy: transitive (non-top-level) dependencies must resolve from a
-  // published registry. git/github/url-tarball sources and unparseable semver
+  // Security policy: transitive (non-top-level) dependencies must resolve from
+  // a published registry. git/github/url-tarball sources and unparseable semver
   // are rejected (hard error). Local (file:/link:/symlink, incl. fynpo
   // siblings) and `npm:` aliases are accepted. Only the top-level package.json
   // may declare non-registry deps.
+  //
+  // Default ON. Disable explicitly with the CLI flag
+  // `--no-enforce-registry-deps` or package.json `fyn.enforceRegistryDeps:false`.
+  // Precedence: CLI option (when given) > package.json fyn flag > default (on).
   get enforceRegistryDeps() {
-    if (this._enforceRegistryDeps === undefined && this._pkg) {
-      this._enforceRegistryDeps = Boolean(_.get(this._pkg, ["fyn", "enforceRegistryDeps"]));
+    // an explicit CLI option always wins (e.g. --no-enforce-registry-deps)
+    const cliOpt = this._options.enforceRegistryDeps;
+    if (cliOpt !== undefined) {
+      return Boolean(cliOpt);
     }
-    return this._enforceRegistryDeps || false;
+    if (this._enforceRegistryDeps === undefined && this._pkg) {
+      const pkgOpt = _.get(this._pkg, ["fyn", "enforceRegistryDeps"]);
+      // default on; only an explicit `false` in package.json disables it.
+      this._enforceRegistryDeps = pkgOpt === undefined ? true : Boolean(pkgOpt);
+    }
+    // if package.json not loaded yet, default on
+    return this._enforceRegistryDeps === undefined ? true : this._enforceRegistryDeps;
   }
 
   get refreshOptionals() {

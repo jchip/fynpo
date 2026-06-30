@@ -61,7 +61,7 @@ describe("pkg-dep-resolver fyn.enforceRegistryDeps", function() {
     expect(result.dep.map(it => it.name)).to.include("evil-dep");
   });
 
-  it("does not restrict transitive deps when disabled (default)", () => {
+  it("does not restrict transitive deps when explicitly disabled", () => {
     const resolver = mkResolver(false);
     let result;
     expect(() => {
