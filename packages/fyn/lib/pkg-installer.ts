@@ -477,8 +477,12 @@ class PkgInstaller {
 
     // Security hardening: packages that did not come from a configured registry
     // (github/git/url tarball deps) do not run their lifecycle scripts unless
-    // explicitly whitelisted in package.json `fyn.allowScripts`.
-    const scriptPolicy = evaluateScriptPolicy(depInfo, this._fyn.allowScripts);
+    // explicitly whitelisted in package.json `fyn.allowScripts`, or - for deps
+    // declared directly in the top-level package.json - opted in via
+    // `fyn.allowTopLevelScripts`.
+    const scriptPolicy = evaluateScriptPolicy(depInfo, this._fyn.allowScripts, {
+      allowTopLevel: this._fyn.allowTopLevelScripts
+    });
     const blockedScripts = [];
     const isAllowed = scriptName => {
       if (isScriptAllowed(scriptPolicy, scriptName)) {
@@ -531,6 +535,12 @@ class PkgInstaller {
         `"fyn": { "allowScripts": { "${policy.key}": [${blocked.map(s => `"${s}"`).join(", ")}] } }`
       )
     );
+    if (policy.topLevel) {
+      logger.verbose(
+        chalk.blue("  Or trust all direct deps' scripts with:"),
+        chalk.cyan(`"fyn": { "allowTopLevelScripts": true }`)
+      );
+    }
   }
 
   _cleanBin() {

@@ -108,6 +108,36 @@ allowed script names:
 - Script names are matched case-insensitively.
 - Use `["*"]` (or `true`) as the value to allow all lifecycle scripts for that package.
 
+#### Trusting direct dependencies (`fyn.allowTopLevelScripts`)
+
+Maintaining per-package `allowScripts` entries is tedious when you have several
+non-registry dependencies you control (e.g. private `github:`/git deps with a
+build step). As an **opt-in** convenience, you can trust the lifecycle scripts of
+any non-registry package that is declared **directly** in your top-level
+`package.json` — without listing each one:
+
+```json
+{
+  "fyn": {
+    "allowTopLevelScripts": true
+  }
+}
+```
+
+- This is **off by default**; the deny-by-default policy above is unchanged.
+- It only applies to dependencies you declared directly in the top-level
+  `package.json`. Non-registry packages pulled in **transitively** stay blocked
+  and still require an explicit `fyn.allowScripts` entry.
+- `true` (or `"*"`) allows all lifecycle scripts; an array such as
+  `["install", "postinstall"]` restricts it to those script names for all direct
+  non-registry deps.
+- Allowances combine with `fyn.allowScripts`: a per-package entry can grant
+  additional scripts on top of what `allowTopLevelScripts` permits.
+
+> ⚠️ A direct `github:`/git dependency on a branch or tag still runs whatever code
+> has been pushed there. Declaring it in your `package.json` is an explicit trust
+> decision — pin to a commit/tarball you've reviewed when that matters.
+
 ### Thank you `npm`
 
 Node Package Manager is a very large and complex piece of software. Developing `fyn` was 10 times easier because of the generous open source software from the community, especially the individual packages that are part of `npm`.

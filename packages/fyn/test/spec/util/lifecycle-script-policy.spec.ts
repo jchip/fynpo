@@ -5,6 +5,7 @@ const { SEMVER, DEP_ITEM } = require("../../../lib/symbols");
 const {
   getUrlType,
   isTrustedScriptSource,
+  isTopLevelDep,
   makeAllowKeys,
   evaluateScriptPolicy,
   isScriptAllowed
@@ -24,12 +25,17 @@ const {
  * @param {string} [opts.spec] original requested dependency spec
  * @param {string} [opts.urlType] explicit urlType for the fake DepItem
  * @param {boolean} [opts.depItem] whether to attach a DEP_ITEM symbol
+ * @param {boolean} [opts.top] whether the dep was requested by the top-level
+ *   package.json (sets `depInfo.top`, as the resolver does)
  * @returns {object} a fake depInfo carrying the SEMVER/DEP_ITEM symbols
  */
-function mkDep({ name = "foo", version = "1.0.0", spec, urlType, depItem = true } = {}) {
+function mkDep({ name = "foo", version = "1.0.0", spec, urlType, depItem = true, top } = {}) {
   const depInfo = { name, version };
   if (spec !== undefined) {
     depInfo[SEMVER] = spec;
+  }
+  if (top !== undefined) {
+    depInfo.top = top;
   }
   if (depItem && (urlType !== undefined || spec !== undefined)) {
     depInfo[DEP_ITEM] = { urlType, semver: spec };
@@ -174,6 +180,86 @@ describe("lifecycle-script-policy", function() {
       const policy = evaluateScriptPolicy(dep, { "foo@^1.0.0": [] });
       expect(policy.trusted).to.equal(true);
       expect(isScriptAllowed(policy, "postinstall")).to.equal(true);
+    });
+  });
+
+  describe("isTopLevelDep", function() {
+    it("is true when depInfo.top is set", () => {
+      expect(isTopLevelDep(mkDep({ top: true }))).to.equal(true);
+    });
+
+    it("is false when depInfo.top is unset/falsy", () => {
+      expect(isTopLevelDep(mkDep({}))).to.equal(false);
+      expect(isTopLevelDep(mkDep({ top: false }))).to.equal(false);
+      expect(isTopLevelDep(undefined)).to.equal(false);
+    });
+  });
+
+  describe("evaluateScriptPolicy with allowTopLevelScripts (opt-in)", function() {
+    it("reports topLevel on the policy result", () => {
+      const top = mkDep({ spec: "github:user/foo", top: true });
+      const transitive = mkDep({ spec: "github:user/foo" });
+      expect(evaluateScriptPolicy(top, {}).topLevel).to.equal(true);
+      expect(evaluateScriptPolicy(transitive, {}).topLevel).to.equal(false);
+    });
+
+    it("stays blocked by default (no option) even for top-level deps", () => {
+      const dep = mkDep({ spec: "github:user/foo", top: true });
+      const policy = evaluateScriptPolicy(dep, {});
+      expect(isScriptAllowed(policy, "postinstall")).to.equal(false);
+    });
+
+    it("allows all scripts for a top-level dep when allowTopLevel is true", () => {
+      const dep = mkDep({ spec: "github:user/foo", top: true });
+      const policy = evaluateScriptPolicy(dep, {}, { allowTopLevel: true });
+      expect(policy.allowAll).to.equal(true);
+      expect(isScriptAllowed(policy, "preinstall")).to.equal(true);
+      expect(isScriptAllowed(policy, "postinstall")).to.equal(true);
+    });
+
+    it("supports the wildcard '*' for allowTopLevel", () => {
+      const dep = mkDep({ spec: "github:user/foo", top: true });
+      const policy = evaluateScriptPolicy(dep, {}, { allowTopLevel: "*" });
+      expect(isScriptAllowed(policy, "install")).to.equal(true);
+    });
+
+    it("restricts to listed script names when allowTopLevel is an array", () => {
+      const dep = mkDep({ spec: "github:user/foo", top: true });
+      const policy = evaluateScriptPolicy(dep, {}, { allowTopLevel: ["postinstall"] });
+      expect(policy.allowAll).to.equal(false);
+      expect(isScriptAllowed(policy, "postinstall")).to.equal(true);
+      expect(isScriptAllowed(policy, "preinstall")).to.equal(false);
+    });
+
+    it("does NOT allow transitive (non-top-level) deps even when allowTopLevel is true", () => {
+      const dep = mkDep({ spec: "github:user/foo", top: false });
+      const policy = evaluateScriptPolicy(dep, {}, { allowTopLevel: true });
+      expect(isScriptAllowed(policy, "postinstall")).to.equal(false);
+    });
+
+    it("treats allowTopLevel false/undefined as off", () => {
+      const dep = mkDep({ spec: "github:user/foo", top: true });
+      expect(isScriptAllowed(evaluateScriptPolicy(dep, {}, { allowTopLevel: false }), "install")).to.equal(false);
+      expect(isScriptAllowed(evaluateScriptPolicy(dep, {}, {}), "install")).to.equal(false);
+    });
+
+    it("unions allowTopLevel with a per-package allowScripts entry", () => {
+      const dep = mkDep({ name: "foo", version: "2.3.0", spec: "github:user/foo", top: true });
+      const policy = evaluateScriptPolicy(
+        dep,
+        { "foo@github:user/foo": ["preinstall"] },
+        { allowTopLevel: ["postinstall"] }
+      );
+      expect(isScriptAllowed(policy, "preinstall")).to.equal(true);
+      expect(isScriptAllowed(policy, "postinstall")).to.equal(true);
+      expect(isScriptAllowed(policy, "install")).to.equal(false);
+    });
+
+    it("does not affect trusted (registry) top-level deps", () => {
+      const dep = mkDep({ spec: "^1.0.0", top: true });
+      const policy = evaluateScriptPolicy(dep, {}, { allowTopLevel: true });
+      expect(policy.trusted).to.equal(true);
+      expect(policy.topLevel).to.equal(true);
     });
   });
 });

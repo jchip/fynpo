@@ -713,6 +713,18 @@ class Fyn {
     return this._allowScripts || {};
   }
 
+  // package.json `fyn.allowTopLevelScripts` - opt-in (default off) to trust the
+  // lifecycle scripts of non-registry packages (github/git/url tarball) that are
+  // declared directly in the top-level package.json, without per-package
+  // `fyn.allowScripts` entries. `true`/`"*"` allows all lifecycle scripts; an
+  // array allows only those script names. Transitive deps stay blocked.
+  get allowTopLevelScripts() {
+    if (this._allowTopLevelScripts === undefined && this._pkg) {
+      this._allowTopLevelScripts = _.get(this._pkg, ["fyn", "allowTopLevelScripts"]) || false;
+    }
+    return this._allowTopLevelScripts || false;
+  }
+
   get refreshOptionals() {
     return this._options.refreshOptionals;
   }

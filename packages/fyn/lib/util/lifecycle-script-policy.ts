@@ -114,22 +114,15 @@ function normalizeAllowEntry(value, acc) {
 }
 
 /**
- * Evaluate the lifecycle-script policy for a resolved package.
+ * Fold any matching `fyn.allowScripts` entries (by spec or resolved-version key)
+ * into the accumulator.
  *
- * @param {object} depInfo resolved package data
- * @param {object} allowScripts the project's package.json `fyn.allowScripts` map
- * @returns {{trusted:boolean, urlType:(string|undefined), allowAll:boolean,
- *   allowed:Set<string>, key:(string|undefined)}} the resolved script policy
+ * @param {string[]} keys candidate keys from {@link makeAllowKeys}
+ * @param {object} allowScripts the project's `fyn.allowScripts` map
+ * @param {{allowAll:boolean, scripts:Set<string>}} acc accumulator to fold into
+ * @returns {(string|undefined)} the first matched key, if any
  */
-function evaluateScriptPolicy(depInfo, allowScripts) {
-  const urlType = getUrlType(depInfo);
-  const keys = makeAllowKeys(depInfo);
-
-  if (!urlType || TRUSTED_URL_TYPES.has(urlType)) {
-    return { trusted: true, urlType, allowAll: true, allowed: new Set(), key: keys[0] };
-  }
-
-  const acc = { allowAll: false, scripts: new Set() };
+function foldAllowScripts(keys, allowScripts, acc) {
   let matchedKey;
   for (const key of keys) {
     const value = allowScripts && allowScripts[key];
@@ -138,6 +131,54 @@ function evaluateScriptPolicy(depInfo, allowScripts) {
       normalizeAllowEntry(value, acc);
     }
   }
+  return matchedKey;
+}
+
+/**
+ * @param {object} depInfo resolved package data
+ * @returns {boolean} true if this resolved package was requested directly by
+ *   the top-level package.json (set during resolution as `depInfo.top` whenever
+ *   the request's parent is the root package). Independent of node_modules
+ *   hoisting/promotion - a transitive dep promoted to the top of node_modules
+ *   is NOT considered top-level here.
+ */
+function isTopLevelDep(depInfo) {
+  return Boolean(depInfo && depInfo.top);
+}
+
+/**
+ * Evaluate the lifecycle-script policy for a resolved package.
+ *
+ * @param {object} depInfo resolved package data
+ * @param {object} allowScripts the project's package.json `fyn.allowScripts` map
+ * @param {object} [options] additional policy options
+ * @param {(boolean|string|string[])} [options.allowTopLevel] the project's
+ *   `fyn.allowTopLevelScripts` config. When truthy, non-registry packages that
+ *   are declared directly in the top-level package.json are allowed to run the
+ *   given lifecycle scripts (`true`/`"*"` = all, or a list of script names).
+ * @returns {{trusted:boolean, urlType:(string|undefined), allowAll:boolean,
+ *   allowed:Set<string>, key:(string|undefined), topLevel:boolean}} the
+ *   resolved script policy
+ */
+function evaluateScriptPolicy(depInfo, allowScripts, options = {}) {
+  const urlType = getUrlType(depInfo);
+  const keys = makeAllowKeys(depInfo);
+  const topLevel = isTopLevelDep(depInfo);
+
+  if (!urlType || TRUSTED_URL_TYPES.has(urlType)) {
+    return { trusted: true, urlType, allowAll: true, allowed: new Set(), key: keys[0], topLevel };
+  }
+
+  const acc = { allowAll: false, scripts: new Set() };
+  const matchedKey = foldAllowScripts(keys, allowScripts, acc);
+
+  // opt-in: trust lifecycle scripts of packages declared directly in the
+  // top-level package.json (fyn.allowTopLevelScripts). Unioned with any
+  // per-package fyn.allowScripts entry above.
+  const { allowTopLevel } = options;
+  if (topLevel && allowTopLevel !== undefined && allowTopLevel !== false) {
+    normalizeAllowEntry(allowTopLevel, acc);
+  }
 
   return {
     trusted: false,
@@ -145,7 +186,8 @@ function evaluateScriptPolicy(depInfo, allowScripts) {
     allowAll: acc.allowAll,
     allowed: acc.scripts,
     // key to suggest when warning - prefer a matched key, else the spec form
-    key: matchedKey || keys[0]
+    key: matchedKey || keys[0],
+    topLevel
   };
 }
 
@@ -165,6 +207,7 @@ module.exports = {
   TRUSTED_URL_TYPES,
   getUrlType,
   isTrustedScriptSource,
+  isTopLevelDep,
   makeAllowKeys,
   evaluateScriptPolicy,
   isScriptAllowed
