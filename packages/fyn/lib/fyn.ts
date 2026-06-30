@@ -703,6 +703,16 @@ class Fyn {
     return this._options.showDeprecated && "show-deprecated";
   }
 
+  // package.json `fyn.allowScripts` whitelist - maps `name@spec` or
+  // `name@version` to the lifecycle scripts allowed for packages that did not
+  // come from a configured registry (github/git/url tarball deps).
+  get allowScripts() {
+    if (this._allowScripts === undefined && this._pkg) {
+      this._allowScripts = _.get(this._pkg, ["fyn", "allowScripts"]) || {};
+    }
+    return this._allowScripts || {};
+  }
+
   get refreshOptionals() {
     return this._options.refreshOptionals;
   }

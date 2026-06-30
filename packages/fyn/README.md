@@ -77,6 +77,37 @@ production=false
 centralStore=false
 ```
 
+### Lifecycle script allow list (`fyn.allowScripts`)
+
+As a security hardening measure, `fyn` does **not** run a package's npm lifecycle
+scripts (`preinstall`, `install`, `postinstall`) during install unless the package
+came from a configured registry (the primary `registry` or a `@scope:registry`) or
+is a local `file:`/`link:`/symlink dependency.
+
+Packages pulled from other sources — `github:`, git URLs (`git+https`, `git+ssh`,
+…), and `http(s)` tarball URLs — have their lifecycle scripts **skipped by default**,
+and `fyn` prints a warning showing how to allow them.
+
+To allow specific scripts for such a package, add a `fyn.allowScripts` map to your
+`package.json`. Each key is `name@<spec-or-version>` and the value is the list of
+allowed script names:
+
+```json
+{
+  "fyn": {
+    "allowScripts": {
+      "foo@github:user/foo#v1": ["install", "postinstall"],
+      "bar@2.3.0": ["preinstall"]
+    }
+  }
+}
+```
+
+- The key matches **either** the original dependency spec (e.g. `foo@github:user/foo#v1`)
+  **or** the resolved version (e.g. `bar@2.3.0`).
+- Script names are matched case-insensitively.
+- Use `["*"]` (or `true`) as the value to allow all lifecycle scripts for that package.
+
 ### Thank you `npm`
 
 Node Package Manager is a very large and complex piece of software. Developing `fyn` was 10 times easier because of the generous open source software from the community, especially the individual packages that are part of `npm`.

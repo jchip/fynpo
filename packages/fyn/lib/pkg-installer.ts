@@ -15,6 +15,7 @@ const fynTil = require("./util/fyntil");
 const hardLinkDir = require("./util/hard-link-dir");
 const { INSTALL_PACKAGE } = require("./log-items");
 const { runNpmScript } = require("./util/run-npm-script");
+const { evaluateScriptPolicy, isScriptAllowed } = require("./util/lifecycle-script-policy");
 const xaa = require("./util/xaa");
 const { AggregateError } = require("@jchip/error");
 
@@ -473,13 +474,27 @@ class PkgInstaller {
     // and shouldn't persist from cached package.json
     json._fyn = {};
     const scripts = json.scripts || {};
+
+    // Security hardening: packages that did not come from a configured registry
+    // (github/git/url tarball deps) do not run their lifecycle scripts unless
+    // explicitly whitelisted in package.json `fyn.allowScripts`.
+    const scriptPolicy = evaluateScriptPolicy(depInfo, this._fyn.allowScripts);
+    const blockedScripts = [];
+    const isAllowed = scriptName => {
+      if (isScriptAllowed(scriptPolicy, scriptName)) {
+        return true;
+      }
+      blockedScripts.push(scriptName);
+      return false;
+    };
+
     const hasPI = json.hasPI || Boolean(scripts.preinstall);
     const piExed = Boolean(depInfo.preinstall);
 
     if (!piExed && hasPI) {
       if (depInfo.preInstalled) {
         json._fyn.preinstall = true;
-      } else {
+      } else if (isAllowed("preinstall")) {
         logger.debug("adding preinstall step for", depInfo.dir);
         this.preInstall.push(depInfo);
       }
@@ -488,7 +503,7 @@ class PkgInstaller {
     this.toLink.push(depInfo);
 
     const install = ["install", "postinstall"].filter(x => {
-      return Boolean(scripts[x]) && !json._fyn[x];
+      return Boolean(scripts[x]) && !json._fyn[x] && isAllowed(x);
     });
 
     if (install.length > 0) {
@@ -496,6 +511,26 @@ class PkgInstaller {
       depInfo.install = install;
       this.postInstall.push(depInfo);
     }
+
+    if (blockedScripts.length > 0) {
+      this._warnBlockedScripts(depInfo, scriptPolicy, blockedScripts);
+    }
+  }
+
+  _warnBlockedScripts(depInfo, policy, blocked) {
+    const id = logFormat.pkgId(depInfo);
+    logger.warn(
+      `${chalk.black.bgYellow("WARN")} ${chalk.magenta("scripts blocked")} ${id}`,
+      chalk.yellow(
+        `skipped lifecycle [${blocked.join(", ")}] for non-registry (${policy.urlType}) package - not in fyn.allowScripts`
+      )
+    );
+    logger.verbose(
+      chalk.blue("  To allow, add to package.json:"),
+      chalk.cyan(
+        `"fyn": { "allowScripts": { "${policy.key}": [${blocked.map(s => `"${s}"`).join(", ")}] } }`
+      )
+    );
   }
 
   _cleanBin() {
