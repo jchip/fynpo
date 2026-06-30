@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "test": "tsx ../../packages/fyn/cli/fyn.ts --no-build-local && fynpo && fynpo run test --stream",
+    "test": "tsx ../../packages/fyn/cli/fyn.ts --no-build-local --no-enforce-registry-deps && fynpo && fynpo run test --stream",
     "clean-test": "npm run clean && npm run test",
     "clean": "rm -rf .fynpo node_modules */*/node_modules */*/dist */*/fyn-lock.* fyn-lock.*",
     "prepublishOnly": "exit 1"
