@@ -138,6 +138,35 @@ any non-registry package that is declared **directly** in your top-level
 > has been pushed there. Declaring it in your `package.json` is an explicit trust
 > decision — pin to a commit/tarball you've reviewed when that matters.
 
+### Registry-only transitive dependencies (`fyn.enforceRegistryDeps`)
+
+A separate **opt-in** hardening: require that **transitive** (non-top-level)
+dependencies resolve from a published registry. This blocks a transitive
+dependency from quietly pulling code off `github:`/git/URL sources that you never
+chose — only the top-level `package.json` is allowed to declare such sources.
+
+```json
+{
+  "fyn": {
+    "enforceRegistryDeps": true
+  }
+}
+```
+
+- **Off by default.** When enabled, a transitive dependency from a non-registry
+  source (`github:`, `git+ssh`/`https`/`http`/`file`, `git:`, `http(s)` tarball)
+  — or one with an unparseable version selector — causes `fyn` to **abort the
+  install** with an error naming the offending package and its parent.
+- **Top-level `package.json` is unrestricted** — you may still declare `github:`,
+  git, URL, and local dependencies for your own project.
+- **Accepted for transitive deps:** registry semver/ranges/dist-tags
+  (`^1.2.3`, `1.x`, `latest`, `*`), `npm:` aliases (registry-backed), and local
+  `file:`/`link:`/symlink deps — including monorepo siblings linked by `fynpo`.
+
+This is independent of the lifecycle-script controls above: `allowScripts` /
+`allowTopLevelScripts` decide whether *scripts run*, while `enforceRegistryDeps`
+decides whether a transitive package is *allowed at all*.
+
 ### Thank you `npm`
 
 Node Package Manager is a very large and complex piece of software. Developing `fyn` was 10 times easier because of the generous open source software from the community, especially the individual packages that are part of `npm`.

@@ -725,6 +725,19 @@ class Fyn {
     return this._allowTopLevelScripts || false;
   }
 
+  // package.json `fyn.enforceRegistryDeps` - opt-in (default off) security
+  // policy: transitive (non-top-level) dependencies must resolve from a
+  // published registry. git/github/url-tarball sources and unparseable semver
+  // are rejected (hard error). Local (file:/link:/symlink, incl. fynpo
+  // siblings) and `npm:` aliases are accepted. Only the top-level package.json
+  // may declare non-registry deps.
+  get enforceRegistryDeps() {
+    if (this._enforceRegistryDeps === undefined && this._pkg) {
+      this._enforceRegistryDeps = Boolean(_.get(this._pkg, ["fyn", "enforceRegistryDeps"]));
+    }
+    return this._enforceRegistryDeps || false;
+  }
+
   get refreshOptionals() {
     return this._options.refreshOptionals;
   }

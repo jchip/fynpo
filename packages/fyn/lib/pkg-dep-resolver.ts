@@ -17,6 +17,7 @@ const logFormat = require("./util/log-format");
 const { LONG_WAIT_META } = require("./log-items");
 const { checkPkgOsCpu, relativePath, unSlashNpmScope } = require("./util/fyntil");
 const { getDepSection, makeDepStep } = require("@fynpo/base");
+const { violatesRegistryPolicy } = require("./util/registry-dep-policy");
 const xaa = require("./util/xaa");
 const { AggregateError } = require("@jchip/error");
 const Promise = require("aveazul");
@@ -372,6 +373,34 @@ class PkgDepResolver {
   }
 
   /**
+   * Enforce the `fyn.enforceRegistryDeps` policy on a transitive dep item.
+   * Throws (aborting the install) when the item is a non-registry source or has
+   * an unparseable semver.
+   *
+   * @param {object} item - the (transitive) dep item being added
+   * @param {object} parent - the dep item that requires `item`
+   * @returns {void}
+   */
+  _enforceRegistryDep(item, parent) {
+    const violation = violatesRegistryPolicy(item);
+    if (!violation) {
+      return;
+    }
+
+    const depId = `${item.name}@${item.semver}`;
+    const reason =
+      violation.kind === "url"
+        ? `is from a non-registry source (${violation.urlType})`
+        : `has an invalid/unparseable version "${violation.semver}"`;
+
+    throw new Error(
+      `fyn.enforceRegistryDeps: transitive dependency "${depId}" required by "${parent.id}" ${reason}. ` +
+        `Only the top-level package.json may use git/github/URL dependencies - ` +
+        `transitive dependencies must come from a registry.`
+    );
+  }
+
+  /**
    * create the dep relation items for a package
    *
    * @param {*} pkg - the package
@@ -408,6 +437,14 @@ class PkgDepResolver {
             deepResolve
           };
           const newItem = new DepItem(opt, depItem);
+
+          // Security (fyn.enforceRegistryDeps): transitive deps (those whose
+          // parent `depItem` is not the top-level package, depth >= 1) must
+          // come from a registry. Reject git/github/url sources and unparseable
+          // semver. The top-level package.json is unrestricted.
+          if (this._fyn.enforceRegistryDeps && depItem.depth >= 1) {
+            this._enforceRegistryDep(newItem, depItem);
+          }
 
           if (noPrefetch !== true) this.prefetchMeta(newItem);
           items.push(newItem);
