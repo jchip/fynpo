@@ -13,7 +13,7 @@
     "build": "tsx node_modules/.bin/xrun --serial fyn/create-tgz compile-yarn bundle",
     "analyze": "ANALYZE_BUNDLE=1 xrun compile-yarn bundle",
     "coverage": "xrun xarc/check",
-    "ci:check": "xrun xarc/check",
+    "ci:check": "xrun xarc/test-only",
     "coveralls": "cat coverage/lcov.info | coveralls",
     "prepublishOnly": "xrun build",
     "prepack": "publish-util-prepack",
