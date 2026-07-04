@@ -106,22 +106,27 @@ export default class Changelog {
   commitChangeLogFile = () => {
     logger.info("Change log updated.");
 
+    // Always resolve to a boolean (committed?) so the caller can safely chain
+    // .then() - returning undefined here previously crashed the --no-commit and
+    // dirty-tree paths with a TypeError.
     if (!this._options.commit) {
       logger.warn("commit option disabled, skip committing changelog file.");
-      return;
+      return Promise.resolve(false);
     }
 
     if (!this._gitClean) {
       logger.warn("Your git branch is not clean, skip committing updates.");
-      return;
+      return Promise.resolve(false);
     }
 
     return this._sh(`git add ${this._changeLogFile} && git commit -n -m "Update changelog"`)
       .then(() => {
         logger.info("Changelog committed");
+        return true;
       })
       .catch((e) => {
         logger.error("Commit changelog failed", e);
+        return false;
       });
   };
 
@@ -210,13 +215,21 @@ export default class Changelog {
         if (opts.publish) {
           return this.preparePackages(output);
         }
-        return this.commitChangeLogFile().then(() => {
-          printSuccess("Changelog updated and committed");
-          printNextSteps([
-            `Review the changes: ${printCommand("git diff HEAD~1 CHANGELOG.md")}`,
-            `Check git status: ${printCommand("git status")}`,
-            `Prepare packages: ${printCommand("fynpo prepare")}`,
-          ]);
+        return this.commitChangeLogFile().then((committed) => {
+          if (committed) {
+            printSuccess("Changelog updated and committed");
+            printNextSteps([
+              `Review the changes: ${printCommand("git diff HEAD~1 CHANGELOG.md")}`,
+              `Check git status: ${printCommand("git status")}`,
+              `Prepare packages: ${printCommand("fynpo prepare")}`,
+            ]);
+          } else {
+            printWarning("Changelog updated but not committed");
+            printNextSteps([
+              `Review the changes: ${printCommand("git diff CHANGELOG.md")}`,
+              `Prepare packages: ${printCommand("fynpo prepare")}`,
+            ]);
+          }
         });
       });
   }
