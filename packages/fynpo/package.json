@@ -8,6 +8,7 @@
     "build": "rm -rf dist && webpack",
     "docs": "xrun xarc/docs",
     "test": "vitest run",
+    "ci:check": "vitest run",
     "prepublishOnly": "xrun --serial [build, test]",
     "prepack": "publish-util-prepack",
     "postpack": "publish-util-postpack",
