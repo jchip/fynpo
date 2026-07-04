@@ -17,4 +17,5 @@ fyn-debug*.log
 package-lock.*
 yarn/lib
 /test/.fyn-global
+/test/.fyn-global-methods
 /test/.cache-util-test
