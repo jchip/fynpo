@@ -96,15 +96,18 @@ export const updatePackageVersions = ({ versions, tags, collated }) => {
     return undefined;
   }
 
-  const data = _.get(collated, "opts.data", { packages: {} });
+  // The readPackages-shaped package objects (pkgJson/pkgDir/path/version) live
+  // on the dep graph carried through the collate pipeline. `collated.opts.data`
+  // was never populated, which previously left this a no-op (no version bumped).
+  const graph = _.get(collated, "opts.graph");
+  const cwd = _.get(collated, "opts.cwd", process.cwd());
 
   const packages = [];
+  const updated = [];
 
-  _.each(data.packages, (pkg, name) => {
-    if (!versions.hasOwnProperty(name)) return;
-
-    const newV = versions[name];
-    if (newV === pkg.version) return;
+  _.each(versions, (newV, name) => {
+    const pkg = graph && graph.getPackageByName(name);
+    if (!pkg || newV === pkg.version) return;
 
     if (pkg.private === true) {
       logger.info("skipping private package", pkg.name);
@@ -117,11 +120,16 @@ export const updatePackageVersions = ({ versions, tags, collated }) => {
       updateDep(pkg.pkgJson, name2, ver);
     });
 
+    updated.push(pkg);
     packages.push(Path.join("packages", pkg.pkgDir, "package.json"));
   });
+
   // all updated, write to disk
-  _.each(data.packages, (pkg) => {
-    Fs.writeFileSync(pkg.pkgFile, `${JSON.stringify(pkg.pkgJson, null, 2)}\n`);
+  updated.forEach((pkg) => {
+    Fs.writeFileSync(
+      Path.join(cwd, pkg.path, "package.json"),
+      `${JSON.stringify(pkg.pkgJson, null, 2)}\n`
+    );
   });
 
   return Promise.resolve({ packages, tags });
