@@ -24,6 +24,7 @@ const unlock = util.promisify(lockfile.unlock);
 class FynGlobal {
   /**
    * Create a FynGlobal instance
+   *
    * @param {Object} options - Configuration options
    * @param {string} [options.globalDir] - Root directory for global packages (default: ~/.fyn/global)
    * @param {string} [options.registry] - NPM registry URL (default: https://registry.npmjs.org)
@@ -54,6 +55,7 @@ class FynGlobal {
 
   /**
    * Create a Fyn instance for global package installation
+   *
    * @param {string} cwd - Working directory for the install
    * @param {boolean} fynlocal - Whether this is a local package
    * @returns {Fyn} Configured Fyn instance
@@ -102,6 +104,7 @@ class FynGlobal {
 
   /**
    * Read the installed.json registry
+   *
    * @returns {Object} Registry object with packages info
    */
   async readInstalledJson() {
@@ -124,6 +127,7 @@ class FynGlobal {
 
   /**
    * Get all versions of a package from the registry
+   *
    * @param {string} packageName
    * @returns {Array} Array of version info objects
    */
@@ -134,6 +138,7 @@ class FynGlobal {
 
   /**
    * Get the linked version of a package
+   *
    * @param {string} packageName
    * @returns {Object|null} Version info or null
    */
@@ -144,6 +149,7 @@ class FynGlobal {
 
   /**
    * Find package info by tag (e.g., g1, g2)
+   *
    * @param {string} tag - The tag to find
    * @returns {Object|null} Object with packageName and versionInfo, or null if not found
    */
@@ -163,6 +169,7 @@ class FynGlobal {
 
   /**
    * Validate that the tag option points to an existing installation
+   *
    * @returns {Object} Object with packageName and versionInfo
    * @throws {Error} If tag is set but doesn't exist
    */
@@ -511,6 +518,7 @@ class FynGlobal {
 
   /**
    * Link bin executables to global bin directory
+   *
    * @param {string} gId - Package directory ID (e.g., "g1")
    * @param {Object} bins - Map of binName -> binPath
    * @param {boolean} force - If true, overwrite existing bins
@@ -549,6 +557,7 @@ class FynGlobal {
    * - Latest version wins (becomes linked)
    * - Prompts if newer version available when installing older
    * - Prompts to remove old versions after installing new
+   *
    * @param {string} packageSpec - Package spec to install
    * @param {Object} [options] - Install options
    * @param {boolean} [options.newTag] - Install as new tag even if same version exists
@@ -818,6 +827,7 @@ class FynGlobal {
 
   /**
    * Remove globally installed package version(s)
+   *
    * @param {string} packageSpec - Package name or name@semver pattern
    *   - name: remove all versions (warns if multiple, won't remove linked unless only one)
    *   - name@version: remove exact version
@@ -835,7 +845,8 @@ class FynGlobal {
     }
 
     // Parse package spec to extract name and optional version/semver
-    let packageName, versionSpec;
+    let packageName;
+    let versionSpec;
 
     if (packageSpec.startsWith("@")) {
       // Scoped package: @scope/name or @scope/name@version
@@ -914,6 +925,7 @@ class FynGlobal {
 
   /**
    * List globally installed packages
+   *
    * @param {string} [filterName] - Optional package name to filter by
    */
   async listGlobalPackages(filterName) {
@@ -992,10 +1004,13 @@ class FynGlobal {
 
   /**
    * Link (activate) a specific version of a package
+   *
    * @param {string} packageSpec - Package name@version to link, or ignored if --tag is specified
    */
   async linkPackageVersion(packageSpec) {
-    let packageName, version, targetVersion;
+    let packageName;
+    let version;
+    let targetVersion;
 
     // If --tag is specified, link that specific installation
     if (this.tag) {
@@ -1084,6 +1099,7 @@ class FynGlobal {
 
   /**
    * Find a package by its local path
+   *
    * @param {string} localPath - The local path to search for
    * @returns {Object|null} Object with packageName and versions, or null
    */
@@ -1105,6 +1121,7 @@ class FynGlobal {
 
   /**
    * Update a globally installed package (linked version or specific tag)
+   *
    * @param {string} packageSpec - Package name or local path
    */
   async updateGlobalPackage(packageSpec) {
@@ -1269,6 +1286,7 @@ class FynGlobal {
 
   /**
    * Cleanup non-linked versions of a package
+   *
    * @param {string} [packageName] - Package name to cleanup, or all packages if not specified
    * @returns {number} Number of versions removed
    */

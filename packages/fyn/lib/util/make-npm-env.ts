@@ -86,7 +86,7 @@ function makeNpmEnv(data, opts, prefix, env) {
       if (minimalConfigKeys.includes(normalizedKey) || minimalConfigKeys.includes(key)) {
         const envKey = `npm_config_${normalizedKey}`;
         const val = opts.config[key];
-        if (val != null && typeof val !== "function") {
+        if (val !== null && val !== undefined && typeof val !== "function") {
           env[envKey] = String(val);
         }
       }

@@ -57,17 +57,15 @@ function isSafeGitToken(s) {
 // Helper to check if git repo has new commits using fast git ls-remote or git rev-parse
 async function checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash) {
   if (!cachedCommitHash) return true; // No cache, assume new commits
-  
+
   try {
     const { execFileSync } = require("child_process");
-    const Path = require("path");
-    const fs = require("fs");
-    
+
     // Handle file:// URLs for local git repos - use git rev-parse instead of ls-remote
     let actualGitUrl = gitUrl;
     let isLocalRepo = false;
     let localRepoPath = null;
-    
+
     if (gitUrl.startsWith("file://")) {
       // Extract the local path from file:// URL
       isLocalRepo = true;
@@ -81,7 +79,7 @@ async function checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash) {
       isLocalRepo = true;
       localRepoPath = Path.resolve(gitUrl);
     }
-    
+
     if (isLocalRepo && localRepoPath) {
       // For local repos, use git rev-parse to get the current HEAD commit
       // This is more reliable than ls-remote for local repos
@@ -96,13 +94,13 @@ async function checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash) {
         encoding: "utf8",
         timeout: 10000 // 10 second timeout
       });
-      
+
       const latestCommit = output.trim();
       if (!latestCommit.match(/^[a-f0-9]{40}$/)) {
         logger.debug(`git rev-parse returned invalid commit hash: ${latestCommit}`);
         return null; // Can't determine
       }
-      
+
       return latestCommit !== cachedCommitHash;
     } else {
       // For remote repos, use git ls-remote
@@ -116,7 +114,7 @@ async function checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash) {
       } else {
         actualGitUrl = gitUrl;
       }
-      
+
       // Use git ls-remote to get the latest commit for the ref without cloning
       const safeRef = ref || "HEAD";
       if (!isSafeGitToken(safeRef) || actualGitUrl.startsWith("-")) {
@@ -128,10 +126,10 @@ async function checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash) {
         encoding: "utf8",
         timeout: 10000 // 10 second timeout
       });
-      
+
       const match = output.match(/^([a-f0-9]{40})\s+/m);
       if (!match) return true; // Can't determine, assume new commits
-      
+
       const latestCommit = match[1];
       return latestCommit !== cachedCommitHash;
     }
@@ -544,30 +542,10 @@ class PkgSrcManager {
       dirPacker = this._getPacoteDirPacker();
     }
 
-    // For git deps with branch/tag semvers (not commit hashes), check cache first
-    // to see if we can avoid cloning by checking for new commits with git ls-remote
-    let pacoteOpts = { dirPacker };
-    if (item.urlType.startsWith("git") && item.semver && !item.semver.match(/^[a-f0-9]{40}$/)) {
-      // Try to find a cached version to get the commit hash
-      // We'll construct a potential cache key from previous resolutions
-      // This is a best-effort check - if we can't find cache, pacote will clone anyway
-      const potentialCacheKeys = [
-        // Try common cache key patterns based on semver
-        `fyn-tarball-for-git+https://github.com/${item.semver.replace(/^github:/, "").split("#")[0]}.git#`,
-        `fyn-tarball-for-git+ssh://git@github.com/${item.semver.replace(/^github:/, "").split("#")[0]}.git#`
-      ];
-      
-      // Check if any cached entry exists and extract commit hash
-      for (const baseKey of potentialCacheKeys) {
-        try {
-          // List cache entries that start with this base key
-          // Note: This is approximate - we'd need to scan cache or maintain a mapping
-          // For now, we'll do the check in _prepPkgDirForManifest after pacote resolves
-        } catch (e) {
-          // Ignore - will check in _prepPkgDirForManifest
-        }
-      }
-    }
+    // For git deps with branch/tag semvers, pacote handles clone vs cache; the
+    // actual commit-freshness check happens in _prepPkgDirForManifest after
+    // pacote resolves.
+    const pacoteOpts = { dirPacker };
 
     return pacote
       .manifest(`${item.name}@${item.semver}`, this.getPacoteOpts(pacoteOpts))
@@ -617,18 +595,18 @@ class PkgSrcManager {
         // semver format: "github:user/repo#branch" or "git+https://github.com/user/repo.git#branch" or "git+file:///path#branch"
         let gitUrl = item.semver;
         let ref = "HEAD";
-        
+
         if (gitUrl.includes("#")) {
           const parts = gitUrl.split("#");
           gitUrl = parts[0];
           ref = parts[1];
         }
-        
+
         // Strip git+ prefix if present (checkGitRepoHasNewCommits will handle file:// URLs)
         if (gitUrl.startsWith("git+")) {
           gitUrl = gitUrl.replace(/^git\+/, "");
         }
-        
+
         // Normalize git URL format for remote repos (but keep file:// URLs as-is)
         if (gitUrl.startsWith("file://")) {
           // Keep file:// URLs as-is - checkGitRepoHasNewCommits will handle them
@@ -637,25 +615,23 @@ class PkgSrcManager {
         } else if (!gitUrl.includes("://")) {
           gitUrl = `https://github.com/${gitUrl}.git`;
         }
-        
+
         const hasNewCommits = await checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash);
         if (hasNewCommits === true) {
           shouldRefresh = true;
           logger.debug(
             `git cache for '${item.name}' has new commits (cached: ${cachedCommitHash.substring(0, 8)}, checking ${ref}), forcing refresh`
           );
-        } else {
+        } else if (tgzCacheInfo.refreshTime) {
           // No new commits OR ls-remote failed - check time-based staleness as fallback
-          if (tgzCacheInfo.refreshTime) {
-            const stale = Date.now() - tgzCacheInfo.refreshTime;
-            const staleByTime = stale >= META_CACHE_STALE_TIME;
-            if (staleByTime) {
-              shouldRefresh = true;
-              const reason = hasNewCommits === null ? "ls-remote failed" : "no new commits";
-              logger.debug(
-                `git cache for '${item.name}' (${reason}), cache is stale by time (${(stale / 1000 / 60 / 60).toFixed(1)}h old), forcing refresh`
-              );
-            }
+          const stale = Date.now() - tgzCacheInfo.refreshTime;
+          const staleByTime = stale >= META_CACHE_STALE_TIME;
+          if (staleByTime) {
+            shouldRefresh = true;
+            const reason = hasNewCommits === null ? "ls-remote failed" : "no new commits";
+            logger.debug(
+              `git cache for '${item.name}' (${reason}), cache is stale by time (${(stale / 1000 / 60 / 60).toFixed(1)}h old), forcing refresh`
+            );
           }
         }
       } else if (!shouldRefresh && tgzCacheInfo.refreshTime) {
@@ -701,7 +677,7 @@ class PkgSrcManager {
       cacheStream.on("integrity", i => (integrity = i.sha512[0].source));
       await missPipe(packStream, cacheStream);
       logger.debug("gitdep package", pkg.name, "cached with integrity", integrity);
-      
+
       // Update refresh time for the cache entry
       await refreshCacheEntry(this._cacheDir, tgzCacheKey);
     }
@@ -755,6 +731,8 @@ class PkgSrcManager {
     const cacheKey = `make-fetch-happen:request-cache:${packumentUrl}`;
     const legacyCacheKey = `make-fetch-happen:request-cache:full:${packumentUrl}`;
     const cacheKeys = [cacheKey, legacyCacheKey];
+
+    let cacheMemoized = false;
 
     const loadCachedPackument = async (key, memoize = true) => {
       try {
@@ -857,7 +835,6 @@ class PkgSrcManager {
     //   )
 
     let foundCache;
-    let cacheMemoized = false;
     const metaMemoizeUrl = this._fyn._options.metaMemoize;
 
     const promise = (item.urlType || forceRefresh
@@ -871,7 +848,7 @@ class PkgSrcManager {
       .then(cached => {
         const packument = cached && cached.data && JSON.parse(cached.data);
         foundCache = cached;
-        
+
         if (cached && cached.refreshTime) {
           const stale = Date.now() - cached.refreshTime;
           const since = (stale / 1000).toFixed(2);
@@ -887,7 +864,7 @@ class PkgSrcManager {
             return packument;
           }
         }
-        
+
         if (cached && metaMemoizeUrl) {
           const checkMemoizedCache = async () => {
             for (const key of cacheKeys) {

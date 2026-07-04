@@ -204,6 +204,7 @@ class Fyn {
 
   /**
    * Check user production mode option against saved install config in node_modules
+   *
    * @remarks - this._installConfig must've been initialized
    * @returns nothing
    */
@@ -436,6 +437,7 @@ class Fyn {
 
   /**
    * Get the version of a direct dependency from package.json
+   *
    * @param {string} pkgName - Package name to look up
    * @returns {string|null} The version or null if not found
    */
@@ -598,7 +600,7 @@ class Fyn {
 
         // pathUpEach stops when callback returns true, but doesn't include that path
         // So we need to check and capture the directory ourselves
-        const paths = pathUpEach(this._cwd, path => {
+        pathUpEach(this._cwd, path => {
           const testPath = Path.join(path, "package.json");
           if (Fs.existsSync(testPath)) {
             foundDir = path;
@@ -995,6 +997,7 @@ class Fyn {
 
   /**
    * Scan FV_DIR for modules saved in the ${name}/${version} format
+   *
    * @returns {*} pkgs under fv dir with their versions
    */
   async loadFvVersions() {

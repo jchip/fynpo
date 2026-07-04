@@ -135,9 +135,9 @@ describe("overrides", function() {
     it("should parse deeply nested overrides", () => {
       const fyn = createMockFyn({});
       const matchers = fyn._processOverrides({
-        "grandparent": {
-          "parent": {
-            "child": "1.0.0"
+        grandparent: {
+          parent: {
+            child: "1.0.0"
           }
         }
       });

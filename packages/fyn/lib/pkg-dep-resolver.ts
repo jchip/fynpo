@@ -1446,9 +1446,9 @@ ${item.depPath.join(" > ")}`
             // that doesn't contain a version satisfying item.semver. If so,
             // bypass the cache and re-fetch directly from the registry before
             // giving up.
-            const r = this._resolveWithMeta({ item, meta: updated, force: false, noLocal: true });
-            if (r) {
-              return r;
+            const resolved = this._resolveWithMeta({ item, meta: updated, force: false, noLocal: true });
+            if (resolved) {
+              return resolved;
             }
             logger.debug(
               `cached meta for ${item.name} has no version satisfying ${item.semver}` +

@@ -17,6 +17,7 @@ module.exports = {
    *  - the part before package name blue
    *  - the package name part magenta
    *  - remaining as is
+   *
    * @param {*} name - package name
    * @param {*} path - path to highlight
    * @returns

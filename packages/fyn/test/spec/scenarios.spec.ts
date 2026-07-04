@@ -386,8 +386,8 @@ const debug = false;
           // Handle cache copying for steps that need it
           const stepAction = optionalRequire(Path.join(cwd, "index.js"), { default: {} });
           if (stepAction.copyCache) {
-            const prevStepNum = parseInt(Path.basename(cwd).replace('step-', '')) - 1;
-            const prevStep = `step-${prevStepNum.toString().padStart(2, '0')}`;
+            const prevStepNum = parseInt(Path.basename(cwd).replace("step-", "")) - 1;
+            const prevStep = `step-${prevStepNum.toString().padStart(2, "0")}`;
             const prevStepDir = Path.join(Path.dirname(cwd), prevStep);
             const prevFynDir = Path.join(prevStepDir, ".fyn");
 

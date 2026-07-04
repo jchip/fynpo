@@ -193,6 +193,7 @@ class PkgDistFetcher {
 
   /**
    * Check if pkg already has a copy extracted to node_modules
+   *
    * @param {*} pkg - package info
    * @returns {*} pkg in FV_DIR and its package.json
    */

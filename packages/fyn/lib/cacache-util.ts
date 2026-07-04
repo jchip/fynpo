@@ -1,4 +1,6 @@
 // @ts-nocheck
+"use strict";
+
 /**
  * cacache refresh utilities
  *
@@ -23,6 +25,33 @@ const cacache = require("cacache");
 const fs = require("fs").promises;
 const path = require("path");
 const crypto = require("crypto");
+
+/**
+ * Hash a cache key using SHA256 (matches cacache's algorithm).
+ */
+function hashKey(key) {
+  return crypto
+    .createHash("sha256")
+    .update(key)
+    .digest("hex");
+}
+
+/**
+ * Get bucket file path for a cache key.
+ * Calculates path using same algorithm as cacache (SHA256 + directory segments).
+ * Reads index version from cacache/package.json for compatibility.
+ */
+function getBucketPath(cache, key) {
+  const hashed = hashKey(key);
+  const indexV = require("cacache/package.json")["cache-version"].index;
+  return path.join(
+    cache,
+    `index-v${indexV}`,
+    hashed.slice(0, 2),
+    hashed.slice(2, 4),
+    hashed.slice(4)
+  );
+}
 
 /**
  * Update cache entry refresh timestamp by modifying bucket file mtime.
@@ -66,33 +95,6 @@ async function getCacheInfoWithRefreshTime(cache, key) {
     }
     throw err;
   }
-}
-
-/**
- * Get bucket file path for a cache key.
- * Calculates path using same algorithm as cacache (SHA256 + directory segments).
- * Reads index version from cacache/package.json for compatibility.
- */
-function getBucketPath(cache, key) {
-  const hashed = hashKey(key);
-  const indexV = require("cacache/package.json")["cache-version"].index;
-  return path.join(
-    cache,
-    `index-v${indexV}`,
-    hashed.slice(0, 2),
-    hashed.slice(2, 4),
-    hashed.slice(4)
-  );
-}
-
-/**
- * Hash a cache key using SHA256 (matches cacache's algorithm).
- */
-function hashKey(key) {
-  return crypto
-    .createHash("sha256")
-    .update(key)
-    .digest("hex");
 }
 
 module.exports = {
