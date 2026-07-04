@@ -193,6 +193,19 @@ const execVersion = async (cmd, _parsed) => {
   return new Version(opts, graph).exec();
 };
 
+/**
+ * Resolve the exit code for `fynpo run`. Run.exec() signals a failing package
+ * script by setting process.exitCode (it does not throw), so honor it: a caught
+ * exception's code wins, then the code Run set, else 0. A hardcoded 0 here would
+ * mask failing package scripts (exit 0 on failure).
+ *
+ * @param thrownCode 1 when execRunScript caught an exception, else 0
+ * @param procExitCode process.exitCode as (optionally) set by Run.exec()
+ * @returns the exit code to pass to process.exit
+ */
+export const resolveRunExitCode = (thrownCode: number, procExitCode?: number): number =>
+  thrownCode || procExitCode || 0;
+
 const execRunScript = async (cmd, _parsed) => {
   const opts = await makeOpts(cmd, _parsed);
   const graph = await makeDepGraph(opts);
@@ -204,7 +217,10 @@ const execRunScript = async (cmd, _parsed) => {
   } catch (err) {
     exitCode = 1;
   } finally {
-    process.exit(exitCode);
+    // Run.exec() signals script failure via process.exitCode (it does not
+    // throw), so honor it here - otherwise a hardcoded process.exit(0) would
+    // mask failing package scripts.
+    process.exit(resolveRunExitCode(exitCode, process.exitCode));
   }
 
   return undefined;

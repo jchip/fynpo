@@ -13,7 +13,7 @@ vi.mock("nix-clap", () => {
   };
 });
 
-import { fynpoMain } from "../src/index";
+import { fynpoMain, resolveRunExitCode } from "../src/index";
 import { NixClap } from "nix-clap";
 
 describe("fynpo CLI", () => {
@@ -67,6 +67,25 @@ describe("fynpo CLI", () => {
     const result = fynpoMain();
     // The unknown-option handler should be defined
     expect(result).toBeDefined();
+  });
+});
+
+describe("resolveRunExitCode", () => {
+  it("propagates a package-script failure code Run set via process.exitCode", () => {
+    // regression: a hardcoded process.exit(0) used to clobber this, so `fynpo run`
+    // exited 0 even when a package script failed.
+    expect(resolveRunExitCode(0, 2)).toBe(2);
+    expect(resolveRunExitCode(0, 1)).toBe(1);
+  });
+
+  it("prefers a caught-exception code over process.exitCode", () => {
+    expect(resolveRunExitCode(1, 0)).toBe(1);
+    expect(resolveRunExitCode(1, undefined)).toBe(1);
+  });
+
+  it("exits 0 on success (no failure code anywhere)", () => {
+    expect(resolveRunExitCode(0, 0)).toBe(0);
+    expect(resolveRunExitCode(0, undefined)).toBe(0);
   });
 });
 
