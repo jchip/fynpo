@@ -19,6 +19,8 @@ const PkgDepLinker = require("./pkg-dep-linker");
 const semverUtil = require("./util/semver");
 const { readPkgJson } = require("./util/fyntil");
 const { OPTIONAL_RESOLVER } = require("./log-items");
+const { DEP_ITEM, SEMVER } = require("./symbols");
+const { evaluateScriptPolicy, isScriptAllowed } = require("./util/lifecycle-script-policy");
 
 xsh.Promise = Promise;
 
@@ -107,6 +109,33 @@ class PkgOptResolver {
   // - 0: add item back to resolve
   // - not: add item to queue for logging at end
   //
+  /**
+   * Evaluate the lifecycle-script policy for an optional dep's preinstall.
+   *
+   * Non-registry (github/git/url) optional deps do not run preinstall unless
+   * whitelisted via `fyn.allowScripts` / `fyn.allowTopLevelScripts` - the same
+   * deny-by-default policy the regular installer enforces (FPM-41). Registry
+   * and local deps are trusted and always allowed.
+   *
+   * @param {object} item the optional dep's DepItem
+   * @param {string} name package name
+   * @param {string} version resolved version
+   * @returns {{allowed:boolean, policy:object}} the policy decision
+   */
+  checkPreinstallPolicy(item, name, version) {
+    const optDepInfo = {
+      [DEP_ITEM]: item,
+      [SEMVER]: item.semver,
+      name,
+      version,
+      top: !_.get(item, ["parent", "depth"])
+    };
+    const policy = evaluateScriptPolicy(optDepInfo, this._fyn.allowScripts, {
+      allowTopLevel: this._fyn.allowTopLevelScripts
+    });
+    return { allowed: isScriptAllowed(policy, "preinstall"), policy };
+  }
+
   /* eslint-disable max-statements */
   optCheck(data) {
     const name = data.item.name;
@@ -267,6 +296,23 @@ class PkgOptResolver {
           );
           return { passed: true };
         } else if (_.get(res, "pkg.scripts.preinstall")) {
+          // Security hardening (FPM-41): an optional dep's preinstall is only
+          // run when its source is trusted (registry) or explicitly whitelisted
+          // via fyn.allowScripts / fyn.allowTopLevelScripts. Non-registry
+          // (github/git/url) optional deps do not run preinstall by default -
+          // the same deny-by-default policy the regular installer enforces.
+          const { allowed, policy } = this.checkPreinstallPolicy(data.item, name, version);
+          if (!allowed) {
+            logger.warn(
+              `${chalk.black.bgYellow("WARN")} ${chalk.magenta("scripts blocked")} ${displayId}`,
+              chalk.yellow(
+                `skipped optional preinstall for non-registry (${policy.urlType}) package` +
+                  ` - not in fyn.allowScripts`
+              )
+            );
+            logPass("preinstall blocked by script policy - keeping optional package");
+            return { passed: true };
+          }
           data.runningScript = true;
           logger.updateItem(OPTIONAL_RESOLVER, `running preinstall for ${displayId}`);
           const ls = new LifecycleScripts({
