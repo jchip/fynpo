@@ -16,6 +16,8 @@ const DepItem = require("../../lib/dep-item");
  * Build a minimal opt-resolver carrying only what checkPreinstallPolicy touches.
  *
  * @param {object} [fyn] stub fields for `this._fyn`
+ * @param {object} [fyn.allowScripts] the fyn.allowScripts whitelist
+ * @param {boolean} [fyn.allowTopLevelScripts] the fyn.allowTopLevelScripts flag
  * @returns {object} a PkgOptResolver with a stub `_fyn`
  */
 function mkResolver({ allowScripts = {}, allowTopLevelScripts = false } = {}) {
