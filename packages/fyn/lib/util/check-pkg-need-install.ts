@@ -75,7 +75,7 @@ async function checkPkgNeedInstall(dir, checkCtime = 0) {
     // local dep, or a broken symlink tripping the dir scan) as "up to date" --
     // surface it so the dep isn't quietly skipped with no explanation.
     logger.warn(`unable to determine if local package at ${dir} needs install: ${error.message}`);
-    return { install: false, error };
+    throw error;
   }
 }
 
