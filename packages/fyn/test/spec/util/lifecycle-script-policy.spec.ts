@@ -27,9 +27,18 @@ const {
  * @param {boolean} [opts.depItem] whether to attach a DEP_ITEM symbol
  * @param {boolean} [opts.top] whether the dep was requested by the top-level
  *   package.json (sets `depInfo.top`, as the resolver does)
+ * @param {object} [opts.parent] declaring dependency item
  * @returns {object} a fake depInfo carrying the SEMVER/DEP_ITEM symbols
  */
-function mkDep({ name = "foo", version = "1.0.0", spec, urlType, depItem = true, top } = {}) {
+function mkDep({
+  name = "foo",
+  version = "1.0.0",
+  spec,
+  urlType,
+  depItem = true,
+  top,
+  parent
+} = {}) {
   const depInfo = { name, version };
   if (spec !== undefined) {
     depInfo[SEMVER] = spec;
@@ -38,7 +47,7 @@ function mkDep({ name = "foo", version = "1.0.0", spec, urlType, depItem = true,
     depInfo.top = top;
   }
   if (depItem && (urlType !== undefined || spec !== undefined)) {
-    depInfo[DEP_ITEM] = { urlType, semver: spec };
+    depInfo[DEP_ITEM] = { urlType, semver: spec, parent };
   }
   return depInfo;
 }
@@ -121,6 +130,28 @@ describe("lifecycle-script-policy", function() {
       expect(policy.trusted).to.equal(true);
       expect(isScriptAllowed(policy, "preinstall")).to.equal(true);
       expect(isScriptAllowed(policy, "postinstall")).to.equal(true);
+    });
+
+    it("blocks local deps declared by a non-registry parent", () => {
+      const parent = { semver: "github:evil/parent", urlType: "github" };
+      const dep = mkDep({ spec: "file:./payload", parent });
+      const policy = evaluateScriptPolicy(dep, {});
+      expect(policy.trusted).to.equal(false);
+      expect(policy.urlType).to.equal("github");
+      expect(isScriptAllowed(policy, "postinstall")).to.equal(false);
+    });
+
+    it("allows local deps declared by a registry parent", () => {
+      const parent = { semver: "^1.0.0" };
+      const dep = mkDep({ spec: "file:./sibling", parent });
+      expect(evaluateScriptPolicy(dep, {}).trusted).to.equal(true);
+    });
+
+    it("blocks nested local deps under a non-registry ancestor", () => {
+      const remote = { semver: "github:evil/parent", urlType: "github" };
+      const local = { semver: "file:./middle", parent: remote };
+      const dep = mkDep({ spec: "file:./payload", parent: local });
+      expect(evaluateScriptPolicy(dep, {}).trusted).to.equal(false);
     });
 
     it("blocks all scripts for untrusted packages with no whitelist", () => {

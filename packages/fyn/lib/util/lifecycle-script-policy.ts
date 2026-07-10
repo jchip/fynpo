@@ -9,12 +9,13 @@ const { DEP_ITEM, SEMVER } = require("../symbols");
 //
 // Security hardening: a package's npm lifecycle scripts (preinstall, install,
 // postinstall) are only executed during install when the package came from a
-// configured registry, is a local file:/link:/symlink dependency, or is
-// explicitly whitelisted in the project's package.json `fyn.allowScripts`.
+// configured registry, is a trusted local file:/link:/symlink dependency, or
+// is explicitly whitelisted in the project's package.json `fyn.allowScripts`.
 //
 // A package's source is determined from its dependency spec's urlType:
 //   - registry semver (e.g. ^1.2.3)         -> no urlType             -> trusted
-//   - local file:/link:/symlink/path        -> localType, no urlType  -> trusted
+//   - local path under root/registry/local  -> localType, no urlType  -> trusted
+//   - local path under git/URL ancestor     -> ancestor urlType       -> UNTRUSTED
 //   - npm: alias (resolves from a registry)  -> urlType "npm"          -> trusted
 //   - github:/git/git+*/http(s) tarball      -> urlType set            -> UNTRUSTED
 //
@@ -24,6 +25,32 @@ const { DEP_ITEM, SEMVER } = require("../symbols");
 
 // urlTypes that still resolve from a configured registry and are trusted.
 const TRUSTED_URL_TYPES = new Set(["npm"]);
+
+/**
+ * Derive the effective source urlType for a dependency item.
+ *
+ * Local dependencies inherit the trust boundary of the nearest non-local
+ * ancestor. This keeps root/registry/fynpo local dependencies trusted while a
+ * local dependency declared by a git/URL package remains untrusted.
+ *
+ * @param {object} depItem dependency item to inspect
+ * @returns {string|undefined} the effective urlType
+ */
+function getSourceUrlType(depItem) {
+  let item = depItem;
+  while (item) {
+    const analyzed = item.semver ? semverUtil.analyze(item.semver) : {};
+    const urlType = item.urlType || analyzed.urlType;
+    if (urlType) {
+      return urlType;
+    }
+    if (!(item.localType || analyzed.localType)) {
+      return undefined;
+    }
+    item = item.parent;
+  }
+  return undefined;
+}
 
 /**
  * Derive the source urlType for a resolved package (depInfo).
@@ -37,11 +64,11 @@ const TRUSTED_URL_TYPES = new Set(["npm"]);
  */
 function getUrlType(depInfo) {
   const depItem = depInfo[DEP_ITEM];
-  if (depItem && depItem.urlType) {
-    return depItem.urlType;
+  if (depItem) {
+    return getSourceUrlType(depItem);
   }
 
-  const spec = (depItem && depItem.semver) || depInfo[SEMVER];
+  const spec = depInfo[SEMVER];
   if (spec) {
     return semverUtil.analyze(spec).urlType;
   }
@@ -205,6 +232,7 @@ function isScriptAllowed(policy, scriptName) {
 
 module.exports = {
   TRUSTED_URL_TYPES,
+  getSourceUrlType,
   getUrlType,
   isTrustedScriptSource,
   isTopLevelDep,

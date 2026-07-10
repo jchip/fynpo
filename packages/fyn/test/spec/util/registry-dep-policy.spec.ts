@@ -15,10 +15,11 @@ const {
  *
  * @param {string} spec the dependency spec
  * @param {string} [name] package name
+ * @param {object} [parent] declaring dependency item
  * @returns {object} a DepItem
  */
-function mkItem(spec, name = "foo") {
-  return new DepItem({ name, semver: spec, src: "dep", dsrc: "dep" }, null);
+function mkItem(spec, name = "foo", parent = null) {
+  return new DepItem({ name, semver: spec, src: "dep", dsrc: "dep" }, parent);
 }
 
 describe("registry-dep-policy", function() {
@@ -128,6 +129,28 @@ describe("registry-dep-policy", function() {
       ["file:../bar", "link:../bar", "../bar", "./bar"].forEach(spec =>
         expect(violatesRegistryPolicy(mkItem(spec)), spec).to.equal(null)
       );
+    });
+
+    it("rejects a local dep declared by a non-registry parent", () => {
+      const parent = mkItem("github:evil/parent", "parent");
+      expect(violatesRegistryPolicy(mkItem("file:./payload", "payload", parent))).to.deep.equal({
+        kind: "local",
+        urlType: "github"
+      });
+    });
+
+    it("accepts a local dep declared by a registry parent", () => {
+      const parent = mkItem("^1.0.0", "parent");
+      expect(violatesRegistryPolicy(mkItem("file:./sibling", "sibling", parent))).to.equal(null);
+    });
+
+    it("rejects a nested local dep whose nearest non-local ancestor is untrusted", () => {
+      const remote = mkItem("github:evil/parent", "parent");
+      const local = mkItem("file:./middle", "middle", remote);
+      expect(violatesRegistryPolicy(mkItem("file:./payload", "payload", local))).to.deep.equal({
+        kind: "local",
+        urlType: "github"
+      });
     });
 
     it("accepts registry semver/range/tag DepItems", () => {

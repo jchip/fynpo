@@ -28,11 +28,12 @@ function mkResolver(enforceRegistryDeps) {
  * Build a parent dep item at a given depth (0 == the top-level package itself).
  *
  * @param {number} depth the dep depth
+ * @param {string} semver the parent's requested dependency spec
  * @returns {object} a DepItem
  */
-function mkParent(depth) {
+function mkParent(depth, semver = "^1.0.0") {
   return new DepItem(
-    { name: "parent", version: "1.0.0", semver: "^1.0.0", src: "dep", dsrc: "dep", depth },
+    { name: "parent", version: "1.0.0", semver, src: "dep", dsrc: "dep", depth },
     null
   );
 }
@@ -86,5 +87,13 @@ describe("pkg-dep-resolver fyn.enforceRegistryDeps", function() {
     expect(() => resolver.makePkgDepItems(pkg, mkParent(1), false, true)).to.throw(
       /enforceRegistryDeps.*bad-sv.*invalid\/unparseable/
     );
+  });
+
+  it("throws on a local dep declared by a non-registry parent", () => {
+    const resolver = mkResolver(true);
+    const pkg = { name: "parent", version: "1.0.0", dependencies: { payload: "file:./payload" } };
+    expect(() =>
+      resolver.makePkgDepItems(pkg, mkParent(1, "github:evil/parent"), false, true)
+    ).to.throw(/enforceRegistryDeps.*payload.*local dependency.*non-registry source \(github\)/);
   });
 });

@@ -388,10 +388,12 @@ class PkgDepResolver {
     }
 
     const depId = `${item.name}@${item.semver}`;
-    const reason =
-      violation.kind === "url"
-        ? `is from a non-registry source (${violation.urlType})`
-        : `has an invalid/unparseable version "${violation.semver}"`;
+    let reason = `has an invalid/unparseable version "${violation.semver}"`;
+    if (violation.kind === "url") {
+      reason = `is from a non-registry source (${violation.urlType})`;
+    } else if (violation.kind === "local") {
+      reason = `is a local dependency declared below a non-registry source (${violation.urlType})`;
+    }
 
     throw new Error(
       `fyn.enforceRegistryDeps: transitive dependency "${depId}" required by "${parent.id}" ${reason}. ` +

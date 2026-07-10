@@ -2,7 +2,7 @@
 "use strict";
 
 const Semver = require("semver");
-const { TRUSTED_URL_TYPES } = require("./lifecycle-script-policy");
+const { TRUSTED_URL_TYPES, getSourceUrlType } = require("./lifecycle-script-policy");
 
 //
 // Security hardening (opt-in via package.json `fyn.enforceRegistryDeps`):
@@ -15,8 +15,8 @@ const { TRUSTED_URL_TYPES } = require("./lifecycle-script-policy");
 // Accepted for transitive deps:
 //   - registry semver / range / dist-tag (e.g. ^1.2.3, 1.x, latest, *)
 //   - `npm:` aliases (resolve from a configured registry)
-//   - local file:/link:/symlink deps, including fynpo monorepo siblings (which
-//     fyn rewrites from semver to a local path during resolution)
+//   - local file:/link:/symlink deps whose nearest non-local ancestor is the
+//     root or registry-backed, including fynpo monorepo siblings
 //
 // Rejected for transitive deps:
 //   - github:, git:, git+ssh/https/http/file, http(s) tarball URLs
@@ -67,6 +67,7 @@ function isValidRegistrySpec(spec) {
  * @returns {(null|{kind:string, urlType?:string, semver?:string})} null when
  *   the dep is acceptable, otherwise a violation descriptor:
  *   - `{ kind: "url", urlType }`   non-registry git/github/url source
+ *   - `{ kind: "local", urlType }` local dep below a non-registry source
  *   - `{ kind: "semver", semver }` unparseable version selector
  */
 function violatesRegistryPolicy(dep) {
@@ -80,9 +81,13 @@ function violatesRegistryPolicy(dep) {
     return { kind: "url", urlType };
   }
 
-  // local file:/link:/symlink (and fynpo siblings rewritten to a local path) -
-  // accepted.
+  // Local file:/link:/symlink dependencies are accepted only when their nearest
+  // non-local ancestor is registry-backed (or the root package).
   if (dep.localType) {
+    const sourceUrlType = getSourceUrlType(dep);
+    if (isNonRegistryUrlType(sourceUrlType)) {
+      return { kind: "local", urlType: sourceUrlType };
+    }
     return null;
   }
 
