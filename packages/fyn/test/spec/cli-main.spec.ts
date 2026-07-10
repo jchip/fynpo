@@ -1,12 +1,22 @@
 "use strict";
 
 const { expect } = require("chai");
-const { getRunExitCode, pickEnvOptions } = require("../../cli/main");
+const { getRunExitCode, pickEnvOptions, setLockfile } = require("../../cli/main");
 
 describe("cli/main", function() {
   describe("getRunExitCode", function() {
     it("prefers the child exit code over errno", () => {
       expect(getRunExitCode({ code: 5, errno: -2 })).to.equal(5);
+    });
+  });
+
+  describe("setLockfile", function() {
+    it("updates the nested option consumed by Fyn and returns its previous value", () => {
+      const config = { opts: { lockfile: true } };
+
+      expect(setLockfile(config, false)).to.equal(true);
+      expect(config.opts.lockfile).to.equal(false);
+      expect(config).not.to.have.own.property("lockfile");
     });
   });
 

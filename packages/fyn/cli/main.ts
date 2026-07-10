@@ -49,6 +49,12 @@ const pickEnvOptions = () => {
 
 const getRunExitCode = err => (err.code !== undefined ? err.code : err.errno || 1);
 
+const setLockfile = (config, lockfile) => {
+  const previous = config.opts.lockfile;
+  config.opts.lockfile = lockfile;
+  return previous;
+};
+
 const pickOptions = async (cmd, checkFynpo = true) => {
   const meta = cmd.jsonMeta;
   // Global options (like --cwd) are stored in cmd.rootCmd.opts
@@ -327,13 +333,12 @@ const commands = {
         Object.assign(meta.opts, cmd.rootCmd.opts);
       }
       const config = await pickOptions(cmd);
-      const lockFile = config.lockfile;
-      config.lockfile = false;
+      const lockFile = setLockfile(config, false);
       const cli = new FynCli(config);
       const opts = Object.assign({}, meta.opts, meta.args);
       return cli.add(opts).then(added => {
         if (!added || !meta.opts.install) return;
-        config.lockfile = lockFile;
+        setLockfile(config, lockFile);
         config.noStartupInfo = true;
         logger.info("installing...");
         fynTil.resetFynpo();
@@ -379,14 +384,13 @@ const commands = {
         Object.assign(meta.opts, cmd.rootCmd.opts);
       }
       const options = await pickOptions(cmd);
-      const lockFile = options.lockfile;
-      options.lockfile = false;
+      const lockFile = setLockfile(options, false);
       const cli = new FynCli(options);
       const opts = Object.assign({}, meta.opts, meta.args);
       const removed = await cli.remove(opts);
       if (removed) {
         if (!meta.opts.install) return;
-        options.lockfile = lockFile;
+        setLockfile(options, lockFile);
         options.noStartupInfo = true;
         fynTil.resetFynpo();
         logger.info("installing...");
@@ -758,5 +762,6 @@ module.exports = {
   nodeGyp,
   getRunExitCode,
   pickEnvOptions,
+  setLockfile,
   hardLinkDir
 };
