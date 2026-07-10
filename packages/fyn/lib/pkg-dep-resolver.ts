@@ -662,6 +662,15 @@ class PkgDepResolver {
     }
 
     const metaJson = meta.versions[resolved];
+    const localFromMeta = meta.local || metaJson.local;
+    if (localFromMeta) {
+      if (!item.localType) {
+        item.localType = localFromMeta;
+      }
+      if (this._fyn.enforceRegistryDeps && item.parent.depth >= 1) {
+        this._enforceRegistryDep(item, item.parent);
+      }
+    }
 
     const platformCheck = () => {
       const sysCheck = checkPkgOsCpu(metaJson);
@@ -745,14 +754,7 @@ class PkgDepResolver {
       }
     }
 
-    const localFromMeta = meta.local || metaJson.local;
     if (localFromMeta) {
-      if (!item.localType) {
-        item.localType = localFromMeta;
-      }
-      if (this._fyn.enforceRegistryDeps && item.parent.depth >= 1) {
-        this._enforceRegistryDep(item, item.parent);
-      }
       pkgV.local = item.localType;
       item.fullPath = pkgV.dir = pkgV.dist.fullPath;
       pkgV.str = meta.jsonStr;

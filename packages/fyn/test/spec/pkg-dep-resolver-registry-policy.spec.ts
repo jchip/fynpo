@@ -133,4 +133,43 @@ describe("pkg-dep-resolver fyn.enforceRegistryDeps", function() {
       /enforceRegistryDeps.*payload.*local dependency.*non-registry source \(github\)/
     );
   });
+
+  it("rechecks local metadata before queueing optional package inspection", async () => {
+    const resolver = mkResolver(true);
+    resolver._fyn.deepResolve = false;
+    resolver._fyn.alwaysFetchDist = false;
+    resolver._data = { getPkgsData: () => ({}) };
+    resolver.addKnownRSemver = () => true;
+    let optionalQueued = false;
+    resolver._optResolver = { add: () => (optionalQueued = true) };
+
+    const remoteParent = mkParent(1, "github:evil/parent");
+    const item = new DepItem(
+      { name: "payload", semver: "^1.0.0", src: "opt", dsrc: "opt" },
+      remoteParent
+    );
+    const meta = {
+      local: "hard",
+      versions: {
+        "1.0.0": {
+          name: "payload",
+          version: "1.0.0",
+          local: "hard",
+          scripts: { preinstall: "node payload.js" },
+          dist: { fullPath: "/local/payload" }
+        }
+      }
+    };
+
+    let error;
+    try {
+      await resolver.addPackageResolution(item, meta, "1.0.0");
+    } catch (err) {
+      error = err;
+    }
+
+    expect(error).to.exist;
+    expect(error.message).to.match(/enforceRegistryDeps.*payload.*local dependency/);
+    expect(optionalQueued).to.equal(false);
+  });
 });
