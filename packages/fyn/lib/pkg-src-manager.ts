@@ -1006,7 +1006,7 @@ class PkgSrcManager {
 
     // Fallback for packages without tarball URL
     const opts = this.getPacoteOpts({
-      fullMeta: true,
+      fullMetadata: true,
       integrity,
       resolved: tarballUrl
     });

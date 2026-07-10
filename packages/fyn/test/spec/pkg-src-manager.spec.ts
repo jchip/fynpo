@@ -331,6 +331,37 @@ describe("pkg-src-manager", function() {
     }
   });
 
+  it("tarball-stream fallback requests full metadata with the correct camelCase option", () => {
+    const pacote = require("pacote");
+    const origStream = pacote.tarball.stream;
+    let captured;
+    pacote.tarball.stream = (_id, _cb, opts) => {
+      captured = opts;
+      return Promise.resolve();
+    };
+
+    const fyn = {
+      concurrency: 1,
+      _fynCacheDir: fynCacheDir,
+      _options: {},
+      isFynpo: false,
+      forceCache: false,
+      remoteMetaDisabled: false,
+      remoteTgzDisabled: false,
+      copy: []
+    };
+    const mgr = new PkgSrcManager({ registry: "http://localhost/", fynCacheDir, fyn });
+
+    try {
+      // no dist.tarball -> takes the pacote.tarball.stream fallback path
+      mgr.pacoteTarballStream("mod-a@1.0.0", { name: "mod-a", version: "1.0.0" }, "sha512-x");
+      expect(captured.fullMetadata).to.equal(true);
+      expect(captured).to.not.have.property("fullMeta");
+    } finally {
+      pacote.tarball.stream = origStream;
+    }
+  });
+
   describe("isPinnedGitCommit", () => {
     const { isPinnedGitCommit } = PkgSrcManager;
     const sha = "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"; // 40 hex chars
