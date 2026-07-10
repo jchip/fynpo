@@ -421,11 +421,13 @@ class PkgSrcManager {
       logger.debug(`pacote.packument ${qItem.packumentUrl}`);
       const promise = pacote.packument(
         pkgName,
+        // pacote 21 / npm-registry-fetch 19 read camelCase options; the old
+        // kebab-case names were silently ignored. preferOnline forces a server
+        // revalidation (cache mode "no-cache") for this refresh path.
         this.getPacoteOpts({
-          "full-metadata": true,
-          "fetch-retries": 3,
-          "cache-policy": "ignore",
-          "cache-key": qItem.cacheKey,
+          fullMetadata: true,
+          fetchRetries: 3,
+          preferOnline: true,
           memoize: false
         })
       );

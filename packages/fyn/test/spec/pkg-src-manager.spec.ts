@@ -276,4 +276,58 @@ describe("pkg-src-manager", function() {
 
     expect(meta["dist-tags"].latest).to.equal("2.0.0");
   });
+
+  it("requests packument with camelCase pacote v21 options", async () => {
+    const pacote = require("pacote");
+    const origPackument = pacote.packument;
+    let captured;
+    pacote.packument = (name, opts) => {
+      captured = opts;
+      return Promise.resolve({
+        name,
+        versions: { "1.0.0": { name, version: "1.0.0" } },
+        "dist-tags": { latest: "1.0.0" }
+      });
+    };
+
+    const fyn = {
+      concurrency: 1,
+      _fynCacheDir: fynCacheDir,
+      _options: {},
+      isFynpo: false,
+      forceCache: false,
+      remoteMetaDisabled: false,
+      remoteTgzDisabled: false,
+      copy: []
+    };
+    const mgr = new PkgSrcManager({
+      registry: "http://localhost/",
+      fynCacheDir,
+      fyn
+    });
+
+    try {
+      const result = await new Promise((resolve, reject) => {
+        mgr.netRetrieveMeta({
+          item: { name: "mod-a" },
+          packumentUrl: mgr.makePackumentUrl("mod-a"),
+          cacheKey: "test-cache-key",
+          defer: { resolve, reject }
+        });
+      });
+
+      expect(result["dist-tags"].latest).to.equal("1.0.0");
+      // the v21-correct camelCase options must reach pacote
+      expect(captured.fullMetadata).to.equal(true);
+      expect(captured.fetchRetries).to.equal(3);
+      expect(captured.preferOnline).to.equal(true);
+      // the old kebab-case / nonexistent names must be gone
+      expect(captured).to.not.have.property("full-metadata");
+      expect(captured).to.not.have.property("fetch-retries");
+      expect(captured).to.not.have.property("cache-policy");
+      expect(captured).to.not.have.property("cache-key");
+    } finally {
+      pacote.packument = origPackument;
+    }
+  });
 });
