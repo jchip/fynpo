@@ -278,13 +278,15 @@ class Fyn {
         const fynInstallConfig = JSON.parse(await Fs.readFile(filename));
         logger.debug("loaded fynInstallConfig", fynInstallConfig);
         const { layout } = fynInstallConfig;
-        if (layout && layout !== this._layout) {
+        if (layout && layout !== this._options.layout) {
           if (this._cliSource.layout !== "default") {
             logger.warn(
-              `Forcing layout to ${layout} from ${this._layout} because your existing node_modules uses that. To change it, please remove node_modules first.`
+              `Forcing layout to ${layout} from ${this._options.layout} because your existing node_modules uses that. To change it, please remove node_modules first.`
             );
           }
-          this._layout = layout;
+          // use the layout the existing node_modules was built with; _options.layout
+          // is the single source of truth read by isNormalLayout at runtime.
+          this._options.layout = layout;
         }
         // absent shortPkgDir on an existing .fyn.json means it was written before
         // the long-pkg-dir layout shipped, i.e. the store is in short form.
@@ -556,7 +558,7 @@ class Fyn {
         time: Date.now() + 5,
         centralDir,
         production: this.production,
-        layout: this._layout,
+        layout: this._options.layout,
         shortPkgDir: this._shortPkgDir
         // not a good idea to save --run-npm options to install config because
         // future fyn install will automatically run them and would be unexpected.
