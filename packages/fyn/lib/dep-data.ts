@@ -57,9 +57,14 @@ class DepData {
   }
 
   getPkgById(id) {
-    const splits = id.split("@");
-    const x = this.getPkgsData()[splits[0]];
-    return splits[1] ? x[splits[1]] : x;
+    // id is `name@version`; split at the LAST '@' so a scoped name's leading
+    // '@' (e.g. "@scope/name@1.2.3") isn't mistaken for the version separator.
+    const lastAt = id.lastIndexOf("@");
+    const sep = lastAt > 0 ? lastAt : -1;
+    const name = sep > 0 ? id.slice(0, sep) : id;
+    const version = sep > 0 ? id.slice(sep + 1) : undefined;
+    const x = this.getPkgsData()[name];
+    return version ? x[version] : x;
   }
 
   eachVersion(cb) {
