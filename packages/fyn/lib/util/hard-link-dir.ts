@@ -347,9 +347,11 @@ async function linkPackTree({ tree, src, dest, sym1, sourceMaps }) {
   // create hardlinks to files (or symlinks if source is a symlink)
   //
   for (const file of files) {
-    // In non-CI mode, skip linking source map file by matching for extensions like .js.map
-    // because we rewrite their sources and copy them already
-    if (!ci.isCI && file.match(/.+\..+\.map$/)) {
+    // In non-CI mode, skip linking .js/.mjs source maps here because handleSourceMap
+    // rewrites+copies the ones referenced by their sibling script. Other maps
+    // (.d.ts.map, .css.map, ...) are NOT handled there, so they must be linked
+    // normally rather than dropped.
+    if (!ci.isCI && file.match(/\.(js|mjs)\.map$/)) {
       continue;
     }
 
