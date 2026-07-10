@@ -47,6 +47,8 @@ const pickEnvOptions = () => {
   }, {});
 };
 
+const getRunExitCode = err => (err.code !== undefined ? err.code : err.errno || 1);
+
 const pickOptions = async (cmd, checkFynpo = true) => {
   const meta = cmd.jsonMeta;
   // Global options (like --cwd) are stored in cmd.rootCmd.opts
@@ -420,7 +422,7 @@ const commands = {
       } catch (err) {
         // Determine exit code from error
         // @npmcli/run-script uses err.code (exit code), not err.errno
-        const exitCode = err.errno !== undefined ? err.errno : (err.code || 1);
+        const exitCode = getRunExitCode(err);
 
         // Format and log the error cleanly
         if (err.event && err.script) {
@@ -754,6 +756,7 @@ module.exports = {
   run,
   fun,
   nodeGyp,
+  getRunExitCode,
   pickEnvOptions,
   hardLinkDir
 };

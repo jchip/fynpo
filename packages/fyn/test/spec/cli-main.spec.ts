@@ -1,9 +1,15 @@
 "use strict";
 
 const { expect } = require("chai");
-const { pickEnvOptions } = require("../../cli/main");
+const { getRunExitCode, pickEnvOptions } = require("../../cli/main");
 
 describe("cli/main", function() {
+  describe("getRunExitCode", function() {
+    it("prefers the child exit code over errno", () => {
+      expect(getRunExitCode({ code: 5, errno: -2 })).to.equal(5);
+    });
+  });
+
   describe("pickEnvOptions", function() {
     let saved;
 
