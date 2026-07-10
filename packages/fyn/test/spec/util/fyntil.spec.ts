@@ -18,6 +18,19 @@ describe("fyntil", function() {
       expect(code).to.equal(1);
       process.exit = save;
     });
+
+    it("passes through a numeric exit code", () => {
+      const save = process.exit;
+      let code;
+      process.exit = c => (code = c);
+      fyntil.exit(0);
+      expect(code).to.equal(0);
+      fyntil.exit(2);
+      expect(code).to.equal(2);
+      fyntil.exit(137);
+      expect(code).to.equal(137);
+      process.exit = save;
+    });
   });
 
   describe("retry", function() {

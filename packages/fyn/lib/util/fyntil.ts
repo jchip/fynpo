@@ -201,7 +201,12 @@ const fyntil = {
   },
 
   exit(err) {
-    process.exit(err ? 1 : 0);
+    // a numeric arg is an explicit exit code (e.g. a script's exit code) and is
+    // passed through as-is; otherwise treat a truthy arg as an error (exit 1).
+    if (typeof err === "number") {
+      return process.exit(err);
+    }
+    return process.exit(err ? 1 : 0);
   },
 
   async readJson(file, defaultData) {
