@@ -750,6 +750,9 @@ class PkgDepResolver {
       if (!item.localType) {
         item.localType = localFromMeta;
       }
+      if (this._fyn.enforceRegistryDeps && item.parent.depth >= 1) {
+        this._enforceRegistryDep(item, item.parent);
+      }
       pkgV.local = item.localType;
       item.fullPath = pkgV.dir = pkgV.dist.fullPath;
       pkgV.str = meta.jsonStr;

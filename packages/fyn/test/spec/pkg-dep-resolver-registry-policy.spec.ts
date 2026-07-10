@@ -96,4 +96,41 @@ describe("pkg-dep-resolver fyn.enforceRegistryDeps", function() {
       resolver.makePkgDepItems(pkg, mkParent(1, "github:evil/parent"), false, true)
     ).to.throw(/enforceRegistryDeps.*payload.*local dependency.*non-registry source \(github\)/);
   });
+
+  it("rechecks a registry-looking dep after it resolves to local metadata", async () => {
+    const resolver = mkResolver(true);
+    resolver._fyn.deepResolve = false;
+    resolver._fyn.alwaysFetchDist = false;
+    resolver._data = { getPkgsData: () => ({}) };
+    resolver.addKnownRSemver = () => true;
+
+    const remoteParent = mkParent(1, "github:evil/parent");
+    const item = new DepItem(
+      { name: "payload", semver: "^1.0.0", src: "dep", dsrc: "dep" },
+      remoteParent
+    );
+    const meta = {
+      local: "hard",
+      versions: {
+        "1.0.0": {
+          name: "payload",
+          version: "1.0.0",
+          local: "hard",
+          dist: { fullPath: "/local/payload" }
+        }
+      }
+    };
+
+    let error;
+    try {
+      await resolver.addPackageResolution(item, meta, "1.0.0");
+    } catch (err) {
+      error = err;
+    }
+
+    expect(error).to.exist;
+    expect(error.message).to.match(
+      /enforceRegistryDeps.*payload.*local dependency.*non-registry source \(github\)/
+    );
+  });
 });
