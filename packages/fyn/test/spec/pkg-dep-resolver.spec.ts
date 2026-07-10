@@ -201,6 +201,38 @@ describe("pkg-dep-resolver", function() {
       });
   }).timeout(10000);
 
+  it("does not abort the install when a devOptDependencies meta fetch fails", () => {
+    const fyn = new Fyn({
+      opts: {
+        registry: `http://localhost:${server.info.port}`,
+        pkgFile: false,
+        pkgData: {
+          name: "test",
+          version: "1.0.0",
+          dependencies: {
+            "mod-a": "^1.0.0"
+          },
+          devOptDependencies: {
+            "no-such-pkg-fyn-test": "^1.0.0"
+          }
+        },
+        fynDir,
+        cwd: fynDir,
+        ignoreDist: true
+      }
+    });
+    let error;
+    return fyn
+      .resolveDependencies()
+      .catch(err => (error = err))
+      .then(() => {
+        // a failing *optional* (devopt) dep must not reject the whole install
+        expect(error, error && error.message).to.not.exist;
+        // the required dependency still resolved
+        expect(fyn._data.pkgs["mod-a"]).to.exist;
+      });
+  }).timeout(10000);
+
   it("should resolve with the `latest` tag", () => {});
 
   it("should refetch meta when cached meta has no satisfying version", () => {

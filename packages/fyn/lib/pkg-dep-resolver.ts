@@ -1468,8 +1468,11 @@ ${item.depPath.join(" > ")}`
             });
           })
           .catch(err => {
-            // item is not optional => fail
-            if (item.dsrc !== "opt") {
+            // item is not optional => fail. optional sections use dsrc that
+            // *includes* "opt" (e.g. "opt", "devopt"), matching the checks
+            // elsewhere in this file — testing `!== "opt"` wrongly treated
+            // devOptDependencies as required and hard-aborted the install.
+            if (!item.dsrc || !item.dsrc.includes("opt")) {
               if (err.message.includes("Unable to retrieve meta")) {
                 throw err;
               } else {
