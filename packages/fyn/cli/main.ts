@@ -43,6 +43,7 @@ const pickEnvOptions = () => {
       cfg[m.optKey] = ev === m.checkValue;
       logger.info(`setting option ${m.optKey} to ${cfg[m.optKey]} by env ${envKey} value ${ev}`);
     }
+    return cfg;
   }, {});
 };
 
@@ -753,5 +754,6 @@ module.exports = {
   run,
   fun,
   nodeGyp,
+  pickEnvOptions,
   hardLinkDir
 };
