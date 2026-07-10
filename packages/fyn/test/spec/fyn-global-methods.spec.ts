@@ -234,17 +234,18 @@ describe("fyn-global methods", function() {
       expect(versions.find(v => v.dir === "g1").version).to.equal("1.0.1");
     });
 
-    it("removeFromRegistry drops a version and prunes empty packages", async () => {
+    it("removeFromRegistry drops an entry by dir and prunes empty packages", async () => {
       const g = makeGlobal();
       await g.addToRegistry("foo", { version: "1.0.0", dir: "g1" });
       await g.addToRegistry("foo", { version: "2.0.0", dir: "g2" });
-      await g.removeFromRegistry("foo", "1.0.0");
+      await g.removeFromRegistry("foo", "g1");
       expect(await g.getPackageVersions("foo")).to.have.length(1);
-      await g.removeFromRegistry("foo", "2.0.0");
+      expect((await g.getPackageVersions("foo"))[0].dir).to.equal("g2");
+      await g.removeFromRegistry("foo", "g2");
       const registry = await g.readInstalledJson();
       expect(registry.packages.foo).to.equal(undefined);
       // no-op for unknown package
-      await g.removeFromRegistry("ghost", "1.0.0");
+      await g.removeFromRegistry("ghost", "g1");
     });
 
     it("updateLinkedInRegistry links one version and unlinks the rest", async () => {
@@ -408,22 +409,53 @@ describe("fyn-global methods", function() {
       await g.writeInstalledJson({
         packages: { foo: { versions: [{ version: "1.0.0", dir: "g1", bins: ["foo"], linked: true }] } }
       });
-      expect(await g.removeVersion("foo", "1.0.0")).to.equal(true);
+      expect(await g.removeVersion("foo", "g1")).to.equal(true);
       expect(fs.existsSync(pkgDir)).to.equal(false);
       expect(await g.getPackageVersions("foo")).to.deep.equal([]);
       // unlink went through the fake linker
       expect(calls.some(c => c.type === "remove" && c.binName === "foo")).to.equal(true);
     });
 
-    it("removeVersion returns false for an unknown version", async () => {
+    it("removeVersion returns false for an unknown dir", async () => {
       const g = makeGlobal();
-      expect(await g.removeVersion("foo", "9.9.9")).to.equal(false);
+      expect(await g.removeVersion("foo", "g9")).to.equal(false);
     });
 
-    it("unlinkBinsForVersion is a no-op for an unknown version", async () => {
+    it("unlinkBinsForVersion is a no-op for an unknown dir", async () => {
       const g = makeGlobal();
-      await g.unlinkBinsForVersion("foo", "1.0.0");
+      await g.unlinkBinsForVersion("foo", "g1");
       expect(calls.some(c => c.type === "remove")).to.equal(false);
+    });
+
+    it("removes the intended tag dir, not the first entry sharing the version", async () => {
+      // two tags at the SAME version: g1 linked (active), g2 unlinked
+      const g = makeGlobal();
+      const g1Dir = path.join(packagesDir, "g1");
+      const g2Dir = path.join(packagesDir, "g2");
+      fs.mkdirSync(g1Dir, { recursive: true });
+      fs.mkdirSync(g2Dir, { recursive: true });
+      await g.writeInstalledJson({
+        packages: {
+          foo: {
+            versions: [
+              { version: "1.0.0", dir: "g1", bins: ["foo"], linked: true },
+              { version: "1.0.0", dir: "g2", bins: ["foo"], linked: false }
+            ]
+          }
+        }
+      });
+
+      // remove the inactive duplicate (g2) — must NOT touch linked g1
+      expect(await g.removeVersion("foo", "g2")).to.equal(true);
+
+      expect(fs.existsSync(g2Dir)).to.equal(false);
+      expect(fs.existsSync(g1Dir), "linked g1 must survive").to.equal(true);
+      const remaining = await g.getPackageVersions("foo");
+      expect(remaining).to.have.length(1);
+      expect(remaining[0].dir).to.equal("g1");
+      expect(remaining[0].linked).to.equal(true);
+      // g2 was unlinked, so no bin removal should have happened
+      expect(calls.some(c => c.type === "remove"), "must not unlink g1's bins").to.equal(false);
     });
   });
 

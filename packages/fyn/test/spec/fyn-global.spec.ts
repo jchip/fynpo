@@ -95,7 +95,7 @@ describe("fyn-global", function() {
       }
     });
 
-    await fynGlobal.unlinkBinsForVersion("foo", "1.0.0");
+    await fynGlobal.unlinkBinsForVersion("foo", "g1");
 
     expect(calls).to.deep.include({
       type: "match",

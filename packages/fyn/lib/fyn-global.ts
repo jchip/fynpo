@@ -208,8 +208,13 @@ class FynGlobal {
 
   /**
    * Remove a version from the registry
+   *
+   * @param {string} packageName - package name
+   * @param {string} dir - the tag dir (e.g. "g1"); the unique key of an entry.
+   *   The same version can exist under multiple tag dirs (--new-tag), so entries
+   *   must be identified by dir, not by version string.
    */
-  async removeFromRegistry(packageName, version) {
+  async removeFromRegistry(packageName, dir) {
     const registry = await this.readInstalledJson();
 
     if (!registry.packages[packageName]) {
@@ -217,7 +222,7 @@ class FynGlobal {
     }
 
     const versions = registry.packages[packageName].versions;
-    const idx = versions.findIndex(v => v.version === version);
+    const idx = versions.findIndex(v => v.dir === dir);
 
     if (idx >= 0) {
       versions.splice(idx, 1);
@@ -708,7 +713,7 @@ class FynGlobal {
         // Unlink previous version(s) bins and update registry
         for (const existing of existingVersions) {
           if (existing.linked) {
-            await this.unlinkBinsForVersion(packageName, existing.version);
+            await this.unlinkBinsForVersion(packageName, existing.dir);
             // Update registry to mark as unlinked
             existing.linked = false;
             await this.addToRegistry(packageName, existing);
@@ -754,7 +759,7 @@ class FynGlobal {
           if (removeOld) {
             for (const existing of existingVersions) {
               if (existing.version !== installedVersion) {
-                await this.removeVersion(packageName, existing.version);
+                await this.removeVersion(packageName, existing.dir);
                 logger.info(`Removed ${packageName}@${existing.version}`);
               }
             }
@@ -782,9 +787,9 @@ class FynGlobal {
   /**
    * Unlink bins for a specific version
    */
-  async unlinkBinsForVersion(packageName, version) {
+  async unlinkBinsForVersion(packageName, dir) {
     const versions = await this.getPackageVersions(packageName);
-    const versionInfo = versions.find(v => v.version === version);
+    const versionInfo = versions.find(v => v.dir === dir);
     if (!versionInfo) return;
 
     const binLinker = this._getBinLinker();
@@ -802,11 +807,16 @@ class FynGlobal {
   }
 
   /**
-   * Remove a specific version of a package
+   * Remove a specific installed entry of a package, identified by its tag dir
+   * (the unique key — the same version may exist under several tag dirs).
+   *
+   * @param {string} packageName - package name
+   * @param {string} dir - the entry's tag dir (e.g. "g1")
+   * @returns {boolean} true if an entry was removed
    */
-  async removeVersion(packageName, version) {
+  async removeVersion(packageName, dir) {
     const versions = await this.getPackageVersions(packageName);
-    const versionInfo = versions.find(v => v.version === version);
+    const versionInfo = versions.find(v => v.dir === dir);
 
     if (!versionInfo) {
       return false;
@@ -814,7 +824,7 @@ class FynGlobal {
 
     // Unlink bins if linked
     if (versionInfo.linked) {
-      await this.unlinkBinsForVersion(packageName, version);
+      await this.unlinkBinsForVersion(packageName, dir);
     }
 
     // Remove directory
@@ -822,7 +832,7 @@ class FynGlobal {
     await Fs.$.rimraf(pkgDir);
 
     // Remove from registry
-    await this.removeFromRegistry(packageName, version);
+    await this.removeFromRegistry(packageName, dir);
 
     return true;
   }
@@ -841,7 +851,7 @@ class FynGlobal {
     if (this.tag) {
       const found = await this.validateTag();
       logger.info(`Removing ${found.packageName}@${found.versionInfo.version} (${this.tag})`);
-      await this.removeVersion(found.packageName, found.versionInfo.version);
+      await this.removeVersion(found.packageName, found.versionInfo.dir);
       logger.info(`Removed ${found.packageName}@${found.versionInfo.version}`);
       return true;
     }
@@ -918,7 +928,7 @@ class FynGlobal {
 
     // Remove the versions
     for (const versionInfo of toRemove) {
-      await this.removeVersion(packageName, versionInfo.version);
+      await this.removeVersion(packageName, versionInfo.dir);
       logger.info(`Removed ${packageName}@${versionInfo.version}`);
     }
 
@@ -1080,7 +1090,7 @@ class FynGlobal {
     const versions = await this.getPackageVersions(packageName);
     const currentLinked = versions.find(v => v.linked);
     if (currentLinked) {
-      await this.unlinkBinsForVersion(packageName, currentLinked.version);
+      await this.unlinkBinsForVersion(packageName, currentLinked.dir);
     }
 
     // Link new version's bins
@@ -1328,7 +1338,7 @@ class FynGlobal {
       }
 
       for (const v of nonLinked) {
-        await this.removeVersion(pkgName, v.version);
+        await this.removeVersion(pkgName, v.dir);
         logger.info(`Removed ${pkgName}@${v.version} (${v.dir})`);
         totalRemoved++;
       }
