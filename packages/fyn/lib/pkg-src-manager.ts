@@ -444,7 +444,6 @@ class PkgSrcManager {
       );
       return promise
         .then(x => {
-          this._metaStat.inTx--;
           // Handle case where pacote returns null/undefined for missing packages
           if (!x) {
             const msg = `pacote returned null/undefined for packument of ${pkgName}`;
@@ -473,6 +472,7 @@ class PkgSrcManager {
 
     return promise
       .then(x => {
+        this._metaStat.inTx--;
         const time = Date.now() - startTime;
         if (time > 20 * 1000) {
           logger.info(
@@ -493,6 +493,7 @@ class PkgSrcManager {
         qItem.defer.resolve(x);
       })
       .catch(err => {
+        this._metaStat.inTx--;
         qItem.defer.reject(err);
       });
   }

@@ -377,6 +377,73 @@ describe("pkg-src-manager", function() {
     }
   });
 
+  it("settles the in-flight meta count after a URL fetch", async () => {
+    const mgr = new PkgSrcManager({
+      registry: "http://localhost/",
+      fynCacheDir,
+      fyn: {
+        concurrency: 1,
+        _options: {},
+        isFynpo: false,
+        forceCache: false,
+        remoteMetaDisabled: false,
+        remoteTgzDisabled: false,
+        copy: []
+      }
+    });
+    mgr.fetchUrlSemverMeta = () => Promise.resolve({ name: "gitdep", versions: {} });
+
+    await new Promise((resolve, reject) => {
+      mgr.netRetrieveMeta({
+        item: { name: "gitdep", urlType: "git" },
+        cacheKey: "unused-url-cache-key",
+        defer: { resolve, reject }
+      });
+    });
+
+    expect(mgr._metaStat.inTx).to.equal(0);
+  });
+
+  it("settles the in-flight meta count after a failed packument fetch", async () => {
+    const pacote = require("pacote");
+    const origPackument = pacote.packument;
+    pacote.packument = () => Promise.reject(new Error("registry unavailable"));
+    const mgr = new PkgSrcManager({
+      registry: "http://localhost/",
+      fynCacheDir,
+      fyn: {
+        concurrency: 1,
+        _options: {},
+        isFynpo: false,
+        forceCache: false,
+        remoteMetaDisabled: false,
+        remoteTgzDisabled: false,
+        copy: []
+      }
+    });
+
+    try {
+      let error;
+      try {
+        await new Promise((resolve, reject) => {
+          mgr.netRetrieveMeta({
+            item: { name: "mod-a" },
+            packumentUrl: mgr.makePackumentUrl("mod-a"),
+            cacheKey: "unused-packument-cache-key",
+            defer: { resolve, reject }
+          });
+        });
+      } catch (err) {
+        error = err;
+      }
+
+      expect(error).to.be.an("error");
+      expect(mgr._metaStat.inTx).to.equal(0);
+    } finally {
+      pacote.packument = origPackument;
+    }
+  });
+
   it("tarball-stream fallback requests full metadata with the correct camelCase option", () => {
     const pacote = require("pacote");
     const origStream = pacote.tarball.stream;
