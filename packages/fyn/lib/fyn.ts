@@ -1044,9 +1044,10 @@ class Fyn {
   async createPkgOutDir(dir, keep) {
     try {
       const r = await Fs.$.mkdirp(dir);
-      // mkdirp returns null if directory already exist
-      // clear directory to prepare it for installing package
-      if (r === null && !keep && dir !== this.getOutputDir()) {
+      // fs.mkdirSync(recursive) returns the first created dir path, or undefined
+      // when the dir already existed (it never returns null). An existing dir
+      // means a reinstall, so clear it to prepare for installing the package.
+      if (r === undefined && !keep && dir !== this.getOutputDir()) {
         await this.clearPkgOutDir(dir);
       }
     } catch (err) {
