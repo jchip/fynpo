@@ -236,7 +236,13 @@ class PkgInstaller {
     // - reverse search each request path to the first opt pkg
     // - if opt pkg is diff from depInfo, then need to ensure it's opt only, else fail.
     const optReqs = depInfo.requests.map(req => {
-      return req.reverse().find(r => r.startsWith("opt"));
+      // copy before reversing: req arrays are shared request paths read by
+      // other consumers (deprecation display, _removeDepsOf), so reversing them
+      // in place would corrupt that state.
+      return req
+        .slice()
+        .reverse()
+        .find(r => r.startsWith("opt"));
     });
 
     const failedId = `${depInfo.name}@${depInfo.version}`;
