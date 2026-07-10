@@ -306,6 +306,7 @@ class ShowStat {
       })
       .catch(err => {
         logger.error(err);
+        throw err;
       })
       .finally(() => {
         logger.removeItem(FETCH_META);
