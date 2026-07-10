@@ -4,6 +4,7 @@
 /* eslint-disable global-require, prefer-template */
 
 const Fs = require("./util/file-ops");
+const Path = require("path");
 const PkgBinLinkerBase = require("./pkg-bin-linker-base");
 
 //
@@ -73,6 +74,37 @@ class PkgBinLinkerWin32 extends PkgBinLinkerBase {
   async _rmBinLink(symlink) {
     await this._unlinkFile(symlink);
     await this._unlinkFile(symlink + ".cmd");
+  }
+
+  // Extract the {{TARGET}} path baked into a generated .cmd wrapper (the path
+  // after `%~dp0\`, ignoring the node.exe reference).
+  async _readBinLinkTarget(symlink) {
+    const content = (await Fs.readFile(symlink + ".cmd")).toString();
+    const matches = [...content.matchAll(/%~dp0[\\/]+([^"\r\n]+)/g)].map(m => m[1]);
+    return matches.find(m => m !== "node.exe");
+  }
+
+  //
+  // Platform specific: the "bin" is a pair of regular script files (cygwin +
+  // .cmd), not a symlink, so the base _cleanLink's Fs.access on the wrapper
+  // always succeeds and never cleans a stale bin. Instead, read the wrapper and
+  // remove it only if the target it points to no longer exists.
+  //
+  async _cleanLink(sym) {
+    const symlink = Path.join(this._binDir, sym);
+
+    try {
+      const target = await this._readBinLinkTarget(symlink);
+      if (target && (await Fs.exists(Path.join(this._binDir, target)))) {
+        return false;
+      }
+    } catch (e) {
+      // unreadable / malformed wrapper -> treat as stale and remove
+    }
+
+    await this._rmBinLink(symlink);
+
+    return true;
   }
 
   async _readBinLinks() {
