@@ -23,7 +23,16 @@ class PkgDistExtractor {
     });
     this._fyn = options.fyn;
     this._promiseQ.on("done", x => this.done(x));
-    this._promiseQ.on("failItem", x => logger.error("dist extractor failed item", x.error));
+    this._promiseQ.on("failItem", x => {
+      logger.error("dist extractor failed item", x.error);
+      // reject the per-item listener (from PkgDistFetcher.putPkgInNodeModules);
+      // otherwise a failed extraction (e.g. corrupted tarball, central-store
+      // replicate error) leaves that promise unsettled and install hangs.
+      const listener = _.get(x, "item.listener");
+      if (listener) {
+        setTimeout(() => listener.emit("fail", x.error), 0);
+      }
+    });
   }
 
   addPkgDist(data) {
@@ -103,6 +112,12 @@ class PkgDistExtractor {
       const json = await this._fyn.ensureProperPkgDir(pkg, fullOutDir);
 
       if (json) {
+        // already extracted to fullOutDir; still notify the listener so the
+        // awaiting putPkgInNodeModules promise settles instead of hanging.
+        if (data.listener) {
+          const listener = data.listener;
+          setTimeout(() => listener.emit("done", json), 0);
+        }
         return json;
       }
 
