@@ -444,6 +444,79 @@ describe("pkg-src-manager", function() {
     }
   });
 
+  it("does not repeat a failed network metadata request", async () => {
+    const mgr = new PkgSrcManager({
+      registry: "http://localhost/",
+      fynCacheDir,
+      fyn: {
+        concurrency: 1,
+        _options: {},
+        isFynpo: false,
+        forceCache: false,
+        remoteMetaDisabled: false,
+        remoteTgzDisabled: false,
+        copy: []
+      }
+    });
+    const error = new Error("registry unavailable");
+    let queued = 0;
+    mgr._netQ.addItem = item => {
+      queued++;
+      mgr._metaStat.wait--;
+      item.defer.reject(error);
+    };
+
+    let caught;
+    try {
+      await mgr.fetchMeta({ name: "missing", semver: "" });
+    } catch (err) {
+      caught = err;
+    }
+
+    expect(caught).to.equal(error);
+    expect(queued).to.equal(1);
+    expect(mgr._metaStat.wait).to.equal(0);
+  });
+
+  it("uses stale metadata when its network refresh fails", async () => {
+    const mgr = new PkgSrcManager({
+      registry: "http://localhost/",
+      fynCacheDir,
+      fyn: {
+        concurrency: 1,
+        _options: {},
+        isFynpo: false,
+        forceCache: false,
+        remoteMetaDisabled: false,
+        remoteTgzDisabled: false,
+        copy: []
+      }
+    });
+    const packument = {
+      name: "mod-a",
+      versions: { "1.0.0": { name: "mod-a", version: "1.0.0" } },
+      "dist-tags": { latest: "1.0.0" }
+    };
+    const cacheKey = `make-fetch-happen:request-cache:${mgr.makePackumentUrl("mod-a")}`;
+    await cacache.put(fynCacheDir, cacheKey, JSON.stringify(packument));
+    await refreshCacheEntry(fynCacheDir, cacheKey);
+    const staleTime = new Date(Date.now() - 26 * 60 * 60 * 1000);
+    Fs.utimesSync(getBucketPath(fynCacheDir, cacheKey), staleTime, staleTime);
+
+    let queued = 0;
+    mgr._netQ.addItem = item => {
+      queued++;
+      mgr._metaStat.wait--;
+      item.defer.reject(new Error("registry unavailable"));
+    };
+
+    const meta = await mgr.fetchMeta({ name: "mod-a", semver: "" });
+
+    expect(meta).to.deep.equal(packument);
+    expect(queued).to.equal(1);
+    expect(mgr._metaStat.wait).to.equal(0);
+  });
+
   it("tarball-stream fallback requests full metadata with the correct camelCase option", () => {
     const pacote = require("pacote");
     const origStream = pacote.tarball.stream;

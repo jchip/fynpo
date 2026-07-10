@@ -788,7 +788,12 @@ class PkgSrcManager {
       return JSON.parse(memoized.data.toString());
     };
 
+    let fetchAttempted = false;
+    let foundCache;
+    let foundPackument;
+
     const queueMetaFetchRequest = cached => {
+      fetchAttempted = true;
       const offline = this._fyn.remoteMetaDisabled;
 
       if (cached && this._fyn.forceCache) {
@@ -849,7 +854,6 @@ class PkgSrcManager {
     //     })
     //   )
 
-    let foundCache;
     const metaMemoizeUrl = this._fyn._options.metaMemoize;
 
     const promise = (item.urlType || forceRefresh
@@ -861,8 +865,9 @@ class PkgSrcManager {
       : loadBestCachedPackument(true)
     )
       .then(cached => {
-        const packument = cached && cached.data && JSON.parse(cached.data);
         foundCache = cached;
+        const packument = cached && cached.data && JSON.parse(cached.data);
+        foundPackument = packument;
 
         if (cached && cached.refreshTime) {
           const stale = Date.now() - cached.refreshTime;
@@ -912,10 +917,19 @@ class PkgSrcManager {
         }
       })
       .catch(err => {
+        if (fetchAttempted) {
+          if (foundPackument) {
+            cacheMemoized = true;
+            logger.warn(
+              `failed to refresh packument for '${pkgName}', using stale cached metadata: ${err.message}`
+            );
+            return foundPackument;
+          }
+          throw err;
+        }
         if (foundCache) {
           const data = foundCache.data && foundCache.data.toString();
           logger.debug(`fail to process packument cache - ${err.message}; data ${data}`);
-          throw err;
         }
         return queueMetaFetchRequest();
       })
