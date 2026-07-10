@@ -91,7 +91,12 @@ class LocalPkgBuilder {
     logger.debug("local pkgs for build all paths", allPaths, "uniq paths", uniqPaths);
 
     for (const path of uniqPaths) {
-      await this.addItem(byPathLookup[path]);
+      try {
+        await this.addItem(byPathLookup[path]);
+      } catch (error) {
+        this._startError = error;
+        break;
+      }
     }
 
     logger.debug("resolving build local _started promise");
@@ -142,6 +147,9 @@ class LocalPkgBuilder {
     if (this._waitItems[fullPath] === undefined && this._started.promise) {
       logger.debug("waiting for local build item start, fullPath:", fullPath);
       await this._started.promise;
+    }
+    if (this._startError) {
+      return { error: this._startError };
     }
     const x = this._waitItems[fullPath];
     // assert(x !== undefined, `No local pkg build job started for pkg at ${fullPath}`);
