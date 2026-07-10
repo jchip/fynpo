@@ -608,15 +608,12 @@ class FynCli {
 
     script = script || argv.args?.script;
     if (argv.opts?.list || !script) {
-      try {
-        await this.fyn.loadPkg();
-        if (!argv.opts?.list) {
-          console.log(`Lifecycle scripts included in ${this.fyn._pkg.name}:\n`);
-        }
-        console.log(Object.keys(_.get(this.fyn._pkg, "scripts", {})).join("\n"));
-      } finally {
-        fyntil.exit(0);
+      await this.fyn.loadPkg();
+      if (!argv.opts?.list) {
+        console.log(`Lifecycle scripts included in ${this.fyn._pkg.name}:\n`);
       }
+      console.log(Object.keys(_.get(this.fyn._pkg, "scripts", {})).join("\n"));
+      fyntil.exit(0);
     }
 
     await this.fyn.loadPkg();
