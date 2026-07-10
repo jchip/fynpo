@@ -18,14 +18,24 @@ describe("semver", function() {
   });
 
   describe("simpleCompare", function() {
-    it("should handle 0.8.3 vs 0.8.3--rc", () => {
-      expect(semver.simpleCompare("0.8.3", "0.8.3--rc")).to.equal(1);
-      expect(semver.simpleCompare("0.8.3--rc", "0.8.3")).to.equal(-1);
+    it("should sort a release ahead of its prerelease (release is newer)", () => {
+      // per semver 0.8.3 > 0.8.3-<pre>, so in descending order the release
+      // sorts first (negative = a is newer)
+      expect(semver.simpleCompare("0.8.3", "0.8.3--rc")).to.equal(-1);
+      expect(semver.simpleCompare("0.8.3--rc", "0.8.3")).to.equal(1);
+      expect(semver.simpleCompare("1.0.0", "1.0.0-alpha")).to.equal(-1);
+      expect(semver.simpleCompare("1.0.0-alpha", "1.0.0")).to.equal(1);
     });
 
     it("should handle both have suffix", () => {
       expect(semver.simpleCompare("0.8.3-a", "0.8.3-b")).to.equal(1);
       expect(semver.simpleCompare("0.8.3-b", "0.8.3-a")).to.equal(-1);
+    });
+
+    it("orders prerelease identifiers numerically, not lexically", () => {
+      // alpha.9 < alpha.10 per semver; descending => alpha.10 first
+      expect(semver.simpleCompare("1.0.0-alpha.9", "1.0.0-alpha.10")).to.equal(1);
+      expect(semver.simpleCompare("1.0.0-alpha.10", "1.0.0-alpha.9")).to.equal(-1);
     });
 
     it("should handle identical/same versions", () => {
