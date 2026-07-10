@@ -71,6 +71,10 @@ async function checkPkgNeedInstall(dir, checkCtime = 0) {
       hasScript
     };
   } catch (error) {
+    // don't silently treat a read/scan failure (e.g. a vanished or unreadable
+    // local dep, or a broken symlink tripping the dir scan) as "up to date" --
+    // surface it so the dep isn't quietly skipped with no explanation.
+    logger.warn(`unable to determine if local package at ${dir} needs install: ${error.message}`);
     return { install: false, error };
   }
 }
