@@ -131,7 +131,7 @@ class PkgInstaller {
           const st = await Fs.stat(pkgJsonFp);
           // OR in owner read/write; arithmetic + carried into higher mode bits
           // for a read-only file (0o444 + 0o600 = 0o1244) and dropped owner read.
-          await Fs.chmod(pkgJsonFp, st.mode | 0o600);
+          await Fs.chmod(pkgJsonFp, st.mode | 0o600); // eslint-disable-line no-bitwise
           await Fs.writeFile(pkgJsonFp, `${outputStr}\n`);
         }
       }
