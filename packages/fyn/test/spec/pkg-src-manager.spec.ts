@@ -14,6 +14,7 @@ const Fyn = require("../../lib/fyn");
 const PkgSrcManager = require("../../lib/pkg-src-manager");
 const mockNpm = require("../fixtures/mock-npm");
 const { getBucketPath, refreshCacheEntry } = require("../../lib/cacache-util");
+const { MARK_URL_SPEC } = require("../../lib/constants");
 
 describe("pkg-src-manager", function() {
   let fynCacheDir;
@@ -404,6 +405,53 @@ describe("pkg-src-manager", function() {
       expect(captured).to.not.have.property("fullMeta");
     } finally {
       pacote.tarball.stream = origStream;
+    }
+  });
+
+  it("reads a cached git resolved URL from the URL-spec marker payload", async () => {
+    const childProcess = require("child_process");
+    const origExecFileSync = childProcess.execFileSync;
+    const commit = "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2";
+    let commitChecks = 0;
+    childProcess.execFileSync = () => {
+      commitChecks++;
+      return `${commit}\n`;
+    };
+
+    const semver = "git+file:///tmp/repo#main";
+    const resolved = `git+file:///tmp/repo#${commit}`;
+    const metadata = {
+      name: "gitdep",
+      version: "1.0.0",
+      dist: {
+        tarball: `${MARK_URL_SPEC}${JSON.stringify({ _resolved: resolved })}`
+      }
+    };
+    await cacache.put(fynCacheDir, `fyn-tarball-for-${semver}`, "cached", { metadata });
+
+    const mgr = new PkgSrcManager({
+      registry: "http://localhost/",
+      fynCacheDir,
+      fyn: {
+        concurrency: 1,
+        _options: {},
+        isFynpo: false,
+        forceCache: false,
+        remoteMetaDisabled: false,
+        remoteTgzDisabled: false,
+        copy: []
+      }
+    });
+
+    try {
+      await mgr._prepPkgDirForManifest(
+        { name: "gitdep", semver, urlType: "git" },
+        { name: "gitdep", version: "1.0.0", _resolved: resolved },
+        Path.join(fynCacheDir, "unused-prepared-dir")
+      );
+      expect(commitChecks).to.equal(1);
+    } finally {
+      childProcess.execFileSync = origExecFileSync;
     }
   });
 

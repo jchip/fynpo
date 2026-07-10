@@ -596,9 +596,10 @@ class PkgSrcManager {
 
     if (tgzCacheInfo) {
       // Extract cached commit hash from the cached resolved URL
+      const cachedTarball = tgzCacheInfo.metadata?.dist?.tarball;
       const cachedResolved = tgzCacheInfo.metadata?._resolved ||
-                            (tgzCacheInfo.metadata?.dist?.tarball?.match(/MARK_URL_SPEC(.+)/)?.[1] ?
-                              JSON.parse(tgzCacheInfo.metadata.dist.tarball.match(/MARK_URL_SPEC(.+)/)[1])._resolved : null);
+                            (cachedTarball?.startsWith(MARK_URL_SPEC) ?
+                              JSON.parse(cachedTarball.slice(MARK_URL_SPEC.length))._resolved : null);
       const cachedCommitHash = cachedResolved?.match(/#([a-f0-9]{40})$/)?.[1];
 
       // Primary check: Use git ls-remote or git rev-parse to check for new commits (fast, no clone needed)
