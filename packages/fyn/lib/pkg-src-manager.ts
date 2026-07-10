@@ -777,6 +777,35 @@ class PkgSrcManager {
       return _.maxBy(cachedEntries, cached => cached.refreshTime || 0) || cachedEntries[0];
     };
 
+    const loadPreparedUrlMeta = async () => {
+      const info = await getCacheInfoWithRefreshTime(
+        this._cacheDir,
+        `fyn-tarball-for-${item.semver}`
+      );
+      const cachedManifest = info && info.metadata;
+      if (!(cachedManifest && cachedManifest.version)) {
+        return undefined;
+      }
+
+      const tarball = JSON.stringify(
+        Object.assign(
+          _.pick(item, ["urlType", "semver"]),
+          _.pick(cachedManifest, ["_resolved", "_id"])
+        )
+      );
+      const manifest = Object.assign({}, cachedManifest, {
+        dist: {
+          integrity: info.integrity,
+          tarball: `${MARK_URL_SPEC}${tarball}`
+        }
+      });
+      return {
+        name: item.name,
+        versions: { [manifest.version]: manifest },
+        urlVersions: { [item.semver]: manifest }
+      };
+    };
+
     const readMemoizedPackument = async () => {
       const memoized = await loadBestCachedPackument(false);
       if (!(memoized && memoized.data)) {
@@ -856,15 +885,27 @@ class PkgSrcManager {
 
     const metaMemoizeUrl = this._fyn._options.metaMemoize;
 
-    const promise = (item.urlType || forceRefresh
-      ? // when the semver is a url then the meta is not from npm registry and
-        // we can't use the cache for registry.
-        // when forceRefresh, skip the local cacache + meta-mem path so we go
-        // straight to a fresh registry fetch via queueMetaFetchRequest.
-        Promise.resolve()
-      : loadBestCachedPackument(true)
-    )
+    let cacheLookup;
+    if (item.urlType) {
+      // URL metadata doesn't use the registry cache, but offline mode can
+      // reconstruct it from fyn's prepared-tarball cache.
+      cacheLookup = this._fyn.remoteMetaDisabled
+        ? loadPreparedUrlMeta().then(preparedUrlMeta => ({ preparedUrlMeta }))
+        : Promise.resolve();
+    } else if (forceRefresh) {
+      // Skip local cacache + meta-mem so this queues a fresh registry fetch.
+      cacheLookup = Promise.resolve();
+    } else {
+      cacheLookup = loadBestCachedPackument(true);
+    }
+
+    const promise = cacheLookup
       .then(cached => {
+        if (cached && cached.preparedUrlMeta) {
+          cacheMemoized = true;
+          this._metaStat.wait--;
+          return cached.preparedUrlMeta;
+        }
         foundCache = cached;
         const packument = cached && cached.data && JSON.parse(cached.data);
         foundPackument = packument;

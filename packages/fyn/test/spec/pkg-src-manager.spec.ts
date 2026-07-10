@@ -517,6 +517,79 @@ describe("pkg-src-manager", function() {
     expect(mgr._metaStat.wait).to.equal(0);
   });
 
+  it("loads prepared URL metadata while offline", async () => {
+    const item = { name: "gitdep", semver: "github:user/repo#main", urlType: "github" };
+    const metadata = {
+      name: item.name,
+      version: "1.0.0",
+      _id: `${item.name}@1.0.0`,
+      _resolved: "git+https://github.com/user/repo.git#0123456789012345678901234567890123456789"
+    };
+    const cacheKey = `fyn-tarball-for-${item.semver}`;
+    const integrity = await cacache.put(fynCacheDir, cacheKey, "prepared tarball", { metadata });
+    const mgr = new PkgSrcManager({
+      registry: "http://localhost/",
+      fynCacheDir,
+      fyn: {
+        concurrency: 1,
+        _options: {},
+        isFynpo: false,
+        forceCache: false,
+        remoteMetaDisabled: "offline",
+        remoteTgzDisabled: "offline",
+        copy: []
+      }
+    });
+    let queued = 0;
+    mgr._netQ.addItem = () => queued++;
+
+    const meta = await mgr.fetchMeta(item);
+    const manifest = meta.versions[metadata.version];
+    const markerData = JSON.parse(manifest.dist.tarball.slice(MARK_URL_SPEC.length));
+
+    expect(meta.name).to.equal(item.name);
+    expect(meta.urlVersions[item.semver]).to.equal(manifest);
+    expect(manifest.dist.integrity.toString()).to.equal(integrity.toString());
+    expect(markerData).to.deep.equal({
+      urlType: item.urlType,
+      semver: item.semver,
+      _resolved: metadata._resolved,
+      _id: metadata._id
+    });
+    expect(queued).to.equal(0);
+    expect(mgr._metaStat.wait).to.equal(0);
+  });
+
+  it("keeps the offline URL cache-miss error balanced", async () => {
+    const item = { name: "gitdep", semver: "github:user/missing#main", urlType: "github" };
+    const mgr = new PkgSrcManager({
+      registry: "http://localhost/",
+      fynCacheDir,
+      fyn: {
+        concurrency: 1,
+        _options: {},
+        isFynpo: false,
+        forceCache: false,
+        remoteMetaDisabled: "offline",
+        remoteTgzDisabled: "offline",
+        copy: []
+      }
+    });
+    let queued = 0;
+    mgr._netQ.addItem = () => queued++;
+
+    let error;
+    try {
+      await mgr.fetchMeta(item);
+    } catch (err) {
+      error = err;
+    }
+
+    expect(error.message).to.include("offline");
+    expect(queued).to.equal(0);
+    expect(mgr._metaStat.wait).to.equal(0);
+  });
+
   it("tarball-stream fallback requests full metadata with the correct camelCase option", () => {
     const pacote = require("pacote");
     const origStream = pacote.tarball.stream;
