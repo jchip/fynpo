@@ -427,6 +427,31 @@ describe("fyn-global methods", function() {
     });
   });
 
+  describe("installGlobalPackage link-existing", () => {
+    it("links an already-installed unlinked version with a single name@version spec", async () => {
+      const g = makeGlobal();
+      await g.writeInstalledJson({
+        packages: { foo: { versions: [{ version: "1.0.0", dir: "g1", linked: false }] } }
+      });
+      g.promptYesNo = async () => true;
+      const linkArgs = [];
+      g.linkPackageVersion = async (...args) => {
+        linkArgs.push(args);
+        return true;
+      };
+
+      const result = await g.installGlobalPackage("foo@1.0.0");
+
+      // the "already installed" path returns false
+      expect(result).to.equal(false);
+      expect(linkArgs).to.have.length(1);
+      // must be a SINGLE spec arg carrying the version (the bug passed 2 args
+      // and dropped the version, so nothing was linked)
+      expect(linkArgs[0]).to.have.length(1);
+      expect(linkArgs[0][0]).to.equal("foo@1.0.0");
+    });
+  });
+
   describe("removeGlobalPackage", () => {
     const seed = async g => {
       const registry = {

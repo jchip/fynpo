@@ -631,7 +631,9 @@ class FynGlobal {
           if (!existingExact.linked) {
             const linkIt = await this.promptYesNo(`Link this version to make it active?`);
             if (linkIt) {
-              await this.linkPackageVersion(packageName, existingExact.version);
+              // linkPackageVersion takes a single name@version spec; passing the
+              // version as a 2nd arg silently dropped it, so nothing got linked.
+              await this.linkPackageVersion(`${packageName}@${existingExact.version}`);
             }
           }
           return false;
