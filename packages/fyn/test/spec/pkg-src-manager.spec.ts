@@ -330,4 +330,25 @@ describe("pkg-src-manager", function() {
       pacote.packument = origPackument;
     }
   });
+
+  describe("isPinnedGitCommit", () => {
+    const { isPinnedGitCommit } = PkgSrcManager;
+    const sha = "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"; // 40 hex chars
+
+    it("treats a 40-hex committish as a pinned commit", () => {
+      expect(isPinnedGitCommit(`github:user/repo#${sha}`)).to.equal(true);
+      expect(isPinnedGitCommit(`git+https://github.com/user/repo.git#${sha}`)).to.equal(true);
+      // a bare sha spec (no '#') is also pinned
+      expect(isPinnedGitCommit(sha)).to.equal(true);
+    });
+
+    it("treats branch/tag refs and plain specs as not pinned", () => {
+      expect(isPinnedGitCommit("github:user/repo#main")).to.equal(false);
+      expect(isPinnedGitCommit("github:user/repo#v1.2.3")).to.equal(false);
+      expect(isPinnedGitCommit("github:user/repo")).to.equal(false);
+      expect(isPinnedGitCommit(`github:user/repo#${sha.slice(0, 7)}`)).to.equal(false);
+      expect(isPinnedGitCommit("")).to.equal(false);
+      expect(isPinnedGitCommit(undefined)).to.equal(false);
+    });
+  });
 });

@@ -54,6 +54,17 @@ function isSafeGitToken(s) {
   return typeof s === "string" && s.length > 0 && s.length < 256 && SAFE_GIT_TOKEN.test(s) && !s.startsWith("-");
 }
 
+// A git dep spec is "pinned" when its committish (the part after '#', or the
+// whole spec if there's no '#') is a raw 40-char commit sha. Such a commit is
+// immutable, so it must NOT take the ls-remote "has new commits?" path -- that
+// path returns nothing for a raw sha and then assumes new commits, defeating
+// the prepared-tarball cache on every install.
+function isPinnedGitCommit(semver) {
+  if (!semver) return false;
+  const committish = semver.includes("#") ? semver.split("#")[1] : semver;
+  return /^[a-f0-9]{40}$/.test(committish);
+}
+
 // Helper to check if git repo has new commits using fast git ls-remote or git rev-parse
 async function checkGitRepoHasNewCommits(gitUrl, ref, cachedCommitHash) {
   if (!cachedCommitHash) return true; // No cache, assume new commits
@@ -592,7 +603,7 @@ class PkgSrcManager {
 
       // Primary check: Use git ls-remote or git rev-parse to check for new commits (fast, no clone needed)
       // This works for branch/tag refs, but not for explicit commit hashes
-      if (!shouldRefresh && cachedCommitHash && item.semver && !item.semver.match(/^[a-f0-9]{40}$/)) {
+      if (!shouldRefresh && cachedCommitHash && item.semver && !isPinnedGitCommit(item.semver)) {
         // Extract git URL and ref from semver
         // semver format: "github:user/repo#branch" or "git+https://github.com/user/repo.git#branch" or "git+file:///path#branch"
         let gitUrl = item.semver;
@@ -1153,3 +1164,4 @@ class PkgSrcManager {
 
 module.exports = PkgSrcManager;
 module.exports.META_CACHE_STALE_TIME = META_CACHE_STALE_TIME;
+module.exports.isPinnedGitCommit = isPinnedGitCommit;
