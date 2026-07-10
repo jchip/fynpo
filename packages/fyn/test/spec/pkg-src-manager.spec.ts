@@ -331,6 +331,51 @@ describe("pkg-src-manager", function() {
     }
   });
 
+  it("refreshes fetched packument cache timestamps with the manager cache directory", async () => {
+    const pacote = require("pacote");
+    const origPackument = pacote.packument;
+    pacote.packument = name => Promise.resolve({
+      name,
+      versions: { "1.0.0": { name, version: "1.0.0" } },
+      "dist-tags": { latest: "1.0.0" }
+    });
+
+    const mgr = new PkgSrcManager({
+      registry: "http://localhost/",
+      fynCacheDir,
+      fyn: {
+        concurrency: 1,
+        _options: {},
+        isFynpo: false,
+        forceCache: false,
+        remoteMetaDisabled: false,
+        remoteTgzDisabled: false,
+        copy: []
+      }
+    });
+    const cacheKey = "test-cache-key";
+    await cacache.put(fynCacheDir, cacheKey, "cached");
+    const bucket = getBucketPath(fynCacheDir, cacheKey);
+    const staleTime = new Date(Date.now() - 26 * 60 * 60 * 1000);
+    Fs.utimesSync(bucket, staleTime, staleTime);
+
+    try {
+      await new Promise((resolve, reject) => {
+        mgr.netRetrieveMeta({
+          item: { name: "mod-a" },
+          packumentUrl: mgr.makePackumentUrl("mod-a"),
+          cacheKey,
+          defer: { resolve, reject }
+        });
+      });
+      await new Promise(resolve => setTimeout(resolve, 20));
+
+      expect(Fs.statSync(bucket).mtimeMs).to.be.greaterThan(staleTime.getTime());
+    } finally {
+      pacote.packument = origPackument;
+    }
+  });
+
   it("tarball-stream fallback requests full metadata with the correct camelCase option", () => {
     const pacote = require("pacote");
     const origStream = pacote.tarball.stream;

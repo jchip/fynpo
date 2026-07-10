@@ -489,7 +489,7 @@ class PkgSrcManager {
           return;
         }
         // Refresh cache timestamp after successful fetch
-        refreshCacheEntry(this._fyn._fynCacheDir, qItem.cacheKey).catch(() => {});
+        refreshCacheEntry(this._cacheDir, qItem.cacheKey).catch(() => {});
         qItem.defer.resolve(x);
       })
       .catch(err => {
