@@ -1,0 +1,13 @@
+{
+  "name": "@scope/local-export-producer",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "fyn": {
+    "localExports": {
+      "src": "src"
+    }
+  }
+}

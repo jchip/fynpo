@@ -77,6 +77,37 @@ production=false
 centralStore=false
 ```
 
+### Local source exports (`fyn.localExports`)
+
+A package can expose local development directories by declaring them in its
+`package.json`:
+
+```json
+{
+  "name": "@acme/ui",
+  "fyn": {
+    "localExports": {
+      "src": "./src"
+    }
+  }
+}
+```
+
+Values are producer-relative directories. The merged `package-fyn.json` may
+override this configuration; `false` disables either one named export or the
+entire `localExports` field.
+
+When the package is a fynpo package or resolves from a `file:`, `link:`, or
+explicit filesystem path dependency, fyn creates each live directory link at
+`_fyn/<package>/<export>` in the consuming package; the example above creates
+`_fyn/@acme/ui/src`. Registry, Git, and URL dependencies never create local
+exports, even if their package metadata declares them.
+
+The `_fyn` directory is generated, disposable content. Exclude it from Git,
+package publication, and fynpo build-cache inputs. Fyn creates the source
+surface only; the consumer remains responsible for configuring Vite aliases,
+TypeScript paths, or equivalent tool settings to use it.
+
 ### Lifecycle script allow list (`fyn.allowScripts`)
 
 As a security hardening measure, `fyn` does **not** run a package's npm lifecycle

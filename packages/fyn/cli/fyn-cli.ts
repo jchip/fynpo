@@ -30,6 +30,7 @@ const myPkg = require("./mypkg");
 const { cleanErrorStack } = require("@jchip/error");
 const { setupNodeGypEnv } = require("../lib/util/setup-node-gyp");
 const hardLinkDir = require("../lib/util/hard-link-dir");
+const { syncLocalExports } = require("../lib/local-exports");
 const xsh = require("xsh");
 
 function checkNewVersion(npmConfig) {
@@ -361,13 +362,21 @@ class FynCli {
   async syncLocalLinks() {
     await this.fyn._initializePkg();
 
-    const { localPkgLinks } = this.fyn._installConfig;
+    const { localPkgLinks, localExports } = this.fyn._installConfig;
+    let refreshed = false;
     if (!_.isEmpty(localPkgLinks)) {
       for (const vdir in localPkgLinks) {
         const tgtDir = Path.join(this.fyn._cwd, vdir);
         const srcDir = Path.join(this.fyn._cwd, localPkgLinks[vdir].srcDir);
         await hardLinkDir.link(srcDir, tgtDir, { sourceMaps: localPkgLinks[vdir].sourceMaps });
       }
+      refreshed = true;
+    }
+    if (localExports) {
+      await syncLocalExports({ cwd: this.fyn._cwd, manifest: localExports });
+      refreshed = true;
+    }
+    if (refreshed) {
       logger.info(`refreshed linked files for local packages`);
     } else {
       logger.info(`There are no local packages`);

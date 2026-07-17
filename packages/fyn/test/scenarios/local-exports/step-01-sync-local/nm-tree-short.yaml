@@ -1,0 +1,18 @@
+node_modules:
+  .f:
+    .fyn.json: file
+    _:
+      '@scope':
+        local-export-producer:
+          1.0.0-fynlocal_h:
+            '@scope':
+              local-export-producer:
+                dist:
+                  index.js: file
+                  index.js.fyn.map: file
+                package.json:
+                  id: '[@scope/local-export-producer@1.0.0]'
+  '@scope':
+    local-export-producer: >-
+      ->
+      ../.f/_/@scope/local-export-producer/1.0.0-fynlocal_h/@scope/local-export-producer

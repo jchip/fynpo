@@ -48,7 +48,7 @@ async function _scanFileStats(dir, ignores, baseDir = "") {
 function scanFileStats(dir, options = {}) {
   // TODO: make this more flexible and configurable
   const ignores = [
-    `**/?(node_modules|.vscode|.DS_Store|coverage|.nyc_output|.fynpo|.git|.github|.gitignore)`,
+    `**/?(node_modules|_fyn|.vscode|.DS_Store|coverage|.nyc_output|.fynpo|.git|.github|.gitignore)`,
     "**/*.?(log|md)"
   ]
     .concat(options.ignores || `**/?(docs|docusaurus|packages|tmp|.etmp|samples|dist)`)

@@ -19,6 +19,7 @@ const fynTil = require("./util/fyntil");
 const FynCentral = require("./fyn-central");
 const xaa = require("./util/xaa");
 const { checkPkgNeedInstall } = require("./util/check-pkg-need-install");
+const { localExportsNeedInstall } = require("./local-exports");
 const lockfile = require("lockfile");
 const createLock = util.promisify(lockfile.lock);
 const unlock = util.promisify(lockfile.unlock);
@@ -522,6 +523,15 @@ class Fyn {
       }
     }
 
+    if (
+      await localExportsNeedInstall({
+        cwd: this._cwd,
+        manifest: this._installConfig.localExports
+      })
+    ) {
+      return true;
+    }
+
     return false;
   }
 
@@ -538,6 +548,10 @@ class Fyn {
 
   setLocalPkgLinks(localLinks) {
     this._installConfig.localPkgLinks = localLinks;
+  }
+
+  setLocalExports(manifest) {
+    this._installConfig.localExports = manifest;
   }
 
   // save the config to outputDir

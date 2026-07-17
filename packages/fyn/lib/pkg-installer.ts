@@ -13,6 +13,7 @@ const logger = require("./logger");
 const logFormat = require("./util/log-format");
 const fynTil = require("./util/fyntil");
 const hardLinkDir = require("./util/hard-link-dir");
+const { makeLocalExportsManifest, reconcileLocalExports } = require("./local-exports");
 const { INSTALL_PACKAGE } = require("./log-items");
 const { runNpmScript } = require("./util/run-npm-script");
 const { evaluateScriptPolicy, isScriptAllowed } = require("./util/lifecycle-script-policy");
@@ -434,6 +435,7 @@ class PkgInstaller {
             logger.info(chalk.green("HOORAY!!! None of your dependencies are marked deprecated."));
           }
         })
+        .then(() => this._installLocalExports())
         .then(() => this._saveLockData())
         .then(() => {
           logger.info(`${chalk.green("done install")} ${logFormat.time(Date.now() - start)}`);
@@ -442,6 +444,19 @@ class PkgInstaller {
           logger.removeItem(INSTALL_PACKAGE);
         })
     );
+  }
+
+  async _installLocalExports() {
+    const pkgsData = this._data.getPkgsData();
+    const manifest = await makeLocalExportsManifest({
+      cwd: this._fyn._cwd,
+      depInfos: this.toLink.filter(depInfo => {
+        const versions = pkgsData[depInfo.name];
+        return versions && versions[depInfo.version] === depInfo;
+      })
+    });
+    await reconcileLocalExports({ cwd: this._fyn._cwd, manifest });
+    this._fyn.setLocalExports(manifest);
   }
 
   async _buildLocalPkg(depInfo) {

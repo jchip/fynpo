@@ -1,0 +1,11 @@
+{
+  "name": "local-exports-scenario",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install": "node consumer-install-check.js"
+  },
+  "dependencies": {
+    "@scope/local-export-producer": "file:./producer"
+  }
+}
