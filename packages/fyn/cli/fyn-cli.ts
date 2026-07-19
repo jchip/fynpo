@@ -30,7 +30,7 @@ const myPkg = require("./mypkg");
 const { cleanErrorStack } = require("@jchip/error");
 const { setupNodeGypEnv } = require("../lib/util/setup-node-gyp");
 const hardLinkDir = require("../lib/util/hard-link-dir");
-const { syncLocalExports } = require("../lib/local-exports");
+const { syncLocalExports, localExportsScanIgnores } = require("../lib/local-exports");
 const xsh = require("xsh");
 
 function checkNewVersion(npmConfig) {
@@ -404,7 +404,9 @@ class FynCli {
           !this.fyn._options.forceInstall &&
           this.fyn._installConfig.time
         ) {
-          const stats = await scanFileStats(this.fyn.cwd);
+          const stats = await scanFileStats(this.fyn.cwd, {
+            moreIgnores: localExportsScanIgnores(this.fyn._pkg)
+          });
           const { latestMtimeMs } = stats;
           logger.debug(
             "time check from install config - last install time",

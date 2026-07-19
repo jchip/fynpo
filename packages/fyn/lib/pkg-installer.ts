@@ -13,7 +13,11 @@ const logger = require("./logger");
 const logFormat = require("./util/log-format");
 const fynTil = require("./util/fyntil");
 const hardLinkDir = require("./util/hard-link-dir");
-const { makeLocalExportsManifest, reconcileLocalExports } = require("./local-exports");
+const {
+  makeLocalExportsManifest,
+  reconcileLocalExports,
+  resolveLocalExportsConfig
+} = require("./local-exports");
 const { INSTALL_PACKAGE } = require("./log-items");
 const { runNpmScript } = require("./util/run-npm-script");
 const { evaluateScriptPolicy, isScriptAllowed } = require("./util/lifecycle-script-policy");
@@ -448,14 +452,17 @@ class PkgInstaller {
 
   async _installLocalExports() {
     const pkgsData = this._data.getPkgsData();
+    const config = resolveLocalExportsConfig(this._fyn._pkg);
     const manifest = await makeLocalExportsManifest({
       cwd: this._fyn._cwd,
+      config,
       depInfos: this.toLink.filter(depInfo => {
         const versions = pkgsData[depInfo.name];
         return versions && versions[depInfo.version] === depInfo;
       })
     });
-    await reconcileLocalExports({ cwd: this._fyn._cwd, manifest });
+    const previous = this._fyn._installConfig.localExports;
+    await reconcileLocalExports({ cwd: this._fyn._cwd, manifest, previous });
     this._fyn.setLocalExports(manifest);
   }
 

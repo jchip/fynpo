@@ -8,12 +8,14 @@ const { getUrlType } = require("./util/lifecycle-script-policy");
 
 /* eslint-disable complexity, max-statements, no-magic-numbers, jsdoc/require-jsdoc */
 
-const ROOT_DIR = "_fyn";
+const DEFAULT_ROOT_DIR = "_fyn";
 const MANIFEST_FILE = ".fyn-local-exports.json";
 const MANIFEST_VERSION = 1;
 const SAFE_NAME = /^[A-Za-z0-9_][A-Za-z0-9._-]*$/;
 
 const posixify = value => value.split(Path.sep).join("/");
+
+const rootOfEntry = entry => entry.root || DEFAULT_ROOT_DIR;
 
 const emptyManifest = () => ({ version: MANIFEST_VERSION, exports: {} });
 
@@ -37,6 +39,92 @@ const checkExportName = (packageName, exportName) => {
   }
 };
 
+const normalizeRootDir = (value, ctx) => {
+  if (typeof value !== "string" || !value.trim()) {
+    throw new Error(`${ctx} must be a non-empty relative directory`);
+  }
+  if (Path.isAbsolute(value) || Path.posix.isAbsolute(value) || Path.win32.isAbsolute(value)) {
+    throw new Error(`${ctx} must not be absolute: ${value}`);
+  }
+  const parts = value.split(/[\\/]+/).filter(part => part && part !== ".");
+  if (
+    parts.length === 0 ||
+    parts.includes("..") ||
+    parts.includes("node_modules") ||
+    parts.includes(".git")
+  ) {
+    throw new Error(`Unsafe ${ctx}: ${value}`);
+  }
+  return parts.join("/");
+};
+
+const nestsWithin = (parent, child) => {
+  const relative = Path.posix.relative(parent, child);
+  return relative !== "" && !relative.startsWith("..");
+};
+
+const assertNoNestedRoots = roots => {
+  const uniq = [...new Set(roots)];
+  for (const a of uniq) {
+    for (const b of uniq) {
+      if (a !== b && nestsWithin(a, b)) {
+        throw new Error(`fyn local export directories must not nest: ${a} contains ${b}`);
+      }
+    }
+  }
+};
+
+// Resolve the consumer-owned export directory configuration from the consuming
+// package's merged fyn metadata: a default directory plus per-package overrides.
+const resolveLocalExportsConfig = pkg => {
+  const fyn = (pkg && pkg.fyn) || {};
+  const defaultDir =
+    fyn.localExportsDir === undefined
+      ? DEFAULT_ROOT_DIR
+      : normalizeRootDir(fyn.localExportsDir, "fyn.localExportsDir");
+  const byPackage = {};
+  const dirs = fyn.localExportsDirs;
+  if (dirs !== undefined && dirs !== null) {
+    if (typeof dirs !== "object" || Array.isArray(dirs)) {
+      throw new Error("fyn.localExportsDirs must be an object of package name to directory");
+    }
+    for (const name of Object.keys(dirs)) {
+      packagePathParts(name);
+      byPackage[name] = normalizeRootDir(dirs[name], `fyn.localExportsDirs[${JSON.stringify(name)}]`);
+    }
+  }
+  assertNoNestedRoots([defaultDir, ...Object.values(byPackage)]);
+  return { defaultDir, byPackage };
+};
+
+const rootDirForPackage = (config, name) =>
+  (config.byPackage && config.byPackage[name]) || config.defaultDir;
+
+// Glob patterns for the configured export roots so the consumer file scan can
+// treat them as generated, disposable state (like the default `_fyn`).
+const localExportsScanIgnores = pkg => {
+  let config;
+  try {
+    config = resolveLocalExportsConfig(pkg);
+  } catch (err) {
+    return [];
+  }
+  const roots = [config.defaultDir, ...Object.values(config.byPackage)];
+  return [...new Set(roots)].map(root => `**/${root}`);
+};
+
+const groupByRoot = exportsMap => {
+  const byRoot = new Map();
+  for (const target of Object.keys(exportsMap)) {
+    const root = rootOfEntry(exportsMap[target]);
+    if (!byRoot.has(root)) {
+      byRoot.set(root, {});
+    }
+    byRoot.get(root)[target] = exportsMap[target];
+  }
+  return byRoot;
+};
+
 const normalizeManifest = manifest => {
   if (!manifest) {
     return emptyManifest();
@@ -54,8 +142,9 @@ const normalizeManifest = manifest => {
     if (!entry || typeof entry !== "object" || typeof entry.source !== "string" || !entry.source) {
       throw new Error("Invalid fyn local exports manifest entry");
     }
+    const root = normalizeRootDir(rootOfEntry(entry), "fyn local exports manifest root");
     const expectedTarget = posixify(
-      Path.join(ROOT_DIR, ...packagePathParts(entry.package), entry.export)
+      Path.join(root, ...packagePathParts(entry.package), entry.export)
     );
     checkExportName(entry.package, entry.export);
     if (target !== expectedTarget || entry.target !== expectedTarget) {
@@ -87,8 +176,8 @@ const isInside = (root, child) => {
   return relative !== "" && relative !== ".." && !relative.startsWith(`..${Path.sep}`);
 };
 
-const readOwnedManifest = async cwd => {
-  const marker = Path.join(cwd, ROOT_DIR, MANIFEST_FILE);
+const readOwnedManifest = async (cwd, root) => {
+  const marker = Path.join(cwd, root, MANIFEST_FILE);
   try {
     const value = JSON.parse(await Fs.readFile(marker, "utf8"));
     return normalizeManifest(value);
@@ -96,7 +185,7 @@ const readOwnedManifest = async cwd => {
     if (err.code === "ENOENT" || err.code === "ENOTDIR") {
       return null;
     }
-    throw new Error(`Invalid ${ROOT_DIR} ownership manifest: ${err.message}`);
+    throw new Error(`Invalid ${root} ownership manifest: ${err.message}`);
   }
 };
 
@@ -112,7 +201,8 @@ const linkMatches = async (cwd, entry) => {
   }
 };
 
-async function makeLocalExportsManifest({ cwd, depInfos }) {
+async function makeLocalExportsManifest({ cwd, depInfos, config: exportsConfig }) {
+  const resolved = exportsConfig || { defaultDir: DEFAULT_ROOT_DIR, byPackage: {} };
   const entries = {};
   const consumerRoot = await Fs.realpath(cwd);
 
@@ -161,7 +251,8 @@ async function makeLocalExportsManifest({ cwd, depInfos }) {
         );
       }
 
-      const target = posixify(Path.join(ROOT_DIR, ...packageParts, exportName));
+      const root = rootDirForPackage(resolved, depInfo.name);
+      const target = posixify(Path.join(root, ...packageParts, exportName));
       const relativeSource = posixify(Path.relative(consumerRoot, source));
       const prior = entries[target];
       if (prior && (prior.source !== relativeSource || prior.version !== depInfo.version)) {
@@ -177,6 +268,7 @@ async function makeLocalExportsManifest({ cwd, depInfos }) {
         export: exportName,
         source: relativeSource,
         target,
+        root,
         linkTarget: fynTil.isWin32
           ? source
           : posixify(Path.relative(Path.dirname(targetPath), source))
@@ -191,42 +283,50 @@ async function makeLocalExportsManifest({ cwd, depInfos }) {
   return { version: MANIFEST_VERSION, exports: sortedEntries };
 }
 
-async function localExportsNeedInstall({ cwd, manifest }) {
-  const desired = normalizeManifest(manifest);
-  const targets = Object.keys(desired.exports);
-  if (targets.length === 0) {
-    try {
-      return Boolean(await readOwnedManifest(cwd));
-    } catch (err) {
-      return false;
-    }
-  }
-
+async function rootNeedsInstall(cwd, root, exportsForRoot) {
+  const rootManifest = { version: MANIFEST_VERSION, exports: exportsForRoot };
   let realized;
   try {
-    realized = await readOwnedManifest(cwd);
+    realized = await readOwnedManifest(cwd, root);
   } catch (err) {
     return true;
   }
-  if (!realized || JSON.stringify(realized) !== JSON.stringify(desired)) {
+  if (!realized || JSON.stringify(realized) !== JSON.stringify(rootManifest)) {
     return true;
   }
-
-  for (const target of targets) {
-    if (!(await linkMatches(cwd, desired.exports[target]))) {
+  for (const target of Object.keys(exportsForRoot)) {
+    if (!(await linkMatches(cwd, exportsForRoot[target]))) {
       return true;
     }
   }
   return false;
 }
 
-async function reconcileLocalExports({ cwd, manifest }) {
+async function localExportsNeedInstall({ cwd, manifest }) {
   const desired = normalizeManifest(manifest);
-  const targets = Object.keys(desired.exports);
-  const root = Path.join(cwd, ROOT_DIR);
+  const byRoot = groupByRoot(desired.exports);
+  if (byRoot.size === 0) {
+    try {
+      return Boolean(await readOwnedManifest(cwd, DEFAULT_ROOT_DIR));
+    } catch (err) {
+      return false;
+    }
+  }
+
+  for (const [root, exportsForRoot] of byRoot) {
+    if (await rootNeedsInstall(cwd, root, exportsForRoot)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+async function reconcileOneRoot(cwd, root, exportsForRoot) {
+  const targets = Object.keys(exportsForRoot);
+  const rootPath = Path.join(cwd, root);
   let owned;
   try {
-    owned = await readOwnedManifest(cwd);
+    owned = await readOwnedManifest(cwd, root);
   } catch (err) {
     if (targets.length === 0) {
       return;
@@ -236,28 +336,29 @@ async function reconcileLocalExports({ cwd, manifest }) {
 
   if (targets.length === 0) {
     if (owned) {
-      await Fs.$.rimraf(root);
+      await Fs.$.rimraf(rootPath);
     }
     return;
   }
-  if ((await Fs.exists(root)) && !owned) {
-    throw new Error(`Refusing to modify ${root} without a fyn ownership manifest`);
+  if ((await Fs.exists(rootPath)) && !owned) {
+    throw new Error(`Refusing to modify ${rootPath} without a fyn ownership manifest`);
   }
-  if (owned && !(await localExportsNeedInstall({ cwd, manifest: desired }))) {
+  if (owned && !(await rootNeedsInstall(cwd, root, exportsForRoot))) {
     return;
   }
 
+  const desiredRootManifest = { version: MANIFEST_VERSION, exports: exportsForRoot };
   const suffix = `${process.pid}-${Date.now()}`;
-  const staging = `${root}.fyn-tmp-${suffix}`;
-  const backup = `${root}.fyn-old-${suffix}`;
+  const staging = `${rootPath}.fyn-tmp-${suffix}`;
+  const backup = `${rootPath}.fyn-old-${suffix}`;
   let movedExisting = false;
 
   try {
     await Fs.$.rimraf(staging);
     await Fs.$.mkdirp(staging);
     for (const target of targets) {
-      const entry = desired.exports[target];
-      const stagedTarget = Path.join(staging, Path.relative(ROOT_DIR, target));
+      const entry = exportsForRoot[target];
+      const stagedTarget = Path.join(staging, Path.relative(root, target));
       const source = sourcePathFor(cwd, entry);
       const stat = await Fs.stat(source);
       if (!stat.isDirectory()) {
@@ -266,14 +367,18 @@ async function reconcileLocalExports({ cwd, manifest }) {
       await Fs.$.mkdirp(Path.dirname(stagedTarget));
       await fynTil.symlinkDir(stagedTarget, source, !fynTil.isWin32);
     }
-    await Fs.writeFile(Path.join(staging, MANIFEST_FILE), `${JSON.stringify(desired, null, 2)}\n`);
+    await Fs.writeFile(
+      Path.join(staging, MANIFEST_FILE),
+      `${JSON.stringify(desiredRootManifest, null, 2)}\n`
+    );
 
     if (owned) {
       await Fs.$.rimraf(backup);
-      await Fs.rename(root, backup);
+      await Fs.rename(rootPath, backup);
       movedExisting = true;
     }
-    await Fs.rename(staging, root);
+    await Fs.$.mkdirp(Path.dirname(rootPath));
+    await Fs.rename(staging, rootPath);
     if (movedExisting) {
       movedExisting = false;
       await Fs.$.rimraf(backup);
@@ -281,10 +386,34 @@ async function reconcileLocalExports({ cwd, manifest }) {
   } catch (err) {
     await Fs.$.rimraf(staging);
     if (movedExisting) {
-      await Fs.$.rimraf(root);
-      await Fs.rename(backup, root);
+      await Fs.$.rimraf(rootPath);
+      await Fs.rename(backup, rootPath);
     }
     throw err;
+  }
+}
+
+async function reconcileLocalExports({ cwd, manifest, previous }) {
+  const desired = normalizeManifest(manifest);
+  const byRoot = groupByRoot(desired.exports);
+  // The default root is always a cleanup candidate so a leftover owned tree is
+  // removed even when the recorded previous state is unavailable.
+  const allRoots = new Set([DEFAULT_ROOT_DIR, ...byRoot.keys()]);
+  if (previous) {
+    for (const root of groupByRoot(normalizeManifest(previous).exports).keys()) {
+      allRoots.add(root);
+    }
+  }
+
+  // Remove orphaned roots before creating desired ones so a relocated default
+  // root cannot clobber a newly created child root nested under it.
+  for (const root of [...allRoots].sort()) {
+    if (!byRoot.has(root)) {
+      await reconcileOneRoot(cwd, root, {});
+    }
+  }
+  for (const root of [...byRoot.keys()].sort()) {
+    await reconcileOneRoot(cwd, root, byRoot.get(root));
   }
 }
 
@@ -296,5 +425,7 @@ module.exports = {
   makeLocalExportsManifest,
   reconcileLocalExports,
   syncLocalExports,
-  localExportsNeedInstall
+  localExportsNeedInstall,
+  resolveLocalExportsConfig,
+  localExportsScanIgnores
 };

@@ -99,11 +99,39 @@ entire `localExports` field.
 
 When the package is a fynpo package or resolves from a `file:`, `link:`, or
 explicit filesystem path dependency, fyn creates each live directory link at
-`_fyn/<package>/<export>` in the consuming package; the example above creates
-`_fyn/@acme/ui/src`. Registry, Git, and URL dependencies never create local
-exports, even if their package metadata declares them.
+`<dir>/<package>/<export>` in the consuming package, where `<dir>` defaults to
+`_fyn`; the example above creates `_fyn/@acme/ui/src`. Registry, Git, and URL
+dependencies never create local exports, even if their package metadata declares
+them.
 
-The `_fyn` directory is generated, disposable content. Exclude it from Git,
+#### Configuring the export directory
+
+The export directory is owned and configured by the **consuming** package, in
+its `package.json` (or merged `package-fyn.json`) `fyn` section:
+
+```json
+{
+  "fyn": {
+    "localExportsDir": "_fyn",
+    "localExportsDirs": {
+      "@acme/ui": "_ui",
+      "tools": "vendor/tools"
+    }
+  }
+}
+```
+
+- `localExportsDir` sets the default directory for all producers; it defaults to
+  `_fyn` when omitted.
+- `localExportsDirs` overrides the directory per producer package name.
+
+With the example above, `@acme/ui` exports land under `_ui/@acme/ui/...` and
+`tools` under `vendor/tools/tools/...`, while every other producer uses the
+`_fyn` default. Directories must be relative paths inside the consumer; absolute
+paths, `..` escapes, `node_modules`, `.git`, and nested export directories are
+rejected. Producers cannot choose where their exports are written.
+
+Each configured directory is generated, disposable content. Exclude it from Git,
 package publication, and fynpo build-cache inputs. Fyn creates the source
 surface only; the consumer remains responsible for configuring Vite aliases,
 TypeScript paths, or equivalent tool settings to use it.

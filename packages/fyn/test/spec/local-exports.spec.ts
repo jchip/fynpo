@@ -13,7 +13,9 @@ const {
   makeLocalExportsManifest,
   reconcileLocalExports,
   syncLocalExports,
-  localExportsNeedInstall
+  localExportsNeedInstall,
+  resolveLocalExportsConfig,
+  localExportsScanIgnores
 } = require("../../lib/local-exports");
 
 const makeDepItem = (name, dir, ancestorSpec) => {
@@ -307,6 +309,122 @@ describe("local exports", function() {
     Fs.unlinkSync(target);
     makeDirLink(wrong, target);
     expect(await localExportsNeedInstall({ cwd, manifest })).to.equal(true);
+  });
+
+  it("resolves the export directory config with default and per-package overrides", async () => {
+    expect(resolveLocalExportsConfig(undefined)).to.deep.equal({
+      defaultDir: "_fyn",
+      byPackage: {}
+    });
+    expect(resolveLocalExportsConfig({ fyn: {} })).to.deep.equal({
+      defaultDir: "_fyn",
+      byPackage: {}
+    });
+    expect(
+      resolveLocalExportsConfig({
+        fyn: {
+          localExportsDir: "./_local/",
+          localExportsDirs: { "@acme/ui": "_ui", tools: "vendor/tools" }
+        }
+      })
+    ).to.deep.equal({
+      defaultDir: "_local",
+      byPackage: { "@acme/ui": "_ui", tools: "vendor/tools" }
+    });
+  });
+
+  it("rejects unsafe or nested export directory configuration", async () => {
+    const cases = [
+      { fyn: { localExportsDir: "" }, match: /localExportsDir/i },
+      { fyn: { localExportsDir: Path.resolve("abs") }, match: /absolute/i },
+      { fyn: { localExportsDir: "../escape" }, match: /unsafe/i },
+      { fyn: { localExportsDir: "node_modules" }, match: /unsafe|node_modules/i },
+      { fyn: { localExportsDirs: [] }, match: /localExportsDirs/i },
+      { fyn: { localExportsDirs: { "@bad name": "x" } }, match: /package name/i },
+      { fyn: { localExportsDirs: { pkg: "../escape" } }, match: /unsafe/i },
+      { fyn: { localExportsDir: "_fyn", localExportsDirs: { pkg: "_fyn/nested" } }, match: /nest/i }
+    ];
+    for (const testCase of cases) {
+      await expectFailure(async () => resolveLocalExportsConfig(testCase), testCase.match);
+    }
+  });
+
+  it("projects exports into configured default and per-package directories", async () => {
+    const plain = makeProducer({ name: "plain-pkg", directories: ["src"] });
+    const scoped = makeProducer({ name: "@scope/ui", directories: ["themes"] });
+    const config = resolveLocalExportsConfig({
+      fyn: { localExportsDir: "_local", localExportsDirs: { "@scope/ui": "vendor/ui" } }
+    });
+    const depInfos = [
+      makeDepInfo({ producer: plain, localExports: { src: "src" } }),
+      makeDepInfo({ producer: scoped, localExports: { themes: "themes" } })
+    ];
+
+    const manifest = await makeLocalExportsManifest({ cwd, config, depInfos });
+    expect(manifest.exports["_local/plain-pkg/src"].root).to.equal("_local");
+    expect(manifest.exports["vendor/ui/@scope/ui/themes"].root).to.equal("vendor/ui");
+
+    await reconcileLocalExports({ cwd, manifest });
+
+    expect(Fs.realpathSync(Path.join(cwd, "_local/plain-pkg/src"))).to.equal(
+      Fs.realpathSync(Path.join(plain.dir, "src"))
+    );
+    expect(Fs.realpathSync(Path.join(cwd, "vendor/ui/@scope/ui/themes"))).to.equal(
+      Fs.realpathSync(Path.join(scoped.dir, "themes"))
+    );
+    expect(Fs.existsSync(Path.join(cwd, "_local/.fyn-local-exports.json"))).to.equal(true);
+    expect(Fs.existsSync(Path.join(cwd, "vendor/ui/.fyn-local-exports.json"))).to.equal(true);
+    expect(Fs.existsSync(Path.join(cwd, "_fyn"))).to.equal(false);
+  });
+
+  it("relocates a projection when its configured directory changes", async () => {
+    const producer = makeProducer({ name: "movable", directories: ["src"] });
+    const before = await makeLocalExportsManifest({
+      cwd,
+      depInfos: [makeDepInfo({ producer, localExports: { src: "src" } })]
+    });
+    await reconcileLocalExports({ cwd, manifest: before });
+    expect(Fs.existsSync(Path.join(cwd, "_fyn/movable/src"))).to.equal(true);
+
+    const config = resolveLocalExportsConfig({ fyn: { localExportsDirs: { movable: "_moved" } } });
+    const after = await makeLocalExportsManifest({
+      cwd,
+      config,
+      depInfos: [makeDepInfo({ producer, localExports: { src: "src" } })]
+    });
+    await reconcileLocalExports({ cwd, manifest: after, previous: before });
+
+    expect(Fs.existsSync(Path.join(cwd, "_fyn"))).to.equal(false);
+    expect(Fs.realpathSync(Path.join(cwd, "_moved/movable/src"))).to.equal(
+      Fs.realpathSync(Path.join(producer.dir, "src"))
+    );
+  });
+
+  it("detects install need across configured directories", async () => {
+    const producer = makeProducer({ name: "checked", directories: ["src"] });
+    const config = resolveLocalExportsConfig({ fyn: { localExportsDir: "_local" } });
+    const manifest = await makeLocalExportsManifest({
+      cwd,
+      config,
+      depInfos: [makeDepInfo({ producer, localExports: { src: "src" } })]
+    });
+
+    expect(await localExportsNeedInstall({ cwd, manifest })).to.equal(true);
+    await reconcileLocalExports({ cwd, manifest });
+    expect(await localExportsNeedInstall({ cwd, manifest })).to.equal(false);
+
+    Fs.unlinkSync(Path.join(cwd, "_local/checked/src"));
+    expect(await localExportsNeedInstall({ cwd, manifest })).to.equal(true);
+  });
+
+  it("maps configured directories to consumer scan ignore globs", async () => {
+    expect(localExportsScanIgnores(undefined)).to.deep.equal(["**/_fyn"]);
+    expect(
+      localExportsScanIgnores({
+        fyn: { localExportsDir: "_local", localExportsDirs: { pkg: "vendor/tools" } }
+      })
+    ).to.deep.equal(["**/_local", "**/vendor/tools"]);
+    expect(localExportsScanIgnores({ fyn: { localExportsDir: "../bad" } })).to.deep.equal([]);
   });
 
   it("ignores the generated _fyn tree during consumer file scans", async () => {
