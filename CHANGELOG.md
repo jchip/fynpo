@@ -1,3 +1,86 @@
+# 8/6/2026
+
+## Packages
+
+-   `fyn@2.1.4` `(2.1.3 => 2.1.4)`
+-   `fynpo@2.1.4` `(2.1.3 => 2.1.4)`
+
+## Commits
+
+-   `packages/fyn`
+
+    -   feat(fyn): make local export dir configurable [commit](https://github.com/electrode-io/fynpo/commit/1e9580d8478ae669f3e7487be0fa5fcf36c9304c)
+    -   feat(fyn): add live local source exports [commit](https://github.com/electrode-io/fynpo/commit/e93d0b58dffb2904c48f647ef167d10dc2d7c61b)
+    -   FPM-40: allow intentional permission bitmask [commit](https://github.com/electrode-io/fynpo/commit/28300dc58365be5eaf64d82a436c6244c82d6e4c)
+    -   FPM-28: load prepared URL metadata offline [commit](https://github.com/electrode-io/fynpo/commit/ef98c6d682d0aff545e5e8164d451d1b39486235)
+    -   FPM-26: separate cache recovery from network failure [commit](https://github.com/electrode-io/fynpo/commit/a5b219313ed5fab84d0c3c4b34cb7aa5ea5cc5d2)
+    -   FPM-27: settle meta in-flight counters [commit](https://github.com/electrode-io/fynpo/commit/4e67e10c10bcbac5d983d64c2df62b5339a3a74b)
+    -   FPM-25: parse cached URL-spec marker value [commit](https://github.com/electrode-io/fynpo/commit/d278a4c1ffd0c0b101b92303cf8eeefc5cdae2e5)
+    -   FPM-24: refresh metadata cache with manager directory [commit](https://github.com/electrode-io/fynpo/commit/8c904f31403723254063c6a9384fb984face8f6f)
+    -   FPM-39: enforce local trust before optional checks [commit](https://github.com/electrode-io/fynpo/commit/2870d260ca0aa929e14e523a9c1d53cbd782ff9f)
+    -   FPM-37: recheck local trust after resolution [commit](https://github.com/electrode-io/fynpo/commit/fc5c63f3a4589a11364a7a8792c6ff516312df23)
+    -   FPM-36: propagate local builder startup failures [commit](https://github.com/electrode-io/fynpo/commit/556e1499813545b5125c8833fb52405949b70c66)
+    -   FPM-34: fail fast on local dependency scan errors [commit](https://github.com/electrode-io/fynpo/commit/cb50462b419498854bd13048ac2e89608b241666)
+    -   FPM-30: preserve trust boundary for transitive local deps [commit](https://github.com/electrode-io/fynpo/commit/4b16f063c9512ec3c2bda52e32a74f1bc0da0ad8)
+    -   FPM-33: toggle the consumed lockfile option [commit](https://github.com/electrode-io/fynpo/commit/903dd381a875d2ed5de34a803905f00b146ddae9)
+    -   FPM-32: propagate stat resolution failures [commit](https://github.com/electrode-io/fynpo/commit/ab4776ccebef90e6b8c69cce2b269826e80d58e9)
+    -   FPM-31: preserve run list load failures [commit](https://github.com/electrode-io/fynpo/commit/beefc4c5179cc90e692fdbfde311d0d99344cdbe)
+    -   FPM-29: prefer child exit code over errno [commit](https://github.com/electrode-io/fynpo/commit/0a3f1b839ad3ea98a18ebab4ab53e019df452d3b)
+    -   FPM-13: clear a package output dir on reinstall (mkdirp contract) [commit](https://github.com/electrode-io/fynpo/commit/7b9d4f2e8e3e7be0768208d7d26fedefceaac2cf)
+    -   FPM-18: fix package.json chmod recovery bit math (| not +) [commit](https://github.com/electrode-io/fynpo/commit/b7776152ef985e77a9319de5001749aadaf0ba58)
+    -   FPM-19: stop mutating shared request-path arrays in _removeFailedOptional [commit](https://github.com/electrode-io/fynpo/commit/60415760a1e8dc82946ed0a39a51d82b3309a2ed)
+    -   FPM-11: make clearExtras remove stale .bin entries on Windows [commit](https://github.com/electrode-io/fynpo/commit/598e466ff32c1770089cb06c64edb3a25d57f88e)
+    -   FPM-12: stop dropping non-JS source maps from local-linked packages [commit](https://github.com/electrode-io/fynpo/commit/46c124d90012f1f7c49668bdb7d610cda16f24ed)
+    -   FPM-16: surface local-dep change-detection failures instead of swallowing [commit](https://github.com/electrode-io/fynpo/commit/beec020fded29058917c18f51640c19cdd0a02f8)
+    -   FPM-14: make the existing-install layout override actually take effect [commit](https://github.com/electrode-io/fynpo/commit/f602c3a463a8ebf8286eeef4066aa963a8968362)
+    -   FPM-10: identify global installs by tag dir, not version string [commit](https://github.com/electrode-io/fynpo/commit/c7451b4ef85dbed1d4a961121604681eafce3594)
+    -   FPM-9: actually link the version when confirming during global add [commit](https://github.com/electrode-io/fynpo/commit/fd36f6a89e194fe9af0ccb819962fce5782de6be)
+    -   FPM-17: fix simpleCompare prerelease ordering [commit](https://github.com/electrode-io/fynpo/commit/6ee0b71735f9cd04f780a403cd28506f354ce3a0)
+    -   FPM-8: dont let a failed devOptDependencies abort the install [commit](https://github.com/electrode-io/fynpo/commit/aebfba7ebe8e7a1f5756ab3115e19978f33b6b4c)
+    -   FPM-7: fix getPkgById TypeError on scoped package ids [commit](https://github.com/electrode-io/fynpo/commit/9e98db747411037fb51e872a6f0fe4b6851956a8)
+    -   FPM-6: fix no-op fullMeta option in pacoteTarballStream fallback [commit](https://github.com/electrode-io/fynpo/commit/115a6cd58d31d9c0515f2da0702bfcf099a3e93f)
+    -   FPM-5: stop re-cloning pinned-commit git deps on every install [commit](https://github.com/electrode-io/fynpo/commit/064cdc398b57d2e2de5c5eca23e43127e524dde6)
+    -   FPM-4: use camelCase pacote v21 options for packument fetch [commit](https://github.com/electrode-io/fynpo/commit/89be6d3ce864bb774a1f4418955d1b88ddc41dac)
+    -   FPM-1: settle putPkgInNodeModules listener on all extractor paths [commit](https://github.com/electrode-io/fynpo/commit/2890805d57703aff66a3a68ebdc5a889011655f1)
+    -   FPM-2: honor NODE_ENV=production in pickEnvOptions [commit](https://github.com/electrode-io/fynpo/commit/bb0edb8ca438eb6804bfe8a6478c26370513b3aa)
+    -   FPM-3: fyn run propagates real script exit codes via fyntil.exit [commit](https://github.com/electrode-io/fynpo/commit/958f8736a5038ec86e518a6748b83094906d0c92)
+    -   FPM-50: improve fyn coverage and re-enable coverage gate in ci:check [commit](https://github.com/electrode-io/fynpo/commit/a3e7747323ee003017d6c1794f55bf37ea8f9c6d)
+    -   FPM-49: fix fyn eslint errors and re-enable lint gate in ci:check [commit](https://github.com/electrode-io/fynpo/commit/be26e820da56a0e71838091e37f15edd36dd71dc)
+    -   FPM-48: fyn ci:check runs tests only (drop failing eslint + coverage gates) [commit](https://github.com/electrode-io/fynpo/commit/88cafcd0c9cb20dead80c4c5545ebf655fb5d19e)
+    -   FPM-47: complete JSDoc params in opt-resolver policy spec [commit](https://github.com/electrode-io/fynpo/commit/aa113df5a80b0030720c7cc478806fb6dfffde94)
+    -   FPM-47: block optional dep preinstall from non-registry sources by default [commit](https://github.com/electrode-io/fynpo/commit/393de2c0431e43423197d29a1ec6bd70e8faf229)
+    -   FPM-45: default fyn.enforceRegistryDeps on; add --no-enforce-registry-deps CLI flag [commit](https://github.com/electrode-io/fynpo/commit/a0534fb619d0a4b7485f6b3007331a84fdbff33c)
+    -   FPM-44: opt-in fyn.enforceRegistryDeps - transitive deps must come from a registry [commit](https://github.com/electrode-io/fynpo/commit/77cd093030c880891424b326e021e623e013555c)
+    -   FPM-42: assert lifecycle-scripts output by content, not brittle stdout indices [commit](https://github.com/electrode-io/fynpo/commit/d1bbdc53adc3763aec1829cf9033a9a9bcedb8ba)
+    -   FPM-43: opt-in fyn.allowTopLevelScripts to trust lifecycle scripts of direct deps [commit](https://github.com/electrode-io/fynpo/commit/f693265b2ae511d691e46016f4b3aa7aaab9742b)
+    -   FPM-41: block lifecycle scripts for non-registry packages; add fyn.allowScripts whitelist [commit](https://github.com/electrode-io/fynpo/commit/f8cb3bef1a7688db5d3d288601fc2bc021c29e7e)
+    -   fix(fyn): command injection via unsanitized git-dependency ref ([#1](https://github.com/electrode-io/fynpo/pull/1)) [commit](https://github.com/electrode-io/fynpo/commit/265d13a053cf4d8fb9e8838804247c16bbeaf354)
+    -   fyn: propagate all CLI options to global install paths [commit](https://github.com/electrode-io/fynpo/commit/13d3fa1b35507d8e106d429d7d235221df5deebe)
+    -   fyn(fix): forward --refresh-meta to global update [commit](https://github.com/electrode-io/fynpo/commit/20efa1774b045ae6ca41e33bf47afce238c96ed5)
+
+-   `packages/fynpo`
+
+    -   FPO-13: run fynpo packages vitest suite in CI via ci:check script [commit](https://github.com/electrode-io/fynpo/commit/26a2e460b36da527c7443ae5d33d8de4e94a3663)
+    -   FPO-12: fynpo changelog - return a promise from commitChangeLogFile skip paths [commit](https://github.com/electrode-io/fynpo/commit/e06b08d656c0c7839bf57c59a4d58fb908fd59f1)
+    -   FPO-11: fynpo run - propagate failing package script exit code [commit](https://github.com/electrode-io/fynpo/commit/a39a2457310a98baf30aee41ed58a069e0aaa79c)
+    -   FPO-10: fynpo version/changelog --publish - bump package.json versions from dep graph [commit](https://github.com/electrode-io/fynpo/commit/95d8709d6bfd247c542efdd8eb0e74c9ae9e6dad)
+
+-   `.github`
+
+    -   FPM-46: CI - drop node 18/20, add node 26 [commit](https://github.com/electrode-io/fynpo/commit/bf65116dd9c452a64251c3d6cc0d52be4cbd9a10)
+
+-   `notes`
+
+    -   feat(fyn): add live local source exports [commit](https://github.com/electrode-io/fynpo/commit/e93d0b58dffb2904c48f647ef167d10dc2d7c61b)
+
+-   `testing`
+
+    -   FPM-46: opt monorepo-test out of default-on enforceRegistryDeps (--no-enforce-registry-deps) [commit](https://github.com/electrode-io/fynpo/commit/c4d7cc0a51fd26c7991795e8631bb355cdd6d6c3)
+
+-   `MISC`
+
+    -   chore: update .gitignore [commit](https://github.com/electrode-io/fynpo/commit/0bd7b26ba0dd4f7878749d851b15c60e4dc2993a)
+
 # 6/4/2026
 
 ## Packages
