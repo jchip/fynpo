@@ -268,6 +268,45 @@ export const lintParser = (commit, options) => {
 };
 
 /**
+ * Make a detector for packages that live in a *different* git repo nested inside
+ * the monorepo - a plain nested clone, a submodule, or a linked worktree.
+ *
+ * Such a package cannot be released by this repo: every git operation in the
+ * release path (change detection, commit collation, the publish commit's changed
+ * file list, staging bumped versions) runs against the outer repo, which has no
+ * commits and no tracked files for those paths. Left alone they silently appear
+ * in a release before the first tag exists, then silently vanish from every
+ * release after it.
+ *
+ * Detection walks up from the package dir to - but not including - the monorepo
+ * root, looking for a `.git` entry. It tests for existence rather than a
+ * directory because a submodule or worktree records `.git` as a *file*.
+ *
+ * @param cwd - monorepo root
+ *
+ * @returns function taking a package path relative to the root, returning the
+ *   dir of the foreign repo that owns it, or `undefined` if this repo owns it
+ */
+export function makeForeignRepoDetector(cwd: string): (pkgPath: string) => string | undefined {
+  const cache = new Map<string, string | undefined>();
+
+  const findRoot = (dir: string): string | undefined => {
+    if (!dir || dir === "." || dir === Path.sep) {
+      return undefined;
+    }
+    if (cache.has(dir)) {
+      return cache.get(dir);
+    }
+    // `.git` may be a dir (clone) or a file (submodule / worktree)
+    const found = Fs.existsSync(Path.join(cwd, dir, ".git")) ? dir : findRoot(Path.dirname(dir));
+    cache.set(dir, found);
+    return found;
+  };
+
+  return (pkgPath: string) => (pkgPath ? findRoot(pkgPath) : undefined);
+}
+
+/**
  * Make a predicate that decides if a package is eligible to be published.
  *
  * Driven by two `command.publish` config arrays of package refs

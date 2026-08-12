@@ -8,7 +8,7 @@ import slash from "slash";
 import _ from "lodash";
 import { FynpoDepGraph } from "@fynpo/base";
 
-import { makePublishTagSearchTerm, makePublishFilter } from "../utils";
+import { makePublishTagSearchTerm, makePublishFilter, makeForeignRepoDetector } from "../utils";
 
 const ifTagExists = (opts) => {
   let result = false;
@@ -91,16 +91,37 @@ export const getUpdatedPackages = (graph: FynpoDepGraph, opts) => {
   // the version bumps, and the `[Publish]` commit body that publish later parses.
   // `packages` is keyed by name and each value is an array, since the same name can
   // exist at more than one path; a name is publishable if any of its paths is.
-  const publishFilter = makePublishFilter(opts.fynpoRc || opts);
+  const rc = opts.fynpoRc || opts;
+  const publishFilter = makePublishFilter(rc);
+
+  // packages living in a nested git repo can't be released from here at all
+  const allowForeign = _.get(rc, "command.publish.allowForeignRepos", false);
+  const foreignRepoOf = makeForeignRepoDetector(opts.cwd || process.cwd());
+  const foreign: string[] = [];
+  const isForeign = (info) => {
+    const root = info && foreignRepoOf(info.path);
+    if (root && !foreign.includes(info.path)) {
+      foreign.push(info.path);
+    }
+    return Boolean(root) && !allowForeign;
+  };
+
   const canPublish = (name: string): boolean => {
     const infos = [].concat(packages[name] || []);
-    return infos.some((info) => publishFilter(info));
+    return infos.some((info) => publishFilter(info) && !isForeign(info));
   };
   const publishableNames = Object.keys(packages).filter(canPublish);
 
+  if (foreign.length > 0) {
+    const what = allowForeign ? "allowForeignRepos is set, keeping" : "cannot be released from here";
+    logger.warn(
+      `${foreign.length} package(s) are in a nested git repo - ${what}:\n  ${foreign.join("\n  ")}`
+    );
+  }
+
   const skipped = Object.keys(packages).length - publishableNames.length;
   if (skipped > 0) {
-    logger.info(`Excluded ${skipped} package(s) from publishing by command.publish config`);
+    logger.info(`Excluded ${skipped} package(s) from publishing`);
   }
 
   if (ifTagExists(opts)) {
