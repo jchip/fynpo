@@ -16,7 +16,13 @@
             "fyn": true
           }
         }
-      }
+      },
+      "_comment_excludePackages": [
+        "_w/* holds vendored forks whose package names (ignore-walk, npm-packlist)",
+        "belong to other publishers on the public registry. They are working copies,",
+        "never ours to publish - keep them out of the release set."
+      ],
+      "excludePackages": ["path:_w/*"]
     }
   },
   "ignore": ["packages/pacote-jchip"],
