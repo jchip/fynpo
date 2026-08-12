@@ -21,11 +21,42 @@ const xrequire = eval("require"); // eslint-disable-line
 
 const globalCmnds = ["bootstrap", "local", "run"];
 
+/**
+ * Discovery is implicit when fynpo.json declares no `packages` patterns. Say so,
+ * because the two discovery paths then disagree: the dep graph searches every
+ * directory for a package.json, while readFynpoPackages falls back to
+ * `packages/*` and finds nothing in a repo laid out any other way.
+ */
+const noticeImplicitDiscovery = (autoSearched: boolean, found: number) => {
+  if (!autoSearched) {
+    return;
+  }
+  if (found > 0) {
+    logger.info(
+      `No "packages" patterns in fynpo.json - searched every directory for package.json and found ${found}.`,
+      `Declare "packages" to make discovery explicit, e.g. "packages": ["packages/*"].`
+    );
+  } else {
+    logger.warn(
+      `No "packages" patterns in fynpo.json and no package.json found by searching.`,
+      `Declare "packages" in fynpo.json to say where your packages live.`
+    );
+  }
+};
+
 const readPackages = async (opts: any, cmdName: string = "") => {
-  const result = await makePkgDeps(
-    await readFynpoPackages(_.pick(opts, ["patterns", "cwd"])),
-    opts
-  );
+  const packages = await readFynpoPackages(_.pick(opts, ["patterns", "cwd"]));
+
+  if (_.isEmpty(packages)) {
+    // this path does NOT auto-search - it defaults to `packages/*`, so an empty
+    // result usually means the repo keeps its packages somewhere else
+    logger.warn(
+      `No packages found under ${JSON.stringify(opts.patterns || ["packages/*"])}.`,
+      `If your packages live elsewhere, declare them in fynpo.json, e.g. "packages": ["*"].`
+    );
+  }
+
+  const result = await makePkgDeps(packages, opts);
   if (!_.isEmpty(result.warnings)) {
     result.warnings.forEach((w) => logger.warn(w));
   }
@@ -75,6 +106,7 @@ const makeOpts = async (cmd, _parsed) => {
 const makeDepGraph = async (opts) => {
   const graph = new FynpoDepGraph(opts);
   await graph.resolve();
+  noticeImplicitDiscovery(graph.autoSearched, Object.keys(graph.packages.byName || {}).length);
   const fynpoData = await readFynpoData(opts.cwd);
   if (!_.isEmpty(fynpoData.indirects)) {
     _.each(fynpoData.indirects, (relations) => {

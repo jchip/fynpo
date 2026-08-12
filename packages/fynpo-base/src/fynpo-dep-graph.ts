@@ -319,6 +319,13 @@ export class FynpoDepGraph {
   depMapByPath: Record<string, PackageDepData>;
   /** Remember resolved package for a `name@<semver>` ID to its `name@version` ID */
   resolvedCache: Record<string, string>;
+  /**
+   * True when no `packages` patterns were configured and every directory had to be
+   * searched for a package.json. Callers can surface this - discovery is then
+   * implicit, and a repo that keeps packages outside the default location gets
+   * different results from the commands that don't auto-search.
+   */
+  autoSearched: boolean;
   _options: ReadFynpoOptions;
 
   constructor(options: ReadFynpoOptions = {}) {
@@ -487,6 +494,7 @@ export class FynpoDepGraph {
 
     // no patterns => setup to search for all package.json
     const autoSearch: boolean = _.isEmpty(patterns);
+    this.autoSearched = autoSearch;
     const autoSearchFound: string[] = [];
     if (autoSearch) {
       groups = { ".": null };

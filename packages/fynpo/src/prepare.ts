@@ -192,7 +192,16 @@ that's not latest but none set in fynpo config`
 
     this.readChangelog();
     if (_.isEmpty(this._versions)) {
-      logger.error("No versions found in CHANGELOG.md");
+      // versions are matched against the discovered package names, so no packages
+      // means no matches - blaming the changelog then sends people to the wrong file
+      if (_.isEmpty(this._data.packages)) {
+        logger.error(
+          `No packages were discovered, so nothing could be matched against CHANGELOG.md.`,
+          `Declare where your packages live in fynpo.json, e.g. "packages": ["*"].`
+        );
+      } else {
+        logger.error("No versions found in CHANGELOG.md");
+      }
       return undefined;
     }
 
