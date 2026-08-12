@@ -205,7 +205,10 @@ that's not latest but none set in fynpo config`
       const newV = this._versions[name];
       if (newV === pkg.version) return;
 
-      if (pkg.private === true) {
+      // readFynpoPackages doesn't copy `private` onto the package info, so
+      // `pkg.private` was always undefined and this check never fired - read it
+      // from the package.json it does carry
+      if (pkg.private === true || pkg.pkgJson?.private === true) {
         printWarning(`Skipping private package: ${pkg.name}`);
         return;
       }
@@ -216,7 +219,9 @@ that's not latest but none set in fynpo config`
         this.updateDep(pkg.pkgJson, name2, ver);
       });
 
-      packages.push(Path.join("packages", pkg.pkgDir, "package.json"));
+      // pkg.path is where the file actually is - a hardcoded "packages" prefix
+      // staged the wrong path for any repo not laid out under packages/
+      packages.push(Path.join(pkg.path, "package.json"));
       updatedPackages.push(`${name}@${newV}`);
     });
 

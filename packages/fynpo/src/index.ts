@@ -151,10 +151,12 @@ const execLocal = async (cmd, parsed) => {
 };
 
 const execPrepare = async (cmd, _parsed) => {
-  // In nix-clap v2, merge root command opts with subcommand opts
-  const rootOpts = cmd.rootCmd?.jsonMeta?.opts || {};
-  const cmdOpts = cmd.jsonMeta?.opts || {};
-  const opts = Object.assign({ cwd: process.cwd() }, rootOpts, cmdOpts);
+  // use makeOpts like every other command, so the configured `packages` patterns
+  // reach discovery. Building opts by hand here left readFynpoPackages on its
+  // default ["packages/*"], so any repo laid out differently found no packages -
+  // and prepare then matched the changelog against an empty list and reported
+  // "No versions found in CHANGELOG.md".
+  const opts = await makeOpts(cmd, _parsed);
 
   // prepare only applies at top level, so switch CWD there
   process.chdir(opts.cwd);
