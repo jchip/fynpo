@@ -1,3 +1,32 @@
+# 8/12/2026
+
+## Packages
+
+-   `fyn@2.1.5` `(2.1.4 => 2.1.5)`
+-   `fynpo@2.1.5` `(2.1.4 => 2.1.5)`
+
+## Commits
+
+-   `packages/fynpo`
+
+    -   FPO-16: document scoped publishing in fynpo README [commit](https://github.com/electrode-io/fynpo/commit/e2685dc278fe485c8206085b4f54f6d89adbfc47)
+    -   FPO-16: skip packages in nested git repos when publishing [commit](https://github.com/electrode-io/fynpo/commit/22daa0715fb42c66755779bbf39e4447f4bff598)
+    -   FPO-16: add publish-scoped package filter and fix layout-bound release paths [commit](https://github.com/electrode-io/fynpo/commit/02436877d03bde3a0378775a1d6ccd221d6be7ee)
+
+-   `docusaurus`
+
+    -   FPO-16: document publish package filter and nested repo skipping [commit](https://github.com/electrode-io/fynpo/commit/131da9ec1854a8a3ec2bd0bd9b5c6e94d380a92d)
+
+-   `notes`
+
+    -   FPO-16: add publish-scoped package filter and fix layout-bound release paths [commit](https://github.com/electrode-io/fynpo/commit/02436877d03bde3a0378775a1d6ccd221d6be7ee)
+
+-   `MISC`
+
+    -   FPO-16: version lock fynpo and fyn together [commit](https://github.com/electrode-io/fynpo/commit/ac50252289681dd5b8111beec7aef668e47938d8)
+    -   FPO-16: drop _w exclusion, nested-repo detection covers it [commit](https://github.com/electrode-io/fynpo/commit/88f2ba1d52a768012a7f0b578a03acab3c7b87a7)
+    -   FPO-16: keep _w vendored forks out of the publish set [commit](https://github.com/electrode-io/fynpo/commit/9d38f0fb5ce14cc0e85689c3ba48762d07fca0a7)
+
 # 8/6/2026
 
 ## Packages
