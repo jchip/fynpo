@@ -9,7 +9,13 @@ title: Configuration
   changeLogMarkers: ["## Packages", "## Commits"],
   command: { 
     bootstrap: { npmRunScripts: ["build"] },
-    publish: { tags: {}, versionTagging: {} }
+    publish: {
+      tags: {},
+      versionTagging: {},
+      includePackages: [],
+      excludePackages: [],
+      allowForeignRepos: false
+    }
   },
   forcePublish: [],
   ignoreChanges: [],
@@ -68,6 +74,91 @@ command: {
 ```
 
 if current version of `pkg4` is `1.0.0`, the above config will add the tag `ver1` to `publishConfig` of `pkg4`.
+
+### command.publish.includePackages
+
+Restrict publishing to the listed packages. A monorepo usually holds packages that must never
+reach the registry — demos, samples, fixtures, local adapters — alongside the few that ship.
+
+```javascript
+command: {
+  publish: {
+    includePackages: ["path:core/*", "path:dev-tools/*"]
+  }
+}
+```
+
+When the list is absent or empty, every package is publishable, which is the default. When it is
+non-empty, only packages matching an entry may be published. It is an allow list on purpose, so
+the config fails closed: a package added later under an unlisted path is not publishable until
+someone says it is.
+
+This affects publishing only. Package discovery, `bootstrap`, and `run` never consult it, so
+excluded packages still build normally.
+
+A package's own `"private": true` remains an independent veto — a private package is never
+published regardless of this setting.
+
+#### Package references
+
+`includePackages` and `excludePackages` take *package refs*, the same syntax as
+[versionLocks](#versionlocks):
+
+| ref | matches |
+| --- | --- |
+| `pkg1` | package **named** `pkg1` |
+| `name:pkg1` | same, explicit |
+| `pkg1@1.0.0` | package **id** — a `@` in the middle implies an id |
+| `id:pkg1@1.0.0` | same, explicit |
+| `path:core/*` | package **directory**, as a glob relative to the monorepo root |
+| `path:/^core\//` | package directory, as a regular expression |
+
+A bare entry is read as a name (or an id when it contains a `@`), so **directory patterns need
+the explicit `path:` prefix** — `core/*` alone will not match a path.
+
+### command.publish.excludePackages
+
+Remove packages from the publishable set. Applied after `includePackages`, and always wins.
+
+```javascript
+command: {
+  publish: {
+    includePackages: ["path:rollup-federation/*"],
+    excludePackages: ["path:rollup-federation/share-*"]
+  }
+}
+```
+
+Useful on its own as a deny list, or to carve exceptions out of a broader allow list. Note a deny
+list alone fails open — a package added under a new top level directory stays publishable until
+someone excludes it.
+
+### command.publish.allowForeignRepos
+
+Default `false`. By default fynpo skips packages that live in a **different git repo nested inside
+the monorepo** — a nested clone, a submodule, or a linked worktree — and warns, naming them:
+
+```
+> 2 package(s) are in a nested git repo - cannot be released from here:
+  vendor/some-lib
+  vendor/other-lib
+```
+
+Such a package cannot be released by the outer repo. Every git operation in the release path —
+change detection, commit collation, the publish commit's changed file list, staging the bumped
+version — runs against the outer repo, which has no commits and no tracked files for those paths.
+Left unchecked they appear in a release before the first release tag exists, then silently vanish
+from every release after it. Release them from inside their own repo instead.
+
+Set to `true` to keep them in the set anyway:
+
+```javascript
+command: {
+  publish: {
+    allowForeignRepos: true
+  }
+}
+```
 
 ### forcePublish
 List of packages to be force published. Use `*` for all packages.
