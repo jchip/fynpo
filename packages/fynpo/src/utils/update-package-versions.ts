@@ -5,6 +5,7 @@ import Chalk from "chalk";
 import assert from "assert";
 import semver from "semver";
 import { logger } from "../logger";
+import { makePublishFilter } from "../utils";
 
 const checkNupdateTag = (pkg, newV, opts) => {
   const { pkgJson } = pkg;
@@ -105,12 +106,19 @@ export const updatePackageVersions = ({ versions, tags, collated }) => {
   const packages = [];
   const updated = [];
 
+  const publishFilter = makePublishFilter(_.get(collated, "opts.fynpoRc"));
+
   _.each(versions, (newV, name) => {
     const pkg = graph && graph.getPackageByName(name);
     if (!pkg || newV === pkg.version) return;
 
     if (pkg.private === true) {
       logger.info("skipping private package", pkg.name);
+      return;
+    }
+
+    if (!publishFilter(pkg)) {
+      logger.info("skipping package excluded from publishing", pkg.name);
       return;
     }
 
@@ -121,7 +129,9 @@ export const updatePackageVersions = ({ versions, tags, collated }) => {
     });
 
     updated.push(pkg);
-    packages.push(Path.join("packages", pkg.pkgDir, "package.json"));
+    // must match where the file is actually written below - a monorepo whose
+    // packages don't live under `packages/` would otherwise stage the wrong path
+    packages.push(Path.join(pkg.path, "package.json"));
   });
 
   // all updated, write to disk

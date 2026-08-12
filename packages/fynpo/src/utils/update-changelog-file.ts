@@ -4,6 +4,7 @@ import Path from "path";
 import Fs from "fs";
 import semver from "semver";
 import _ from "lodash";
+import { makePublishFilter } from "../utils";
 
 const xrequire = eval("require"); // eslint-disable-line
 
@@ -66,10 +67,20 @@ export const updateChangelog = (collated) => {
     output.push(`### Directly Updated\n\n`);
   }
 
+  const publishFilter = makePublishFilter(opts.fynpoRc);
+  const canPublish = (name: string): boolean => {
+    const info = opts.graph?.getPackageByName?.(name);
+    // no graph to resolve against - leave the decision to the upstream filter
+    return !info || publishFilter(info);
+  };
+
   const emitPackageMsg = (p, packages) => {
     const pkg = packages[p];
     const newVer = getTaggedVersion(pkg, opts.fynpoRc);
     if (pkg.originalPkg.private) return;
+    // belt and braces - getUpdatedPackages already filtered these out, but this
+    // is what writes the `[Publish]` commit body that publish parses back
+    if (!canPublish(p)) return;
     /* eslint-disable no-useless-concat */
     output.push(`-   \`${p}@${newVer}\` ` + "`" + `(${pkg.version} => ${newVer})` + "`\n");
     versions[p] = newVer;

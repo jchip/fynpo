@@ -268,6 +268,52 @@ export const lintParser = (commit, options) => {
 };
 
 /**
+ * Make a predicate that decides if a package is eligible to be published.
+ *
+ * Driven by two `command.publish` config arrays of package refs
+ * (see `PackageRef` - supports `name:`, `id:`, `path:`, `/regex/` and globs):
+ *
+ * - `includePackages` - allow list. When non-empty, only packages matching it
+ *   are eligible. Absent or empty means every package is eligible.
+ * - `excludePackages` - deny list, applied after the allow list and always wins.
+ *
+ * The allow list is checked first so the config fails closed: a newly added
+ * package under an unlisted path is not publishable until someone says so.
+ *
+ * This is only about publishing. Discovery, bootstrap and build never consult it.
+ * A package's own `"private": true` is a separate, independent veto.
+ *
+ * @param fynpoRc - fynpo config
+ *
+ * @returns predicate taking a package's info, `true` if it may be published
+ */
+export function makePublishFilter(fynpoRc: any): (pkgInfo: PackageInfo) => boolean {
+  const toRefs = (key: string) => {
+    const val = _.get(fynpoRc, `command.publish.${key}`, []);
+    // tolerate a single string for the common one-entry case
+    const list = [].concat(val || []).filter((x) => typeof x === "string" && x.trim());
+    return list.map((ref: string) => new PackageRef(ref));
+  };
+
+  const include = toRefs("includePackages");
+  const exclude = toRefs("excludePackages");
+
+  if (include.length === 0 && exclude.length === 0) {
+    return () => true;
+  }
+
+  return (pkgInfo: PackageInfo): boolean => {
+    if (!pkgInfo) {
+      return false;
+    }
+    if (include.length > 0 && !include.find((ref) => ref.match(pkgInfo))) {
+      return false;
+    }
+    return !exclude.find((ref) => ref.match(pkgInfo));
+  };
+}
+
+/**
  * match versionLocks config to packages and generate the
  * mapping of locked packages.
  *

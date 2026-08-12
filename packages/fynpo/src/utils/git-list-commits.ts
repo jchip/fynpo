@@ -74,6 +74,42 @@ export const collateCommitsPackages = ({ commits, changed, opts }) => {
   if (ignoreChanges.length) {
     logger.info("Ignoring commits in files matching patterns:", ignoreChanges);
   }
+
+  /**
+   * Find the package that owns a changed file, by longest matching dir prefix.
+   *
+   * Resolved against the dep graph so it works for any monorepo layout. This used
+   * to only recognize a top level `packages/` (or `samples/`) dir, which meant a
+   * repo laid out any other way collated no packages at all - nothing was version
+   * bumped, the changelog's `## Packages` section came out empty, and publish
+   * (which parses that commit body) had nothing to publish.
+   */
+  const byPath = opts.graph && opts.graph.packages && opts.graph.packages.byPath;
+  const findPkgForFile = (file: string) => {
+    const parts = file.split("/");
+
+    if (byPath) {
+      for (let i = parts.length - 1; i > 0; i--) {
+        const pkg = byPath[parts.slice(0, i).join("/")];
+        if (pkg) {
+          return { name: pkg.name, dirName: pkg.pkgDir || pkg.path };
+        }
+      }
+      return undefined;
+    }
+
+    // no graph to resolve against - fall back to the original packages/ assumption
+    if (parts[0] === "packages" || parts[0] === "samples") {
+      const dir = Path.resolve(opts.cwd || process.cwd(), "packages", parts[1]);
+      if (Fs.existsSync(dir)) {
+        /* eslint-disable @typescript-eslint/no-var-requires */
+        const Pkg = xrequire(Path.join(dir, "package.json"));
+        return { name: Pkg.name, dirName: parts[1] };
+      }
+    }
+
+    return undefined;
+  };
   const filterFunctions = ignoreChanges.map((p) =>
     minimatch.filter(`!${p}`, {
       matchBase: true,
@@ -108,16 +144,13 @@ export const collateCommitsPackages = ({ commits, changed, opts }) => {
           handled[group][key] = true;
         };
 
-        if (parts[0] === "packages" || parts[0] === "samples") {
-          if (Fs.existsSync(Path.resolve("packages", parts[1]))) {
-            /* eslint-disable @typescript-eslint/no-var-requires */
-            const Pkg = xrequire(Path.resolve("packages", parts[1], "package.json"));
-            if (parts[0] === "packages" && collated.realPackages.indexOf(Pkg.name) < 0) {
-              collated.realPackages.push(Pkg.name);
-              a.packages[Pkg.name] = { dirName: parts[1] };
-            }
-            add(parts[0], Pkg.name);
+        const ownerPkg = findPkgForFile(x);
+        if (ownerPkg) {
+          if (collated.realPackages.indexOf(ownerPkg.name) < 0) {
+            collated.realPackages.push(ownerPkg.name);
+            a.packages[ownerPkg.name] = { dirName: ownerPkg.dirName };
           }
+          add("packages", ownerPkg.name);
         } else if (parts.length > 1) {
           add("others", parts[0]);
         } else {

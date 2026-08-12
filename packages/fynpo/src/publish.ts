@@ -118,9 +118,14 @@ export default class Publish {
       .filter((x) => Path.basename(x) === "package.json")
       .map((x) => Path.dirname(x));
 
+    const publishFilter = utils.makePublishFilter(this._fynpoRc);
+
     return Object.values(this._graph.packages.byId).filter((pkg: FynpoPackageInfo) => {
       return (
-        packagePaths.includes(pkg.path) && !pkg.pkgJson.private && packageNames.includes(pkg.name)
+        packagePaths.includes(pkg.path) &&
+        !pkg.pkgJson.private &&
+        packageNames.includes(pkg.name) &&
+        publishFilter(pkg)
       );
     });
   }

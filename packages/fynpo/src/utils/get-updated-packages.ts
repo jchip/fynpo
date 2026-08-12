@@ -8,7 +8,7 @@ import slash from "slash";
 import _ from "lodash";
 import { FynpoDepGraph } from "@fynpo/base";
 
-import { makePublishTagSearchTerm } from "../utils";
+import { makePublishTagSearchTerm, makePublishFilter } from "../utils";
 
 const ifTagExists = (opts) => {
   let result = false;
@@ -35,12 +35,17 @@ const getLatestTag = (opts) => {
   return { tagName, commitCount, sha };
 };
 
-const addDependents = (name, changed, graph: FynpoDepGraph) => {
+const addDependents = (name, changed, graph: FynpoDepGraph, canPublish) => {
   const pkg = graph.getPackageByName(name);
   const depPaths = Object.keys(graph.depMapByPath[pkg.path].dependentsByPath);
   const dependents = depPaths.map((path) => graph.packages.byPath[path].name);
 
   dependents.forEach((dep) => {
+    // a dependent that can't be published must not be pulled back into the
+    // changed set just because something it depends on changed
+    if (!canPublish(dep)) {
+      return;
+    }
     if (!changed.pkgs.includes(dep)) {
       changed.pkgs.push(dep);
     }
@@ -49,12 +54,15 @@ const addDependents = (name, changed, graph: FynpoDepGraph) => {
   });
 };
 
-const addVersionLocks = (name, changed, opts) => {
+const addVersionLocks = (name, changed, opts, canPublish) => {
   const verLocks = opts.versionLockMap[name];
   changed.verLocks[name] = [];
 
   if (verLocks) {
     for (const lockPkgName of _.without(verLocks, name)) {
+      if (!canPublish(lockPkgName)) {
+        continue;
+      }
       if (!changed.pkgs.includes(lockPkgName)) {
         changed.pkgs.push(lockPkgName);
       }
@@ -78,6 +86,23 @@ export const getUpdatedPackages = (graph: FynpoDepGraph, opts) => {
     cwd: opts.cwd,
   };
 
+  // `command.publish.includePackages` / `excludePackages`. Filtering here keeps every
+  // downstream consumer consistent - the changed list that's printed, the changelog,
+  // the version bumps, and the `[Publish]` commit body that publish later parses.
+  // `packages` is keyed by name and each value is an array, since the same name can
+  // exist at more than one path; a name is publishable if any of its paths is.
+  const publishFilter = makePublishFilter(opts.fynpoRc || opts);
+  const canPublish = (name: string): boolean => {
+    const infos = [].concat(packages[name] || []);
+    return infos.some((info) => publishFilter(info));
+  };
+  const publishableNames = Object.keys(packages).filter(canPublish);
+
+  const skipped = Object.keys(packages).length - publishableNames.length;
+  if (skipped > 0) {
+    logger.info(`Excluded ${skipped} package(s) from publishing by command.publish config`);
+  }
+
   if (ifTagExists(opts)) {
     const { tagName, commitCount } = getLatestTag(opts);
     changed.latestTag = tagName;
@@ -98,7 +123,7 @@ export const getUpdatedPackages = (graph: FynpoDepGraph, opts) => {
       logger.info("All packages are version locked.");
     }
     logger.info("Assuming all packages changed.");
-    const pkgNames = Object.keys(packages);
+    const pkgNames = publishableNames;
     pkgNames.forEach((name) => {
       changed.pkgs.push(name);
       changed.verLocks[name] = pkgNames;
@@ -150,19 +175,19 @@ export const getUpdatedPackages = (graph: FynpoDepGraph, opts) => {
       return changedFiles.length > 0;
     };
 
-    Object.keys(packages).forEach((name) => {
+    publishableNames.forEach((name) => {
       if (isForced(name) || isChanged(name)) {
         changed.pkgs.push(name);
       }
     });
 
     changed.pkgs.forEach((name) => {
-      addVersionLocks(name, changed, opts);
+      addVersionLocks(name, changed, opts, canPublish);
     });
   }
 
   changed.pkgs.forEach((name) => {
-    addDependents(name, changed, graph);
+    addDependents(name, changed, graph, canPublish);
   });
 
   return changed;
