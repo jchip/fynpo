@@ -1,6 +1,6 @@
 {
   "name": "fyn",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "fyn is the NPM for fynpo -- a zero setup monorepo tool",
   "main": "./bin/fyn.js",
   "homepage": "https://jchip.github.io/fynpo/",
