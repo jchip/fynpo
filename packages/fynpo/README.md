@@ -44,6 +44,10 @@
 
   > When publishing, allows you to select certain packages to lock versions or be independent.
 
+- **Scoped Publishing**: choose which packages are allowed to reach the registry.
+
+  > Most monorepos hold packages that should never be published - demos, samples, fixtures, local adapters. `command.publish.includePackages` and `excludePackages` restrict releases by package name, id, or directory glob, without excluding anything from bootstrap or build. The allow list fails closed, so a package added later isn't publishable until you say so. Packages living in a nested git repo are detected and skipped automatically, since the outer repo can't release them. See [configuration](https://jchip.github.io/fynpo/docs/getting-started/configuration).
+
 - **Informative node_modules paths**: For any file from `node_modules`, the path will show its owner package's version.
 
   > You no longer have to guess or find the version of a package when looking at stack traces.
