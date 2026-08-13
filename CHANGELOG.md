@@ -1,3 +1,26 @@
+# 8/13/2026
+
+## Packages
+
+-   `@fynpo/base@1.1.23` `(1.1.22 => 1.1.23)`
+-   `fyn@2.1.6` `(2.1.5 => 2.1.6)`
+-   `fynpo@2.1.6` `(2.1.5 => 2.1.6)`
+
+## Commits
+
+-   `packages/fynpo-base`
+
+    -   FPO-17: notice when package discovery is implicit or finds nothing [commit](https://github.com/electrode-io/fynpo/commit/e651d324d53e7ca3b8bfb1a37ee722d59096f496)
+
+-   `packages/fynpo`
+
+    -   FPO-17: notice when package discovery is implicit or finds nothing [commit](https://github.com/electrode-io/fynpo/commit/e651d324d53e7ca3b8bfb1a37ee722d59096f496)
+    -   FPO-17: fix fynpo prepare for repos not laid out under packages/ [commit](https://github.com/electrode-io/fynpo/commit/c9f8eec8c7913ca3a812edd5f2acccb857425c79)
+
+-   `MISC`
+
+    -   chore: update dep data [commit](https://github.com/electrode-io/fynpo/commit/11c9cf8a22e03fc4e26e678d2102180efbe75c97)
+
 # 8/12/2026
 
 ## Packages
